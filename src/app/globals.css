@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --kasi-black: #090909;
+  --kasi-ivory: #f4f2ea;
+  --kasi-green: #c7ff00;
+  --kasi-grey: #929292;
+  --kasi-border: #242424;
+  --background: var(--kasi-black);
+  --foreground: var(--kasi-ivory);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-kasi-black: var(--kasi-black);
+  --color-kasi-ivory: var(--kasi-ivory);
+  --color-kasi-green: var(--kasi-green);
+  --color-kasi-grey: var(--kasi-grey);
+  --color-kasi-border: var(--kasi-border);
+  --font-sans: var(--font-kasi-sans);
+  --font-mono: var(--font-kasi-mono);
+  --font-display: var(--font-kasi-display);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--kasi-green);
+  color: var(--kasi-black);
+}
+
+:focus-visible {
+  outline: 2px solid var(--kasi-green);
+  outline-offset: 3px;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
