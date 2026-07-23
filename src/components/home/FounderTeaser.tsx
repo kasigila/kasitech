@@ -10,9 +10,10 @@ export function FounderTeaser() {
             <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-green">
               EST. 2026 · DAR
             </p>
-            <p className="mt-6 font-display text-6xl leading-none tracking-[-0.05em] text-kasi-ivory md:text-7xl">
-              KM
-              <span className="text-kasi-green">K</span>
+            <p className="mt-6 max-w-[12ch] font-display text-3xl leading-[1.1] tracking-[-0.03em] text-kasi-ivory md:text-4xl">
+              Founder,
+              <br />
+              KasiTech
             </p>
           </div>
         </div>
