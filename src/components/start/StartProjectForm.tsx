@@ -160,8 +160,8 @@ export function StartProjectForm() {
     if (!name.trim()) e.name = "Enter your name.";
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       e.email = "Enter an email we can reply to.";
-    if (!phone.trim() || phone.replace(/\D/g, "").length < 9)
-      e.phone = "Enter a phone or WhatsApp number we can reach.";
+    if (!phone.trim() || phone.replace(/\D/g, "").length !== 10)
+      e.phone = "Enter a 10-digit phone or WhatsApp number.";
     setErrors(e);
     if (Object.keys(e).length) return;
 
@@ -550,9 +550,15 @@ export function StartProjectForm() {
               </span>
               <input
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setPhone(digits);
+                }}
+                inputMode="numeric"
+                autoComplete="tel"
+                maxLength={10}
                 className="mt-2 w-full border border-kasi-border bg-transparent px-4 py-3 text-sm outline-none focus:border-kasi-green"
-                placeholder="+255… or your WhatsApp number"
+                placeholder="10-digit number"
               />
               {errors.phone && (
                 <p className="mt-2 text-sm text-red-400">{errors.phone}</p>
