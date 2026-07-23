@@ -134,8 +134,8 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L"],
     stock: { XS: 5, S: 10, M: 9, L: 4 },
     images: [
-      "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1618932260643-eee4a2c4d807?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1770294758971-44fa1eae61a3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1495223834854-0638ec66b5d1?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Bias-cut silk cami with adjustable straps. Layer under the blazer or wear alone for evening.",
@@ -202,8 +202,8 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     stock: { S: 6, M: 9, L: 7, XL: 4 },
     images: [
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1629337464494-7418ec7d35f8?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1627662235844-6f5d8f54816b?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Fine-gauge polo with mother-of-pearl buttons. Weekend polish without the heat.",
@@ -242,7 +242,7 @@ export const products: Product[] = [
     stock: { "One Size": 15 },
     images: [
       "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Handwoven raffia tote with leather handles and a detachable cotton pouch.",
@@ -301,7 +301,7 @@ export const products: Product[] = [
     sizes: ["S", "M", "L"],
     stock: { S: 0, M: 3, L: 2 },
     images: [
-      "https://images.unsplash.com/photo-1548625361-1adcab316530?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1633821879282-0c4e91f96232?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
@@ -323,8 +323,8 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L", "XL"],
     stock: { XS: 8, S: 14, M: 16, L: 10, XL: 5 },
     images: [
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1628869503963-6ce8de674c58?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1627662235844-6f5d8f54816b?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Everyday ribbed tank with a clean neckline. The foundation piece under everything.",
