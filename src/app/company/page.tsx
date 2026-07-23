@@ -114,7 +114,7 @@ export default function CompanyPage() {
             </h2>
             <p className="mt-4 text-lg">
               <Link href="/start" className="text-kasi-green hover:underline">
-                Start a Project ↗
+                Start my project ↗
               </Link>
               {" · "}
               <a href={whatsappUrl()} className="hover:underline">

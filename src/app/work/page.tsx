@@ -173,7 +173,7 @@ export default function WorkPage() {
                   href="/start"
                   className="mt-8 inline-block text-sm text-kasi-green hover:underline"
                 >
-                  Start a project like this →
+                  Start my project like this →
                 </Link>
               </div>
             )}

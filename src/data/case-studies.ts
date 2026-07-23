@@ -258,13 +258,13 @@ export const caseStudies: Record<string, CaseStudyContent> = {
     businessGoal: "Convert ambitious businesses while signalling a real technology company.",
     thinking:
       "Restrained brand, progressive disclosure, portfolio routing, independent demo universes.",
-    experience: "Brand intro, hero product window, router, search, Start a Project mini-product.",
+    experience: "Brand intro, hero product window, router, search, Start my project mini-product.",
     system: "Shared design tokens, analytics hooks, demo chrome, case study architecture.",
     mobile: "Menu overlay, vertical discovery, WhatsApp after engagement, no hover dependency.",
     interactions: [
       "Work / Capabilities / About previews",
       "Portfolio search in plain language",
-      "Start a Project 4-step flow",
+      "Start my project 4-step flow",
     ],
     built: [
       "Design system",

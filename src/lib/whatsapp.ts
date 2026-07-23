@@ -8,7 +8,7 @@ export function hasWhatsApp() {
 export function whatsappUrl(message?: string) {
   if (!hasWhatsApp()) return "/start";
   const text = encodeURIComponent(
-    message ?? "Hi KasiTech: I'd like to start a project.",
+    message ?? "Hi KasiTech: I'd like to start my project.",
   );
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
 }

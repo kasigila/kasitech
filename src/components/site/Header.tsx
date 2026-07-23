@@ -148,7 +148,7 @@ export function Header() {
               }}
               className="text-[13px] tracking-[0.04em] text-kasi-ivory transition hover:text-kasi-green"
             >
-              Start a Project ↗
+              Start my project ↗
             </Link>
           </nav>
 
@@ -323,7 +323,7 @@ export function Header() {
               track("start_project_click", { source: "mobile_menu" });
             }}
           >
-            Start a Project ↗
+            Start my project ↗
           </Link>
         </nav>
         <div className="mt-16 flex flex-wrap items-center gap-5">

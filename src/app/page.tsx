@@ -38,7 +38,7 @@ export default function HomePage() {
                 href="/start"
                 className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm tracking-wide text-kasi-black"
               >
-                START A PROJECT ↗
+                START MY PROJECT ↗
               </Link>
               {hasWhatsApp() && (
                 <a

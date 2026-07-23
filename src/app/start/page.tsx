@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { StartProjectForm } from "@/components/start/StartProjectForm";
 
-export const metadata: Metadata = { title: "Start a Project" };
+export const metadata: Metadata = { title: "Start my project" };
 
 export default function StartPage() {
   return (

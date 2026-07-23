@@ -18,44 +18,7 @@ export async function POST(request: Request) {
   const enquiryTo =
     process.env.ENQUIRY_TO_EMAIL?.trim() || social.email;
 
-  // Always email Karen (FormSubmit → iCloud until business inbox exists).
-  // First-ever submit sends an activation link to this inbox. Confirm once.
-  if (enquiryTo) {
-    try {
-      const res = await fetch(
-        `https://formsubmit.co/ajax/${encodeURIComponent(enquiryTo)}`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: body.name,
-            email: body.email,
-            phone: body.phone,
-            company: body.company,
-            need: body.need ?? "",
-            goals: body.goals.join(", "),
-            budget: body.budget,
-            timeline: body.timeline,
-            website: body.website || "-",
-            brief: body.brief,
-            reference: body.id,
-            message,
-            _subject: `KasiTech enquiry ${body.id}: ${body.company}`,
-            _template: "table",
-            _captcha: "false",
-            _replyto: body.email,
-          }),
-        },
-      );
-      if (res.ok) delivered.push("email");
-    } catch {
-      // WhatsApp redirect still proceeds on the client
-    }
-  }
-
+  // Optional backends (FormSubmit is sent from the browser — see formsubmit.ts)
   const formspreeId = process.env.FORMSPREE_FORM_ID;
   if (formspreeId) {
     try {
@@ -104,7 +67,7 @@ export async function POST(request: Request) {
 
   return Response.json({
     ok: true,
-    emailed: delivered.includes("email") || delivered.includes("resend") || delivered.includes("formspree"),
+    emailed: delivered.length > 0,
     delivered,
   });
 }

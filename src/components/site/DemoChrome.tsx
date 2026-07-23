@@ -50,7 +50,7 @@ export function DemoChrome({ slug, className }: Props) {
             }
             className="hidden text-[12px] tracking-wide text-[#C7FF00] hover:opacity-90 sm:inline"
           >
-            Start a Project
+            Start my project
           </Link>
           <button
             type="button"
@@ -114,7 +114,7 @@ export function DemoChrome({ slug, className }: Props) {
                   track("start_project_click", { source: `demo_${slug}` })
                 }
               >
-                START A PROJECT ↗
+                START MY PROJECT ↗
               </Link>
               {hasWhatsApp() && (
                 <div>

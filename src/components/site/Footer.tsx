@@ -106,7 +106,7 @@ export function Footer() {
             </a>
           ) : (
             <Link href="/start" className="text-sm text-kasi-grey hover:text-kasi-green">
-              Start a Project →
+              Start my project →
             </Link>
           )}
         </div>

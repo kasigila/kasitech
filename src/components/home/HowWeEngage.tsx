@@ -49,7 +49,7 @@ const steps = [
   {
     n: "01",
     t: "ENQUIRE",
-    d: "Send a brief via Start a Project, or message us on WhatsApp directly.",
+    d: "Send a brief via Start my project, or message us on WhatsApp directly.",
   },
   {
     n: "02",

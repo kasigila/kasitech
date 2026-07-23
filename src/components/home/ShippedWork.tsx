@@ -52,7 +52,7 @@ export function ShippedWork() {
         <p className="mt-14 text-sm text-kasi-black/50">
           More client work will land here over time.{" "}
           <Link href="/start" className="text-kasi-black underline underline-offset-4">
-            Start a project
+            Start my project
           </Link>{" "}
           if you want yours next.
         </p>

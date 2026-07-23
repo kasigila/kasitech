@@ -11,6 +11,7 @@ import {
   buildEnquiryMessage,
   type EnquiryPayload,
 } from "@/lib/enquiry";
+import { sendEnquiryViaFormSubmit } from "@/lib/formsubmit";
 
 type Need =
   | "presence"
@@ -188,7 +189,14 @@ export function StartProjectForm() {
       // ignore
     }
 
-    // Email Karen first (await so navigation doesn't cancel the request), then WhatsApp
+    // Email Karen from the browser (FormSubmit). Server-side posts often fail.
+    try {
+      await sendEnquiryViaFormSubmit(payload);
+    } catch {
+      // WhatsApp is still the customer-facing next step
+    }
+
+    // Optional Formspree / Resend if env keys are set on the host
     try {
       await fetch("/api/enquiry", {
         method: "POST",
@@ -196,7 +204,7 @@ export function StartProjectForm() {
         body: JSON.stringify(payload),
       });
     } catch {
-      // WhatsApp is still the customer-facing next step
+      // ignore
     }
 
     const message = buildEnquiryMessage(payload);
@@ -234,7 +242,9 @@ export function StartProjectForm() {
           OPENING WHATSAPP…
         </h1>
         <p className="mt-6 max-w-lg text-lg text-kasi-grey">
-          Your brief was emailed to KasiTech and is ready to send on WhatsApp.
+          Your brief is ready to send on WhatsApp, and a copy was emailed to
+          KasiTech. First time only: check iCloud (and Spam) for a FormSubmit
+          activation link and tap Confirm, or later briefs won&apos;t arrive.
           If WhatsApp didn&apos;t open, tap below. We reply within 24 hours on
           business days.
         </p>

@@ -18,7 +18,7 @@ export default function NotFound() {
           Work
         </Link>
         <Link href="/start" className="text-kasi-green">
-          Start a Project
+          Start my project
         </Link>
       </div>
     </div>

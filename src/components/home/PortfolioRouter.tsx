@@ -92,7 +92,7 @@ export function PortfolioRouter({ id = "router" }: { id?: string }) {
                         })
                       }
                     >
-                      Start a project like this →
+                      Start my project like this →
                     </Link>
                   </div>
                 )}

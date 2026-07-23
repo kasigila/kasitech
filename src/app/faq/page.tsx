@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: "How do pricing and quotes work?",
-    a: "Every project is scoped after a short discovery. We then send a clear price breakdown for your goals and timeline. Use Start a Project or WhatsApp to begin. We reply within 24 hours on business days.",
+    a: "Every project is scoped after a short discovery. We then send a clear price breakdown for your goals and timeline. Use Start my project or WhatsApp to begin. We reply within 24 hours on business days.",
   },
   {
     q: "WhatsApp is a US number. Can I still message from Tanzania?",
@@ -77,7 +77,7 @@ export default function FaqPage() {
           href="/start"
           className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
         >
-          START A PROJECT ↗
+          START MY PROJECT ↗
         </Link>
         {hasWhatsApp() && (
           <a
