@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BuyCtas } from "@/components/site/BuyCtas";
 
 export const metadata: Metadata = { title: "Founder" };
 
@@ -45,16 +46,11 @@ export default function FounderPage() {
               website and grow into software, automation, and products.
             </p>
           </div>
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link
-              href="/start"
-              className="inline-block border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
-            >
-              START A PROJECT ↗
-            </Link>
+          <div className="mt-10 space-y-4">
+            <BuyCtas source="founder" />
             <Link
               href="/card"
-              className="text-sm text-kasi-grey hover:text-kasi-green"
+              className="inline-block text-sm text-kasi-grey hover:text-kasi-green"
             >
               Digital business card →
             </Link>

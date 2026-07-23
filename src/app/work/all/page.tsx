@@ -2,6 +2,7 @@ import Link from "next/link";
 import { projects } from "@/data/projects";
 import { projectCovers } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { BuyCtas } from "@/components/site/BuyCtas";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,9 +20,12 @@ export default function AllWorkPage() {
           EVERYTHING.
         </h1>
         <p className="mt-6 max-w-xl text-kasi-grey">
-          Each concept is a working product you can click through: guest view
-          and business view where it matters.
+          Interactive examples of what we can build. Click through guest and
+          business views where it matters.
         </p>
+        <div className="mt-8">
+          <BuyCtas source="work_all" compact />
+        </div>
 
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
@@ -69,6 +73,13 @@ export default function AllWorkPage() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mt-16 border-t border-kasi-border pt-10">
+          <p className="mb-4 text-sm text-kasi-grey">
+            Want something like one of these for your business?
+          </p>
+          <BuyCtas source="work_all_footer" />
         </div>
       </div>
     </div>

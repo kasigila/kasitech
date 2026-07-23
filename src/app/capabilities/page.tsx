@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { BuyCtas } from "@/components/site/BuyCtas";
 import { capabilityVisuals } from "@/data/images";
 import { getProject } from "@/data/projects";
 
@@ -83,7 +84,7 @@ export default function CapabilitiesPage() {
         </h1>
         <p className="mt-6 max-w-xl text-lg text-kasi-grey">
           Four categories. Each one pairs the craft with an interactive concept
-          demo, with examples of what we can build, not client case studies.
+          demo.
         </p>
 
         <div className="mt-20 space-y-28">
@@ -161,12 +162,9 @@ export default function CapabilitiesPage() {
           })}
         </div>
 
-        <Link
-          href="/start"
-          className="mt-20 inline-block border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
-        >
-          START A PROJECT ↗
-        </Link>
+        <div className="mt-20">
+          <BuyCtas source="capabilities" />
+        </div>
       </div>
     </div>
   );

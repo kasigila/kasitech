@@ -7,6 +7,8 @@ import { getProject } from "@/data/projects";
 import { projectCovers } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { cn } from "@/lib/cn";
+import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
+import { BuyCtas } from "@/components/site/BuyCtas";
 
 export function CaseStudyView({ slug }: { slug: string }) {
   const content: CaseStudyContent | undefined = caseStudies[slug];
@@ -72,6 +74,16 @@ export function CaseStudyView({ slug }: { slug: string }) {
           >
             Build something like this →
           </Link>
+          {hasWhatsApp() && (
+            <a
+              href={whatsappUrl(
+                `Hi KasiTech: I'm interested in something like ${content.name}.`,
+              )}
+              className="px-2 py-3 text-sm text-kasi-grey hover:text-kasi-green"
+            >
+              WhatsApp →
+            </a>
+          )}
         </div>
 
         <div className="relative mt-14 aspect-[21/9] w-full overflow-hidden border border-kasi-border">
@@ -191,22 +203,17 @@ export function CaseStudyView({ slug }: { slug: string }) {
             WANT THIS FOR YOUR BUSINESS?
           </p>
           <h2 className="mt-4 font-display text-4xl tracking-[-0.04em] md:text-5xl">
-            Let’s build yours.
+            Let&apos;s build yours.
           </h2>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link
-              href="/start"
-              className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
-            >
-              START A PROJECT ↗
-            </Link>
-            <Link
-              href={demoPath}
-              className="border border-kasi-border px-6 py-3 text-sm"
-            >
-              Keep exploring the demo
-            </Link>
+          <div className="mt-8">
+            <BuyCtas source={`case_${slug}`} />
           </div>
+          <Link
+            href={demoPath}
+            className="mt-4 inline-block text-sm text-kasi-grey hover:text-kasi-ivory"
+          >
+            Keep exploring the demo →
+          </Link>
         </section>
       </div>
     </article>

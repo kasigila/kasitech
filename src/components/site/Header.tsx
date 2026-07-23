@@ -121,6 +121,13 @@ export function Header() {
                 </Link>
               </div>
             ))}
+            <Link
+              href="/faq"
+              className="text-[13px] tracking-[0.04em] text-kasi-ivory/85 transition hover:text-kasi-ivory"
+              onClick={() => setPanel(null)}
+            >
+              FAQ
+            </Link>
             {hasWhatsApp() && (
               <a
                 href={whatsappUrl()}
@@ -263,6 +270,7 @@ export function Header() {
                     { href: "/company", label: "Company" },
                     { href: "/founder", label: "Founder" },
                     { href: "/about#how-we-work", label: "How We Work" },
+                    { href: "/faq", label: "FAQ" },
                     { href: "/about", label: "About KasiTech →" },
                   ].map((l) => (
                     <Link
@@ -300,6 +308,13 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/faq"
+            className="font-display text-4xl tracking-[-0.03em]"
+            onClick={() => setOpen(false)}
+          >
+            FAQ
+          </Link>
           <Link
             href="/start"
             className="font-display text-4xl tracking-[-0.03em] text-kasi-green"

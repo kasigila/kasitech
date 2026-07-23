@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BuyCtas } from "@/components/site/BuyCtas";
 
 export const metadata: Metadata = { title: "Kasi Lab" };
 
@@ -46,6 +47,13 @@ export default function LabPage() {
             </Link>
           </div>
         </article>
+
+        <div className="mt-12">
+          <p className="mb-4 text-sm text-kasi-grey">
+            Ready for client work instead of lab experiments?
+          </p>
+          <BuyCtas source="lab" />
+        </div>
 
         <Link href="/company" className="mt-12 inline-block text-sm hover:text-kasi-green">
           ← About the Company

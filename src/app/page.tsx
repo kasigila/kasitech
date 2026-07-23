@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HeroProductWindow } from "@/components/home/HeroProductWindow";
+import { IntentChips } from "@/components/home/IntentChips";
 import { BeautifulIsntEnough } from "@/components/home/BeautifulIsntEnough";
 import { WhatWeBuild } from "@/components/home/WhatWeBuild";
 import { ShippedWork } from "@/components/home/ShippedWork";
@@ -54,8 +55,9 @@ export default function HomePage() {
                 See shipped work ↓
               </a>
             </div>
+            <IntentChips />
             <p className="mt-6 text-[12px] text-kasi-grey">
-              Reply within 24 hours on business days · Limited new projects
+              Reply within 24 hours · Limited new projects
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-kasi-border pt-6 text-[12px] text-kasi-grey">
               <p>Dar es Salaam, Tanzania · Working worldwide</p>

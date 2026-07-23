@@ -55,19 +55,47 @@ export function PortfolioRouter({ id = "router" }: { id?: string }) {
                   {route.projectSlugs.map((slug) => {
                     const p = getProject(slug)!;
                     return (
-                      <Link
+                      <div
                         key={slug}
-                        href={p.caseStudyPath}
                         className="border border-kasi-border px-4 py-4 hover:border-kasi-green"
                       >
                         <p className="font-display text-xl">{p.name}</p>
                         <p className="mt-1 text-xs text-kasi-grey">
                           {p.industry} · {p.tags.join(" · ")}
                         </p>
-                      </Link>
+                        <div className="mt-3 flex flex-wrap gap-3 text-[12px]">
+                          <Link
+                            href={p.demoPath}
+                            className="text-kasi-green hover:underline"
+                          >
+                            Try demo ↗
+                          </Link>
+                          <Link
+                            href={p.caseStudyPath}
+                            className="text-kasi-grey hover:text-kasi-ivory"
+                          >
+                            How it works →
+                          </Link>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
+                {open && (
+                  <div className="pb-8">
+                    <Link
+                      href={`/start?need=${needForRoute(route.id)}`}
+                      className="text-sm text-kasi-green hover:underline"
+                      onClick={() =>
+                        track("start_project_click", {
+                          source: `router_${route.id}`,
+                        })
+                      }
+                    >
+                      Start a project like this →
+                    </Link>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -75,4 +103,11 @@ export function PortfolioRouter({ id = "router" }: { id?: string }) {
       </div>
     </section>
   );
+}
+
+function needForRoute(id: string) {
+  if (id === "sell") return "sell";
+  if (id === "platform") return "system";
+  if (id === "automation") return "automation";
+  return "presence";
 }

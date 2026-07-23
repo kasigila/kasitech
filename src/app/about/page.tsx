@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HowWeThink } from "@/components/home/HowWeThink";
+import { BuyCtas } from "@/components/site/BuyCtas";
 
 export const metadata: Metadata = { title: "About" };
 
@@ -23,7 +24,10 @@ export default function AboutPage() {
             software and intelligent systems, starting where businesses need
             momentum most.
           </p>
-          <div className="mt-10 flex flex-wrap gap-6 text-sm">
+          <div className="mt-10">
+            <BuyCtas source="about" />
+          </div>
+          <div className="mt-8 flex flex-wrap gap-6 text-sm">
             <Link href="/company" className="hover:text-kasi-green">
               Company →
             </Link>
@@ -32,6 +36,9 @@ export default function AboutPage() {
             </Link>
             <Link href="/lab" className="hover:text-kasi-green">
               Kasi Lab →
+            </Link>
+            <Link href="/faq" className="hover:text-kasi-green">
+              FAQ →
             </Link>
           </div>
         </div>

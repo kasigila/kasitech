@@ -18,8 +18,8 @@ export function SelectedWork() {
           COULD LOOK LIKE.
         </h2>
         <p className="mt-6 text-lg text-kasi-grey">
-          These are example products, not client case studies. Each one shows
-          how a business like yours might work with KasiTech.
+          Example products that show how a business like yours might work with
+          KasiTech.
         </p>
       </div>
 

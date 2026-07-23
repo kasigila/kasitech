@@ -5,6 +5,7 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
 import { getProject } from "@/data/projects";
+import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
 
 type Props = {
   slug: string;
@@ -21,20 +22,44 @@ export function DemoChrome({ slug, className }: Props) {
     <>
       <div
         className={cn(
-          "fixed left-0 right-0 top-0 z-[60] flex h-12 items-center justify-between border-b border-black/10 bg-black/80 px-4 text-white backdrop-blur-md",
+          "fixed left-0 right-0 top-0 z-[60] flex h-12 items-center justify-between gap-3 border-b border-black/10 bg-black/80 px-4 text-white backdrop-blur-md",
           className,
         )}
       >
-        <Link href="/" className="text-[13px] tracking-wide hover:opacity-80">
+        <Link href="/" className="shrink-0 text-[13px] tracking-wide hover:opacity-80">
           ← KasiTech
         </Link>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="font-mono text-[11px] tracking-[0.14em] uppercase hover:opacity-80"
-        >
-          About This Demo +
-        </button>
+        <div className="flex items-center gap-3 sm:gap-4">
+          {hasWhatsApp() && (
+            <a
+              href={whatsappUrl(
+                `Hi KasiTech: I tried the ${project.name} demo and want something similar.`,
+              )}
+              onClick={() =>
+                track("whatsapp_click", { source: `demo_bar_${slug}` })
+              }
+              className="hidden text-[12px] tracking-wide text-white/85 hover:text-white sm:inline"
+            >
+              WhatsApp
+            </a>
+          )}
+          <Link
+            href={`/start?need=${needForSlug(slug)}`}
+            onClick={() =>
+              track("start_project_click", { source: `demo_bar_${slug}` })
+            }
+            className="hidden text-[12px] tracking-wide text-[#C7FF00] hover:opacity-90 sm:inline"
+          >
+            Start a Project
+          </Link>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="font-mono text-[11px] tracking-[0.14em] uppercase hover:opacity-80"
+          >
+            About +
+          </button>
+        </div>
       </div>
 
       {open && (
@@ -66,7 +91,9 @@ export function DemoChrome({ slug, className }: Props) {
               What it demonstrates: {project.tags.join(" · ")}
             </p>
             <div className="mt-8 space-y-3 text-sm">
-              <p className="text-kasi-ivory/90">Customer View: browse as an end user.</p>
+              <p className="text-kasi-ivory/90">
+                Customer View: browse as an end user.
+              </p>
               <p className="text-kasi-ivory/90">
                 Business View: look for the ops / admin toggle inside the demo.
               </p>
@@ -78,17 +105,32 @@ export function DemoChrome({ slug, className }: Props) {
                 Case Study →
               </Link>
             </div>
-            <div className="mt-10 border-t border-kasi-border pt-6">
+            <div className="mt-10 space-y-4 border-t border-kasi-border pt-6">
               <p className="text-sm text-kasi-grey">Need something similar?</p>
               <Link
-                href="/start"
-                className="mt-3 inline-block text-sm tracking-wide text-kasi-ivory hover:text-kasi-green"
+                href={`/start?need=${needForSlug(slug)}`}
+                className="inline-block border border-kasi-green bg-kasi-green px-5 py-3 text-sm text-kasi-black"
                 onClick={() =>
                   track("start_project_click", { source: `demo_${slug}` })
                 }
               >
-                Start a Project →
+                START A PROJECT ↗
               </Link>
+              {hasWhatsApp() && (
+                <div>
+                  <a
+                    href={whatsappUrl(
+                      `Hi KasiTech: I tried the ${project.name} demo and want something similar.`,
+                    )}
+                    className="text-sm text-kasi-green hover:underline"
+                    onClick={() =>
+                      track("whatsapp_click", { source: `demo_panel_${slug}` })
+                    }
+                  >
+                    Or WhatsApp us →
+                  </a>
+                </div>
+              )}
             </div>
             <p className="mt-10 font-mono text-[10px] tracking-[0.16em] text-kasi-grey">
               DEMO DATA · FICTIONAL CONCEPT
@@ -98,4 +140,15 @@ export function DemoChrome({ slug, className }: Props) {
       )}
     </>
   );
+}
+
+function needForSlug(slug: string) {
+  if (
+    ["zuri", "moto", "noir", "soko", "nest"].includes(slug)
+  ) {
+    return "sell";
+  }
+  if (["kasi-flow", "atlas"].includes(slug)) return "system";
+  if (slug === "kasi-intelligence") return "automation";
+  return "presence";
 }

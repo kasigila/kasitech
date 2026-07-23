@@ -20,7 +20,11 @@ const faqs = [
   },
   {
     q: "How do pricing and quotes work?",
-    a: "We quote after a short discovery so scope stays honest. Use Start a Project to share budget range and goals. We reply within 24 hours on business days.",
+    a: "Every project is scoped after a short discovery. We then send a clear price breakdown for your goals and timeline. Use Start a Project or WhatsApp to begin. We reply within 24 hours on business days.",
+  },
+  {
+    q: "WhatsApp is a US number. Can I still message from Tanzania?",
+    a: "Yes. +1 269 861 3487 is the project WhatsApp (reachable worldwide). +255 626 000 005 is the Tanzania mobile for calls/SMS. Prefer WhatsApp for project chat.",
   },
   {
     q: "What do you need from me?",

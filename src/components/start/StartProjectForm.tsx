@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
 import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
 import { emailHref, hasEmail, social } from "@/lib/social";
@@ -17,6 +18,14 @@ type Need =
   | "system"
   | "automation"
   | "unsure";
+
+const needIds: Need[] = [
+  "presence",
+  "sell",
+  "system",
+  "automation",
+  "unsure",
+];
 
 const needs: { id: Need; label: string }[] = [
   { id: "presence", label: "A BETTER DIGITAL PRESENCE" },
@@ -77,6 +86,7 @@ const timelines = [
 const STORAGE_KEY = "kasi-project-submissions";
 
 export function StartProjectForm() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [need, setNeed] = useState<Need | null>(null);
   const [goals, setGoals] = useState<string[]>([]);
@@ -94,6 +104,13 @@ export function StartProjectForm() {
   const [refId, setRefId] = useState("");
   const [waHref, setWaHref] = useState("");
   const [mailHref, setMailHref] = useState("");
+
+  useEffect(() => {
+    const raw = searchParams.get("need");
+    if (raw && needIds.includes(raw as Need)) {
+      setNeed(raw as Need);
+    }
+  }, [searchParams]);
 
   const goalOptions = useMemo(
     () => (need ? goalsByNeed[need] : []),

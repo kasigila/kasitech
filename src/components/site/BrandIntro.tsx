@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+const INTRO_KEY = "kasi_brand_intro_seen";
+
 export function BrandIntro() {
   const [show, setShow] = useState(false);
   const [phase, setPhase] = useState<"kasi" | "tech">("kasi");
@@ -11,27 +13,48 @@ export function BrandIntro() {
   useEffect(() => {
     setReady(true);
 
+    try {
+      if (sessionStorage.getItem(INTRO_KEY) === "1") {
+        return;
+      }
+    } catch {
+      // ignore storage errors
+    }
+
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    const markSeen = () => {
+      try {
+        sessionStorage.setItem(INTRO_KEY, "1");
+      } catch {
+        // ignore
+      }
+    };
+
     if (reduced) {
-      // Brief presence only for reduced-motion users
       const start = window.setTimeout(() => setShow(true), 40);
-      const end = window.setTimeout(() => setShow(false), 600);
+      const end = window.setTimeout(() => {
+        setShow(false);
+        markSeen();
+      }, 600);
       return () => {
         window.clearTimeout(start);
         window.clearTimeout(end);
       };
     }
 
-    // Every refresh / visit:
+    // Once per browser session:
     // 1) "Kasi" + meaning (~2s so it's readable)
     // 2) "KasiTech" hold (~1.2s)
     // 3) fade out
     const start = window.setTimeout(() => setShow(true), 40);
     const toTech = window.setTimeout(() => setPhase("tech"), 2000);
-    const hide = window.setTimeout(() => setShow(false), 3400);
+    const hide = window.setTimeout(() => {
+      setShow(false);
+      markSeen();
+    }, 3400);
 
     return () => {
       window.clearTimeout(start);
