@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
 import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
@@ -19,13 +20,15 @@ const nav = [
   { href: "/about", label: "About", panel: "about" as const },
 ];
 
+type Panel = "work" | "capabilities" | "about";
+
 export function Header() {
+  const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<"work" | "capabilities" | "about" | null>(
-    null,
-  );
+  const [panel, setPanel] = useState<Panel | null>(null);
   const [lastY, setLastY] = useState(0);
 
   useEffect(() => {
@@ -46,18 +49,46 @@ export function Header() {
     };
   }, [open]);
 
+  // Close mega-menu on route change, outside click, and Escape
+  useEffect(() => {
+    setPanel(null);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!panel) return;
+
+    const onPointerDown = (e: PointerEvent) => {
+      const root = headerRef.current;
+      if (root && !root.contains(e.target as Node)) {
+        setPanel(null);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPanel(null);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [panel]);
+
   return (
     <>
       <header
+        ref={headerRef}
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-transform duration-300",
           hidden && !open && !panel ? "-translate-y-full" : "translate-y-0",
         )}
+        onMouseLeave={() => setPanel(null)}
       >
         <div
           className={cn(
             "mx-auto flex h-[76px] max-w-[1400px] items-center justify-between px-5 transition-colors md:px-8",
-            scrolled || open
+            scrolled || open || panel
               ? "border-b border-kasi-border bg-kasi-black/85 backdrop-blur-md"
               : "bg-transparent",
           )}
@@ -65,7 +96,10 @@ export function Header() {
           <Link
             href="/"
             className="font-display text-[17px] font-medium tracking-[-0.02em] text-kasi-ivory"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              setPanel(null);
+            }}
           >
             KasiTech
           </Link>
@@ -76,11 +110,12 @@ export function Header() {
                 key={item.href}
                 className="relative"
                 onMouseEnter={() => setPanel(item.panel)}
-                onFocus={() => setPanel(item.panel)}
               >
                 <Link
                   href={item.href}
                   className="text-[13px] tracking-[0.04em] text-kasi-ivory/85 transition hover:text-kasi-ivory"
+                  onClick={() => setPanel(null)}
+                  onFocus={() => setPanel(item.panel)}
                 >
                   {item.label}
                 </Link>
@@ -88,7 +123,10 @@ export function Header() {
             ))}
             <Link
               href="/start"
-              onClick={() => track("start_project_click", { source: "header" })}
+              onClick={() => {
+                setPanel(null);
+                track("start_project_click", { source: "header" });
+              }}
               className="text-[13px] tracking-[0.04em] text-kasi-ivory transition hover:text-kasi-green"
             >
               Start a Project ↗
@@ -112,7 +150,6 @@ export function Header() {
             "pointer-events-none absolute inset-x-0 top-[76px] hidden justify-center lg:flex",
             panel ? "pointer-events-auto" : "",
           )}
-          onMouseLeave={() => setPanel(null)}
         >
           {panel && (
             <div className="w-full max-w-[1400px] border-b border-kasi-border bg-kasi-black/95 px-8 py-8 backdrop-blur-md">
@@ -138,10 +175,18 @@ export function Header() {
                       ))}
                     </div>
                     <div className="mt-8 flex flex-wrap gap-6 text-[13px] text-kasi-grey">
-                      <Link href="/work/all" className="hover:text-kasi-ivory">
+                      <Link
+                        href="/work/all"
+                        className="hover:text-kasi-ivory"
+                        onClick={() => setPanel(null)}
+                      >
                         Explore all 12 demos →
                       </Link>
-                      <Link href="/work#router" className="hover:text-kasi-ivory">
+                      <Link
+                        href="/work#router"
+                        className="hover:text-kasi-ivory"
+                        onClick={() => setPanel(null)}
+                      >
                         Find something for your business →
                       </Link>
                     </div>
