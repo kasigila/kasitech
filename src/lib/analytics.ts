@@ -8,7 +8,8 @@ type AnalyticsEvent =
   | "whatsapp_click"
   | "form_start"
   | "form_complete"
-  | "capability_view";
+  | "capability_view"
+  | "card_save_contact";
 
 export function track(
   event: AnalyticsEvent,

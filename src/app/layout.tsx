@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   description:
     "Premium digital technology studio in Dar es Salaam. Websites, booking, ecommerce, software, and AI systems built to work.",
-  metadataBase: new URL("https://kasitech.co"),
+  metadataBase: new URL("https://kasitechinnovations.com"),
 };
 
 export default function RootLayout({

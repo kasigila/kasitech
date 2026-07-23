@@ -56,6 +56,7 @@ export function Footer() {
             ["/capabilities", "Capabilities"],
             ["/about", "About"],
             ["/company", "Company"],
+            ["/card", "Digital Card"],
           ].map(([href, label]) => (
             <Link key={href} href={href} className="text-kasi-ivory/80 hover:text-kasi-green">
               {label}

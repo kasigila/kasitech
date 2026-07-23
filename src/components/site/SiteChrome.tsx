@@ -8,8 +8,10 @@ import { BrandIntro } from "@/components/site/BrandIntro";
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isDemo = pathname?.startsWith("/demo/");
+  const isCard = pathname === "/card";
 
-  if (isDemo) {
+  // Standalone surfaces: demos + digital business card (no site chrome / intro)
+  if (isDemo || isCard) {
     return <>{children}</>;
   }
 

@@ -45,12 +45,20 @@ export default function FounderPage() {
               website and grow into software, automation, and products.
             </p>
           </div>
-          <Link
-            href="/start"
-            className="mt-10 inline-block border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
-          >
-            START A PROJECT ↗
-          </Link>
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Link
+              href="/start"
+              className="inline-block border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
+            >
+              START A PROJECT ↗
+            </Link>
+            <Link
+              href="/card"
+              className="text-sm text-kasi-grey hover:text-kasi-green"
+            >
+              Digital business card →
+            </Link>
+          </div>
         </div>
       </div>
     </div>
