@@ -394,6 +394,87 @@ export function getStory(id: string) {
   return stories.find((s) => s.id === id);
 }
 
+export function buildFollowPath(
+  programId: string,
+  amount: number,
+  freq: "one-time" | "monthly",
+  method: "mpesa" | "card",
+) {
+  const program = getProgram(programId);
+  const name = program?.name ?? "Program";
+  const project =
+    projects.find((p) => p.programId === programId && p.status === "Active") ??
+    projects[0];
+  const payLabel = method === "mpesa" ? "M-Pesa" : "card";
+  const freqLabel = freq === "monthly" ? "monthly" : "one-time";
+
+  const middleByProgram: Record<
+    string,
+    { activity: string; outcome: string }
+  > = {
+    water: {
+      activity: "Pump install, caretaker training, spare-parts fund seeded",
+      outcome: `${project.outcome} · average fetch time cut from 90 to 12 minutes`,
+    },
+    food: {
+      activity: "Cold room prep, co-op ledger setup, market buyer intros",
+      outcome: `${project.outcome} · better prices at first sale window`,
+    },
+    skills: {
+      activity: "Lab kits, mentor pairing, employer showcase day",
+      outcome: `${project.outcome} · stipends and first freelance placements`,
+    },
+    learning: {
+      activity: "Tutor training, solar lamp kits, reading circle launch",
+      outcome: `${project.outcome} · weekly literacy circles running`,
+    },
+  };
+
+  const mid =
+    middleByProgram[programId] ?? middleByProgram.water;
+
+  const activityDetail =
+    amount >= 250000
+      ? `${mid.activity} · accelerated tranche unlocked at ${formatTzs(amount)}`
+      : amount >= 100000
+        ? `${mid.activity} · standard field tranche at ${formatTzs(amount)}`
+        : `${mid.activity} · seed tranche at ${formatTzs(amount)}`;
+
+  return [
+    {
+      id: "donation",
+      label: "Donation",
+      detail: `${formatTzs(amount)} · ${freqLabel} · ${payLabel} · ${name}`,
+    },
+    {
+      id: "program",
+      label: "Program",
+      detail: `${name}: ${program?.focus ?? "field work"}`,
+    },
+    {
+      id: "region",
+      label: "Region",
+      detail: `${project.region} · ${project.name}`,
+    },
+    {
+      id: "activity",
+      label: "Activity",
+      detail: activityDetail,
+    },
+    {
+      id: "outcome",
+      label: "Outcome",
+      detail: mid.outcome,
+    },
+    {
+      id: "reporting",
+      label: "Reporting",
+      detail:
+        "Monthly field note · uptime or attendance log · annual report citation",
+    },
+  ] as const;
+}
+
 export function formatTzs(n: number) {
   return `TZS ${n.toLocaleString("en-TZ")}`;
 }

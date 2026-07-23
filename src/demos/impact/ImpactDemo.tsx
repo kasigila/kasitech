@@ -3,11 +3,12 @@
 import Image from "next/image";
 import { useState } from "react";
 import { DemoChrome } from "@/components/site/DemoChrome";
+import { MpesaOverlay } from "@/components/demo/MpesaOverlay";
 import { cn } from "@/lib/cn";
 import {
-  adminDonations,
+  adminDonations as seedAdminDonations,
+  buildFollowPath,
   donationPresets,
-  followPath,
   formatTzs,
   getProgram,
   getStory,
@@ -18,6 +19,7 @@ import {
   projects,
   reports,
   stories,
+  type DonationRow,
   type Project,
 } from "./data";
 
@@ -58,16 +60,33 @@ export function ImpactDemo() {
   const [customAmount, setCustomAmount] = useState("");
   const [freq, setFreq] = useState<"one-time" | "monthly">("one-time");
   const [method, setMethod] = useState<"mpesa" | "card">("mpesa");
+  const [mpesaOpen, setMpesaOpen] = useState(false);
   const [donateProgram, setDonateProgram] = useState(programs[0].id);
   const [donorName, setDonorName] = useState("");
   const [donationId, setDonationId] = useState<string | null>(null);
   const [followStep, setFollowStep] = useState(0);
   const [reportOpen, setReportOpen] = useState<string | null>(null);
+  const [adminList, setAdminList] = useState<DonationRow[]>(() => [
+    ...seedAdminDonations,
+  ]);
+  const [lastDonation, setLastDonation] = useState<{
+    id: string;
+    amount: number;
+    programId: string;
+    donor: string;
+  } | null>(null);
 
   const story = getStory(storyId) ?? neemaStory;
   const resolvedAmount = customAmount
     ? Number(customAmount) || amount
     : amount;
+
+  const activeFollowPath = buildFollowPath(
+    donateProgram,
+    resolvedAmount,
+    freq,
+    method,
+  );
 
   function go(next: View) {
     setView(next);
@@ -80,8 +99,38 @@ export function ImpactDemo() {
   }
 
   function submitDonate() {
-    setDonationId(`DN-${8800 + Math.floor(Math.random() * 90)}`);
+    const id = `DN-${8800 + Math.floor(Math.random() * 90)}`;
+    setDonationId(id);
+    const donorLabel = donorName.trim() || "Guest donor";
+    setLastDonation({
+      id,
+      amount: resolvedAmount,
+      programId: donateProgram,
+      donor: donorLabel,
+    });
+    setAdminList((prev) => [
+      {
+        id,
+        donor: donorLabel,
+        amount: resolvedAmount,
+        type: freq === "monthly" ? "Monthly" : "One-time",
+        method: method === "mpesa" ? "M-Pesa" : "Card",
+        date: "Just now",
+        program: getProgram(donateProgram)?.name ?? "Program",
+      },
+      ...prev,
+    ]);
+    setFollowStep(0);
+    setMpesaOpen(false);
     go("confirm");
+  }
+
+  function requestDonate() {
+    if (method === "mpesa") {
+      setMpesaOpen(true);
+      return;
+    }
+    submitDonate();
   }
 
   const nav: { id: View; label: string }[] = [
@@ -667,7 +716,7 @@ export function ImpactDemo() {
 
             <button
               type="button"
-              onClick={submitDonate}
+              onClick={requestDonate}
               className="w-full bg-[#8B7355] py-3.5 text-sm tracking-wide text-white"
             >
               Give {formatTzs(resolvedAmount)}{" "}
@@ -677,11 +726,48 @@ export function ImpactDemo() {
         </main>
       )}
 
+      <MpesaOverlay
+        open={mpesaOpen}
+        amountLabel={formatTzs(resolvedAmount)}
+        phoneHint="07XX XXX XXX"
+        onSuccess={submitDonate}
+        onCancel={() => setMpesaOpen(false)}
+      />
+
       {view === "confirm" && (
         <main className="mx-auto max-w-xl px-4 py-16 text-center">
           <DemoBadge />
           <h1 className="mt-6 text-4xl tracking-tight">Thank you</h1>
-          <p className="mt-4 leading-relaxed text-[#2C2416]/75">
+          {lastDonation && (
+            <div className="mx-auto mt-8 max-w-sm border border-[#8B7355]/35 bg-white p-6 text-left shadow-sm">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-[#8B7355]">
+                Share your impact
+              </p>
+              <p className="mt-4 text-2xl leading-snug">
+                What your money did:{" "}
+                {getProgram(lastDonation.programId)?.name ?? "our work"} ·{" "}
+                {formatTzs(lastDonation.amount)}.
+              </p>
+              <p className="mt-3 text-sm text-[#2C2416]/65">
+                {getProgram(lastDonation.programId)?.focus}
+              </p>
+              <p className="mt-4 font-mono text-[10px] tracking-wider text-[#8B7355]">
+                {lastDonation.id} · IMPACT DEMO
+              </p>
+              <button
+                type="button"
+                className="mt-4 w-full border border-[#8B7355]/40 py-2 text-xs tracking-wide"
+                onClick={() => {
+                  void navigator.clipboard?.writeText(
+                    `I funded ${getProgram(lastDonation.programId)?.name} with ${formatTzs(lastDonation.amount)} via IMPACT.`,
+                  );
+                }}
+              >
+                Copy share line
+              </button>
+            </div>
+          )}
+          <p className="mt-8 leading-relaxed text-[#2C2416]/75">
             Donation <strong>{donationId}</strong> for{" "}
             {formatTzs(resolvedAmount)} ({freq}) via{" "}
             {method === "mpesa" ? "M-Pesa" : "card"} toward{" "}
@@ -720,7 +806,7 @@ export function ImpactDemo() {
             Donation → Program → Region → Activity → Outcome → Reporting
           </p>
           <div className="mt-10 flex flex-wrap gap-2">
-            {followPath.map((step, i) => (
+            {activeFollowPath.map((step, i) => (
               <button
                 key={step.id}
                 type="button"
@@ -741,15 +827,15 @@ export function ImpactDemo() {
           <div className="relative mt-8 border border-[#8B7355]/25 bg-white p-8">
             <div className="absolute left-0 top-0 h-1 bg-[#8B7355] transition-all"
               style={{
-                width: `${((followStep + 1) / followPath.length) * 100}%`,
+                width: `${((followStep + 1) / activeFollowPath.length) * 100}%`,
               }}
             />
             <p className="text-xs tracking-[0.18em] uppercase text-[#8B7355]">
-              Step {followStep + 1} of {followPath.length}
+              Step {followStep + 1} of {activeFollowPath.length}
             </p>
-            <h2 className="mt-3 text-3xl">{followPath[followStep].label}</h2>
+            <h2 className="mt-3 text-3xl">{activeFollowPath[followStep].label}</h2>
             <p className="mt-4 text-lg leading-relaxed text-[#2C2416]/80">
-              {followPath[followStep].detail}
+              {activeFollowPath[followStep].detail}
             </p>
             <div className="mt-8 flex justify-between">
               <button
@@ -760,7 +846,7 @@ export function ImpactDemo() {
               >
                 Back
               </button>
-              {followStep < followPath.length - 1 ? (
+              {followStep < activeFollowPath.length - 1 ? (
                 <button
                   type="button"
                   onClick={() => setFollowStep((s) => s + 1)}
@@ -802,8 +888,14 @@ export function ImpactDemo() {
                 </tr>
               </thead>
               <tbody>
-                {adminDonations.map((d) => (
-                  <tr key={d.id} className="border-t border-[#8B7355]/10">
+                {adminList.map((d, i) => (
+                  <tr
+                    key={d.id}
+                    className={cn(
+                      "border-t border-[#8B7355]/10",
+                      i === 0 && d.date === "Just now" && "bg-[#EDE6DC]/60",
+                    )}
+                  >
                     <td className="px-4 py-3 font-mono text-xs">{d.id}</td>
                     <td className="px-4 py-3">{d.donor}</td>
                     <td className="px-4 py-3">{formatTzs(d.amount)}</td>

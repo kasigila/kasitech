@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { DemoChrome } from "@/components/site/DemoChrome";
 import {
   events as initialEvents,
+  floorPlanZones,
   formatTzs,
   getFeaturedEvent,
   groteskStyle,
@@ -154,6 +156,7 @@ export function NoirDemo() {
   const [guestName, setGuestName] = useState("");
   const [payOpen, setPayOpen] = useState(false);
   const [issuedTicket, setIssuedTicket] = useState<IssuedTicket | null>(null);
+  const [ticketPassOpen, setTicketPassOpen] = useState(false);
 
   const [tables, setTables] = useState<VipTable[]>(initialTables);
   const [selectedTableId, setSelectedTableId] = useState<string | null>("A07");
@@ -164,6 +167,8 @@ export function NoirDemo() {
   const [sales, setSales] = useState<TicketSale[]>(seedTicketSales);
   const [guests, setGuests] = useState<GuestListEntry[]>(seedGuestList);
   const [vipReservations, setVipReservations] = useState<VipReservation[]>([]);
+  const [tableTip, setTableTip] = useState<VipTable | null>(null);
+  const [stampFlashId, setStampFlashId] = useState<string | null>(null);
 
   const featured = eventList.find((e) => e.featured) ?? eventList[0];
   const selectedEvent =
@@ -185,6 +190,7 @@ export function NoirDemo() {
     setSection("tickets");
     setViewMode("customer");
     setIssuedTicket(null);
+    setTicketPassOpen(false);
   }
 
   function purchaseTicket() {
@@ -237,6 +243,7 @@ export function NoirDemo() {
       amount: tier.price,
     });
     setPayOpen(false);
+    setTicketPassOpen(true);
   }
 
   function reserveTable() {
@@ -470,6 +477,7 @@ export function NoirDemo() {
               onChange={(e) => {
                 setSelectedEventId(e.target.value);
                 setIssuedTicket(null);
+                setTicketPassOpen(false);
               }}
               className="mt-2 w-full border border-white/15 bg-[#161616] px-3 py-3 text-sm outline-none focus:border-[#FF2A2A]"
             >
@@ -481,42 +489,23 @@ export function NoirDemo() {
             </select>
           </label>
 
-          {issuedTicket ? (
-            <div className="mt-8 border border-[#FF2A2A] bg-[#111111] p-6">
+          {issuedTicket && !ticketPassOpen ? (
+            <div className="mt-8 border border-white/15 bg-[#111111] p-6 text-center">
               <p className="font-mono text-[11px] tracking-[0.18em] text-[#FF2A2A]">
-                ENTRY PASS ISSUED
+                PASS READY
               </p>
-              <div className="mt-6 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-                <DemoQr seed={issuedTicket.id} />
-                <div>
-                  <p className="text-2xl text-white" style={groteskStyle}>
-                    {issuedTicket.id}
-                  </p>
-                  <ul className="mt-3 space-y-1 text-sm text-[#C8C8C8]">
-                    <li>{issuedTicket.eventCode}</li>
-                    <li>{issuedTicket.tier}</li>
-                    <li>{issuedTicket.guest}</li>
-                    <li className="font-mono text-[#FF2A2A]">
-                      {formatTzs(issuedTicket.amount)}
-                    </li>
-                  </ul>
-                  <p className="mt-4 text-xs text-[#6B6B6B]">
-                    Demo QR pattern: fictional ticket, no live venue scan.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIssuedTicket(null);
-                      setGuestName("");
-                    }}
-                    className="mt-4 border border-white/25 px-4 py-2 text-xs uppercase tracking-[0.14em]"
-                  >
-                    Buy another
-                  </button>
-                </div>
-              </div>
+              <p className="mt-3 text-sm text-[#C8C8C8]">
+                Your digital ticket is open. Close the pass to buy another tier.
+              </p>
+              <button
+                type="button"
+                onClick={() => setTicketPassOpen(true)}
+                className="mt-4 border border-[#FF2A2A] px-4 py-2 text-xs uppercase tracking-[0.14em] text-[#FF2A2A]"
+              >
+                View pass
+              </button>
             </div>
-          ) : (
+          ) : issuedTicket && ticketPassOpen ? null : (
             <>
               <div className="mt-8 space-y-3">
                 {selectedEvent.tiers.map((tier) => (
@@ -667,17 +656,27 @@ export function NoirDemo() {
             <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
               {/* Desktop / tablet floor plan */}
               <div className="relative hidden aspect-[4/3] border border-white/15 bg-[#0d0d0d] md:block">
-                {/* Zones */}
+                {floorPlanZones.map((zone) => (
+                  <div
+                    key={zone.id}
+                    className="pointer-events-none absolute border border-dashed border-white/15"
+                    style={zone.style}
+                  >
+                    <span className="absolute left-1 top-0.5 font-mono text-[8px] tracking-[0.14em] text-[#6B6B6B]">
+                      {zone.label}
+                    </span>
+                  </div>
+                ))}
                 <div
-                  className="absolute border border-dashed border-white/20 bg-[#FF2A2A]/5"
+                  className="pointer-events-none absolute border border-dashed border-[#FF2A2A]/40 bg-[#FF2A2A]/8"
                   style={{ left: "28%", top: "42%", width: "44%", height: "22%" }}
                 >
-                  <span className="absolute left-2 top-1 font-mono text-[9px] tracking-[0.16em] text-[#FF2A2A]/80">
-                    DANCE FLOOR
+                  <span className="absolute left-2 top-1 font-mono text-[9px] tracking-[0.16em] text-[#FF2A2A]">
+                    DANCEFLOOR
                   </span>
                 </div>
                 <div
-                  className="absolute border border-white/20 bg-white/5"
+                  className="pointer-events-none absolute border border-white/20 bg-white/5"
                   style={{ left: "38%", top: "8%", width: "24%", height: "10%" }}
                 >
                   <span className="absolute inset-0 flex items-center justify-center font-mono text-[9px] tracking-[0.16em] text-[#C8C8C8]">
@@ -685,47 +684,80 @@ export function NoirDemo() {
                   </span>
                 </div>
                 <div
-                  className="absolute border border-white/20 bg-white/5"
-                  style={{ left: "4%", top: "48%", width: "12%", height: "28%" }}
+                  className="pointer-events-none absolute border border-white/20 bg-[#FF2A2A]/10"
+                  style={{ left: "2%", top: "44%", width: "14%", height: "32%" }}
                 >
-                  <span className="absolute inset-0 flex items-center justify-center font-mono text-[9px] tracking-[0.16em] text-[#C8C8C8] [writing-mode:vertical-rl]">
+                  <span className="absolute inset-0 flex items-center justify-center font-mono text-[9px] tracking-[0.16em] text-[#FF2A2A]/90 [writing-mode:vertical-rl]">
                     BAR
                   </span>
                 </div>
                 <div
-                  className="absolute border border-white/20 bg-white/5"
-                  style={{ right: "4%", top: "48%", width: "12%", height: "28%" }}
+                  className="pointer-events-none absolute border border-white/20 bg-[#FF2A2A]/10"
+                  style={{ right: "2%", top: "44%", width: "14%", height: "32%" }}
                 >
-                  <span className="absolute inset-0 flex items-center justify-center font-mono text-[9px] tracking-[0.16em] text-[#C8C8C8] [writing-mode:vertical-rl]">
+                  <span className="absolute inset-0 flex items-center justify-center font-mono text-[9px] tracking-[0.16em] text-[#FF2A2A]/90 [writing-mode:vertical-rl]">
                     BAR
                   </span>
                 </div>
 
+                {tableTip && (
+                  <div
+                    className="pointer-events-none absolute z-20 border border-[#FF2A2A] bg-black/95 px-3 py-2 font-mono text-[10px] text-[#C8C8C8] shadow-lg"
+                    style={{
+                      left: `${Math.min(tableTip.x + tableTip.w / 2, 72)}%`,
+                      top: `${Math.max(tableTip.y - 8, 2)}%`,
+                    }}
+                  >
+                    <p className="text-[#FF2A2A]">{tableTip.id}</p>
+                    <p>{tableTip.capacity} pax · min {formatTzs(tableTip.minSpend)}</p>
+                    <p className="text-[#6B6B6B]">Zone {tableTip.zone}</p>
+                  </div>
+                )}
+
                 {tables.map((table) => {
                   const selected = selectedTableId === table.id;
                   const available = table.status === "AVAILABLE";
+                  const isSignature = table.id === "A07";
                   return (
                     <button
                       key={table.id}
                       type="button"
                       disabled={!available}
-                      onClick={() => setSelectedTableId(table.id)}
-                      className={`absolute flex items-center justify-center font-mono text-[10px] transition ${
+                      onClick={() => {
+                        setSelectedTableId(table.id);
+                        setTableTip((t) => (t?.id === table.id ? null : table));
+                      }}
+                      onMouseEnter={() => setTableTip(table)}
+                      onMouseLeave={() =>
+                        setTableTip((t) => (t?.id === table.id ? null : t))
+                      }
+                      className={`absolute flex flex-col items-center justify-center font-mono text-[10px] transition ${
+                        isSignature && available
+                          ? "ring-2 ring-[#FF2A2A] ring-offset-2 ring-offset-[#0d0d0d]"
+                          : ""
+                      } ${
                         selected
                           ? "z-10 border-2 border-[#FF2A2A] bg-[#FF2A2A] text-black"
                           : available
-                            ? "border border-[#C8C8C8]/50 bg-[#161616] text-[#C8C8C8] hover:border-[#FF2A2A]"
+                            ? isSignature
+                              ? "border-2 border-[#FF2A2A] bg-[#FF2A2A]/25 text-white hover:bg-[#FF2A2A]/40"
+                              : "border border-[#C8C8C8]/50 bg-[#161616] text-[#C8C8C8] hover:border-[#FF2A2A]"
                             : "cursor-not-allowed border border-white/10 bg-[#1a1a1a] text-[#6B6B6B] line-through"
-                      }`}
+                      } ${isSignature && available ? "animate-pulse" : ""}`}
                       style={{
                         left: `${table.x}%`,
                         top: `${table.y}%`,
                         width: `${table.w}%`,
                         height: `${table.h}%`,
                       }}
-                      title={`${table.id} · ${table.status}`}
+                      title={`${table.id} · ${table.capacity}p · ${formatTzs(table.minSpend)}`}
                     >
                       {table.id}
+                      {isSignature && (
+                        <span className="mt-0.5 text-[7px] tracking-wider text-[#FF2A2A]">
+                          PICK
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -746,7 +778,9 @@ export function NoirDemo() {
                       className={`flex w-full items-center justify-between border px-3 py-3 text-left text-sm ${
                         selectedTableId === table.id
                           ? "border-[#FF2A2A] bg-[#FF2A2A]/10"
-                          : "border-white/10"
+                          : table.id === "A07"
+                            ? "border-[#FF2A2A]/60 bg-[#FF2A2A]/5"
+                            : "border-white/10"
                       } disabled:opacity-40`}
                     >
                       <span>
@@ -754,7 +788,7 @@ export function NoirDemo() {
                           {table.id}
                         </span>
                         <span className="ml-2 text-[#6B6B6B]">
-                          · {table.capacity} pax
+                          · {table.capacity} pax · min {formatTzs(table.minSpend)}
                         </span>
                       </span>
                       <span className="font-mono text-[10px]">
@@ -964,8 +998,21 @@ export function NoirDemo() {
                 {guests.map((g) => (
                   <li
                     key={g.id}
-                    className="flex items-center justify-between gap-2 border border-white/10 px-3 py-2 text-sm"
+                    className="relative flex items-center justify-between gap-2 border border-white/10 px-3 py-2 text-sm overflow-hidden"
                   >
+                    <AnimatePresence>
+                      {stampFlashId === g.id && (
+                        <motion.span
+                          initial={{ opacity: 0, scale: 0.85 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-[#FF2A2A]/90 font-mono text-lg tracking-[0.2em] text-black"
+                          style={groteskStyle}
+                        >
+                          STAMPED
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                     <div>
                       <p>{g.name}</p>
                       <p className="font-mono text-[10px] text-[#6B6B6B]">
@@ -975,15 +1022,24 @@ export function NoirDemo() {
                     </div>
                     <button
                       type="button"
-                      onClick={() =>
+                      onClick={() => {
+                        const nextIn = !g.checkedIn;
                         setGuests((prev) =>
                           prev.map((x) =>
                             x.id === g.id
-                              ? { ...x, checkedIn: !x.checkedIn }
+                              ? { ...x, checkedIn: nextIn }
                               : x,
                           ),
-                        )
-                      }
+                        );
+                        if (nextIn) {
+                          setStampFlashId(g.id);
+                          window.setTimeout(() => {
+                            setStampFlashId((id) =>
+                              id === g.id ? null : id,
+                            );
+                          }, 1200);
+                        }
+                      }}
                       className={`px-2 py-1 font-mono text-[9px] uppercase tracking-wider ${
                         g.checkedIn
                           ? "bg-[#FF2A2A] text-black"
@@ -1040,6 +1096,79 @@ export function NoirDemo() {
           </div>
         </section>
       )}
+
+      <AnimatePresence>
+        {ticketPassOpen && issuedTicket && (
+          <motion.div
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0A0A0A] px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="relative w-full max-w-md border-2 border-[#FF2A2A] bg-[#111111] p-8"
+              initial={{ scale: 0.96, opacity: 0 }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                boxShadow: [
+                  "0 0 0 0 rgba(255,42,42,0.35)",
+                  "0 0 32px 4px rgba(255,42,42,0.25)",
+                  "0 0 0 0 rgba(255,42,42,0.35)",
+                ],
+              }}
+              transition={{
+                scale: { duration: 0.35 },
+                boxShadow: { duration: 2.2, repeat: Infinity },
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setTicketPassOpen(false)}
+                className="absolute right-4 top-4 font-mono text-[10px] tracking-[0.16em] text-[#6B6B6B] hover:text-[#FF2A2A]"
+              >
+                CLOSE
+              </button>
+              <p className="font-mono text-[11px] tracking-[0.22em] text-[#FF2A2A]">
+                DIGITAL PASS
+              </p>
+              <h3
+                className="mt-3 text-4xl text-white"
+                style={groteskStyle}
+              >
+                {issuedTicket.eventCode}
+              </h3>
+              <p className="mt-2 text-sm text-[#C8C8C8]">{issuedTicket.tier}</p>
+              <div className="mt-8 flex flex-col items-center gap-6">
+                <div className="rounded-sm border border-[#FF2A2A]/40 p-2">
+                  <DemoQr seed={issuedTicket.id} />
+                </div>
+                <div className="w-full space-y-1 text-center font-mono text-xs text-[#6B6B6B]">
+                  <p className="text-lg text-white">{issuedTicket.id}</p>
+                  <p>{issuedTicket.guest}</p>
+                  <p className="text-[#FF2A2A]">
+                    {formatTzs(issuedTicket.amount)}
+                  </p>
+                </div>
+              </div>
+              <p className="mt-6 text-center text-[10px] text-[#6B6B6B]">
+                Demo entry pass · fictional QR · show at door
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setTicketPassOpen(false);
+                  setIssuedTicket(null);
+                  setGuestName("");
+                }}
+                className="mt-6 w-full border border-white/20 py-3 text-xs uppercase tracking-[0.12em] text-[#C8C8C8]"
+              >
+                Buy another
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <footer className="border-t border-white/10 px-4 py-8 text-center">
         <p className="font-mono text-[10px] tracking-[0.18em] text-[#6B6B6B]">

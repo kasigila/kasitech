@@ -27,6 +27,16 @@ export type Listing = {
   mapX: number;
   mapY: number;
   featured?: boolean;
+  compareTag?: string;
+};
+
+export type DayStripLabel = "Commute" | "Brunch" | "Beach" | "School run";
+
+export type DayStripItem = {
+  label: DayStripLabel;
+  time: string;
+  placeName: string;
+  travelMin: number;
 };
 
 export type Agent = {
@@ -146,6 +156,7 @@ export const listings: Listing[] = [
     mapX: 62,
     mapY: 38,
     featured: true,
+    compareTag: "Best for WFH",
   },
   {
     id: "oyster-garden-villa",
@@ -172,6 +183,7 @@ export const listings: Listing[] = [
     mapX: 72,
     mapY: 48,
     featured: true,
+    compareTag: "Best for family",
   },
   {
     id: "upanga-loft",
@@ -196,6 +208,7 @@ export const listings: Listing[] = [
     floorPlanNote: "Open loft · Mezzanine desk · Compact kitchen island",
     mapX: 48,
     mapY: 55,
+    compareTag: "Best for WFH",
   },
   {
     id: "mikocheni-townhouse",
@@ -220,6 +233,7 @@ export const listings: Listing[] = [
     floorPlanNote: "3 levels · Patio BBQ · Laundry on ground floor",
     mapX: 40,
     mapY: 32,
+    compareTag: "Best for family",
   },
   {
     id: "mbezi-cliff-home",
@@ -245,6 +259,7 @@ export const listings: Listing[] = [
     mapX: 28,
     mapY: 22,
     featured: true,
+    compareTag: "Best for beach life",
   },
   {
     id: "kigamboni-cottage",
@@ -579,6 +594,51 @@ export function getListing(id: string) {
 export function getAgent(id: string) {
   return agents.find((a) => a.id === id);
 }
+
+const dayStripSlots: Record<
+  DayStripLabel,
+  { time: string; category: PlaceCategory }
+> = {
+  Commute: { time: "07:30", category: "Transport" },
+  Brunch: { time: "10:30", category: "Dining" },
+  Beach: { time: "16:00", category: "Beach" },
+  "School run": { time: "07:45", category: "Schools" },
+};
+
+/** Demo Tuesday rhythm for a neighborhood, built from nearby places. */
+export function getTuesdayDayStrip(
+  location: LocationId | "All",
+): DayStripItem[] {
+  const loc = location === "All" ? ("Masaki" as LocationId) : location;
+  return (Object.keys(dayStripSlots) as DayStripLabel[]).map((label) => {
+    const { time, category } = dayStripSlots[label];
+    const match =
+      neighborhoodPlaces.find(
+        (p) => p.location === loc && p.category === category,
+      ) ??
+      neighborhoodPlaces.find((p) => p.category === category) ??
+      neighborhoodPlaces[0];
+    return {
+      label,
+      time,
+      placeName: match.name,
+      travelMin: match.travelMin,
+    };
+  });
+}
+
+export function buildViewingWhatsAppMessage(input: {
+  listingTitle: string;
+  date: string;
+  time: string;
+  type: string;
+  confirmId: string;
+  agentName: string;
+}): string {
+  return `Hi ${input.agentName}, I booked a viewing on NEST (demo).\n\nProperty: ${input.listingTitle}\nWhen: ${input.date} at ${input.time}\nType: ${input.type}\nConfirmation: ${input.confirmId}\n\nPlease confirm if this slot still works. Thank you.`;
+}
+
+export const demoAgentWhatsApp = "255754880221";
 
 /** Simple payment estimator for buy (mortgage-ish) or rent affordability. */
 export function estimatePayment(input: {

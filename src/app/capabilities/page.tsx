@@ -10,8 +10,10 @@ export const metadata: Metadata = { title: "Capabilities" };
 const caps = [
   {
     id: "experiences",
-    title: "EXPERIENCES",
+    title: "WEBSITES & DIGITAL EXPERIENCES",
     intro: "Websites people remember and understand.",
+    forWho: "Brands, firms, institutions, and local businesses that need credibility online.",
+    solves: "Unclear story, outdated presence, weak mobile experience, no path to enquiry.",
     visual: capabilityVisuals.experiences,
     exampleSlug: "amani",
     previewLabel: "Brand site",
@@ -27,8 +29,10 @@ const caps = [
   },
   {
     id: "commerce",
-    title: "COMMERCE",
+    title: "COMMERCE & BOOKINGS",
     intro: "Selling, booking, and payments without unnecessary friction.",
+    forWho: "Hotels, restaurants, shops, events, and service businesses.",
+    solves: "DM-only selling, missed bookings, payment friction, weak conversion.",
     visual: capabilityVisuals.commerce,
     exampleSlug: "soko",
     previewLabel: "Checkout + booking",
@@ -43,8 +47,10 @@ const caps = [
   },
   {
     id: "systems",
-    title: "SYSTEMS",
+    title: "SOFTWARE & BUSINESS SYSTEMS",
     intro: "Software built around how your business actually operates.",
+    forWho: "Operators drowning in spreadsheets, WhatsApp threads, or disconnected tools.",
+    solves: "Manual ops, invisible inventory, no single source of truth.",
     visual: capabilityVisuals.systems,
     exampleSlug: "kasi-flow",
     previewLabel: "Ops dashboard",
@@ -59,8 +65,10 @@ const caps = [
   },
   {
     id: "intelligence",
-    title: "INTELLIGENCE",
+    title: "DATA, AI & AUTOMATION",
     intro: "Data, AI, and automation that reduce manual work.",
+    forWho: "Teams ready to decide faster and cut repetitive admin.",
+    solves: "Vanity metrics, manual reporting, slow follow-up, disconnected tools.",
     visual: capabilityVisuals.intelligence,
     exampleSlug: "kasi-intelligence",
     previewLabel: "Ask + automate",
@@ -80,11 +88,11 @@ export default function CapabilitiesPage() {
     <div className="px-5 pb-24 pt-32 md:px-8">
       <div className="mx-auto max-w-[1400px]">
         <h1 className="font-display text-5xl tracking-[-0.04em] md:text-7xl">
-          WHAT WE DO.
+          WHAT WE BUILD.
         </h1>
         <p className="mt-6 max-w-xl text-lg text-kasi-grey">
-          Four categories. Each one pairs the craft with an interactive concept
-          demo.
+          Four capability groups across the digital business - each paired with
+          an interactive concept you can try.
         </p>
 
         <div className="mt-20 space-y-28">
@@ -100,6 +108,16 @@ export default function CapabilitiesPage() {
                     <h2 className="mt-4 max-w-xl font-display text-3xl tracking-[-0.03em] md:text-5xl">
                       {c.intro}
                     </h2>
+                    <div className="mt-8 space-y-4 text-sm text-kasi-grey">
+                      <p>
+                        <span className="text-kasi-ivory/70">Who it&apos;s for - </span>
+                        {c.forWho}
+                      </p>
+                      <p>
+                        <span className="text-kasi-ivory/70">Problems it solves - </span>
+                        {c.solves}
+                      </p>
+                    </div>
                     <ul className="mt-10 space-y-4">
                       {c.items.map((item) => (
                         <li
@@ -113,6 +131,12 @@ export default function CapabilitiesPage() {
                         </li>
                       ))}
                     </ul>
+                    <Link
+                      href="/start"
+                      className="mt-8 inline-block text-sm text-kasi-green hover:underline"
+                    >
+                      Start a project in this area →
+                    </Link>
                   </div>
 
                   <div className="lg:sticky lg:top-28">

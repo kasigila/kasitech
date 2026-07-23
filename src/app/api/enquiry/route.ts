@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   const enquiryTo =
     process.env.ENQUIRY_TO_EMAIL?.trim() || social.email;
 
-  // Optional backends (FormSubmit is sent from the browser — see formsubmit.ts)
+  // Optional backends (FormSubmit is sent from the browser - see formsubmit.ts)
   const formspreeId = process.env.FORMSPREE_FORM_ID;
   if (formspreeId) {
     try {

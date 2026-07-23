@@ -120,12 +120,41 @@ export const profitAnswer: QueryAnswer = {
   ],
 };
 
+export const responseTimeAnswer: QueryAnswer = {
+  id: "response-time",
+  query: "Where is response time losing us leads?",
+  summary:
+    "Afternoon inquiries wait too long. Median first reply was 2h 41m yesterday; leads unanswered after 2 hours converted at 4%.",
+  explanation: [
+    "Peak inquiry window 14:00-17:00 with one salesperson covering chat and phone.",
+    "6 of 14 new leads yesterday had no follow-up logged.",
+    "Under-30-minute replies convert at 31% in this demo set.",
+  ],
+  sources: ["Channels", "Sales"],
+  charts: [
+    {
+      title: "Conversion by reply speed",
+      unit: "%",
+      points: [
+        { label: "<30m", value: 31 },
+        { label: "30-2h", value: 18 },
+        { label: ">2h", value: 4 },
+      ],
+    },
+  ],
+  citations: [
+    "CRM · 14 new inquiries · 22 Jul",
+    "Median response 2h 41m",
+  ],
+};
+
 export const answers: Record<string, QueryAnswer> = {
   "june-sales": juneSalesAnswer,
   "gross-profit": profitAnswer,
+  "response-time": responseTimeAnswer,
 };
 
-export function resolveQuery(raw: string): QueryAnswer {
+export function resolveQuery(raw: string): QueryAnswer | null {
   const q = raw.toLowerCase();
   if (
     q.includes("gross profit") ||
@@ -134,10 +163,51 @@ export function resolveQuery(raw: string): QueryAnswer {
   ) {
     return profitAnswer;
   }
-  if (q.includes("june") || q.includes("sales down") || q.includes("why")) {
+  if (
+    q.includes("june") ||
+    q.includes("sales down") ||
+    (q.includes("why") && q.includes("sales"))
+  ) {
     return juneSalesAnswer;
   }
-  return juneSalesAnswer;
+  if (q.includes("stock") && (q.includes("spc") || q.includes("low"))) {
+    return juneSalesAnswer;
+  }
+  if (
+    q.includes("response") ||
+    q.includes("lead") ||
+    q.includes("reply")
+  ) {
+    return responseTimeAnswer;
+  }
+  return null;
+}
+
+export function unknownAnswer(query: string): QueryAnswer {
+  const monthHint =
+    /\b(july|august|september|october|november|december|202[7-9])\b/i.test(
+      query,
+    );
+  return {
+    id: "unknown",
+    query,
+    summary: monthHint
+      ? "I don't know yet. That period isn't in the connected demo ledger - here's the latest month I can explain (June), and why."
+      : "I don't know yet. I couldn't match that question to evidence in the demo data set.",
+    explanation: [
+      monthHint
+        ? "Connected sources currently cover March-June 2026 (July is marked provisional)."
+        : "Try a question that touches sales, product profit, stock, or response time.",
+      "I refuse to invent numbers when sources are missing - that's the point of evidence-first answers.",
+      "Suggested: “Why were sales down in June?” or “Which products made the most gross profit last month?”",
+    ],
+    sources: ["Sales"],
+    charts: [],
+    citations: [
+      "No matching extract for this query",
+      "Demo corpus · Mar-Jun 2026",
+    ],
+  };
 }
 
 export const initialHistory: HistoryItem[] = [

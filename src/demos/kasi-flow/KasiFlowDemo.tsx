@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { DemoChrome } from "@/components/site/DemoChrome";
 import { cn } from "@/lib/cn";
@@ -12,19 +13,27 @@ import {
   expenses,
   formatTzs,
   homeMetrics,
-  invoices,
-  notifications,
-  products,
-  purchaseOrders,
+  invoices as initialInvoices,
+  notifications as initialNotifications,
+  products as initialProducts,
+  purchaseOrders as initialPurchaseOrders,
   revenueByWeek,
   revenuePrev,
-  tasks,
+  tasks as initialTasks,
   team,
   todayLabel,
   unpaidOver30,
+  SPC02_PO_ID,
+  SPC02_RESTOCK_QTY,
+  SPC02_SKU,
+  type Approval,
   type Customer,
   type CustomerStatus,
+  type DemoNotification,
   type Invoice,
+  type Product,
+  type PurchaseOrder,
+  type Task,
 } from "./data";
 
 type View =
@@ -53,12 +62,22 @@ function DemoBadge() {
   );
 }
 
+const AUTOMATION_BANNER_KEY = "kasi-automation-approved";
+
 export function KasiFlowDemo() {
   const [view, setView] = useState<View>("home");
   const [dark, setDark] = useState(false);
   const [customerId, setCustomerId] = useState(customers[0].id);
   const [crmList, setCrmList] = useState(customers);
   const [noteDraft, setNoteDraft] = useState("");
+  const [invoiceList, setInvoiceList] = useState<Invoice[]>(initialInvoices);
+  const [notificationList, setNotificationList] =
+    useState<DemoNotification[]>(initialNotifications);
+  const [productList, setProductList] = useState<Product[]>(initialProducts);
+  const [poList, setPoList] = useState<PurchaseOrder[]>(initialPurchaseOrders);
+  const [approvalList, setApprovalList] = useState<Approval[]>(approvals);
+  const [tasksList, setTasksList] = useState<Task[]>(initialTasks);
+  const [flowBanner, setFlowBanner] = useState<string | null>(null);
   const [financeTab, setFinanceTab] = useState<
     "invoices" | "payments" | "expenses" | "balances"
   >("invoices");
@@ -72,8 +91,25 @@ export function KasiFlowDemo() {
   const [cmdResults, setCmdResults] = useState<Invoice[]>([]);
 
   const customer = crmList.find((c) => c.id === customerId) ?? crmList[0];
-  const stockAlerts = products.filter((p) => p.stock <= p.reorderAt);
-  const pendingApprovals = approvals.filter((a) => a.status === "Pending");
+  const stockAlerts = productList.filter((p) => p.stock <= p.reorderAt);
+  const pendingApprovals = approvalList.filter((a) => a.status === "Pending");
+  const overdueOver30 = useMemo(
+    () => unpaidOver30(invoiceList),
+    [invoiceList],
+  );
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(AUTOMATION_BANNER_KEY);
+      if (raw) {
+        setFlowBanner(
+          "Rule from Kasi Intelligence: when new inquiry + no reply in 30 min → create CRM lead, ack, WhatsApp salesperson, follow-up +2h.",
+        );
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -112,11 +148,174 @@ export function KasiFlowDemo() {
     setNoteDraft("");
   }
 
+  function updateCustomerField(
+    field: "email" | "phone" | "company",
+    value: string,
+  ) {
+    setCrmList((list) =>
+      list.map((c) => (c.id === customerId ? { ...c, [field]: value } : c)),
+    );
+  }
+
+  function confirmReminders() {
+    const ids = new Set(cmdResults.map((i) => i.id));
+    const justNow = "JUST NOW";
+    setInvoiceList((list) =>
+      list.map((i) =>
+        ids.has(i.id) ? { ...i, remindedAt: justNow } : i,
+      ),
+    );
+    const customerNames = new Set(cmdResults.map((i) => i.customer));
+    setCrmList((list) =>
+      list.map((c) => {
+        if (!customerNames.has(c.company)) return c;
+        return {
+          ...c,
+          history: [
+            { date: justNow, event: "Payment reminder sent (⌘K)" },
+            ...c.history,
+          ],
+          notes: [
+            `Reminder queued for overdue invoice · ${justNow}`,
+            ...c.notes,
+          ],
+        };
+      }),
+    );
+    setNotificationList((list) => [
+      {
+        id: `n-${Date.now()}`,
+        text: `Payment reminders queued for ${cmdResults.length} overdue invoices`,
+        urgent: false,
+        at: justNow,
+      },
+      ...list,
+    ]);
+    setTasksList((list) =>
+      list.map((t) =>
+        t.id === "t1" ? { ...t, status: "Done" as const } : t,
+      ),
+    );
+    setCmdPhase("closed");
+    go("finance");
+    setFinanceTab("invoices");
+  }
+
+  function submitSpcPoForApproval() {
+    setPoList((list) =>
+      list.map((po) =>
+        po.id === SPC02_PO_ID ? { ...po, status: "Sent" as const } : po,
+      ),
+    );
+    setNotificationList((list) => [
+      {
+        id: `n-po-${Date.now()}`,
+        text: `${SPC02_PO_ID} submitted for approval (${SPC02_SKU} restock)`,
+        urgent: false,
+        at: "JUST NOW",
+      },
+      ...list,
+    ]);
+    go("approvals");
+  }
+
+  function createSpcPo() {
+    const exists = poList.some(
+      (po) => po.id === SPC02_PO_ID || po.items.includes(SPC02_SKU),
+    );
+    if (exists) {
+      submitSpcPoForApproval();
+      return;
+    }
+    const newPo: PurchaseOrder = {
+      id: "PO-442",
+      supplier: "Okello Farms",
+      items: `${SPC02_SKU} × ${SPC02_RESTOCK_QTY}`,
+      status: "Sent",
+      total: SPC02_RESTOCK_QTY * 22000,
+      date: "23 Jul 2026",
+    };
+    setPoList((list) => [newPo, ...list]);
+    setApprovalList((list) => [
+      {
+        id: "ap-spc",
+        title: `${newPo.id} Okello Farms`,
+        requester: "Brian Owino",
+        amount: newPo.total,
+        status: "Pending",
+      },
+      ...list,
+    ]);
+    setNotificationList((list) => [
+      {
+        id: `n-po-new-${Date.now()}`,
+        text: `PO created for ${SPC02_SKU} · awaiting approval`,
+        urgent: true,
+        at: "JUST NOW",
+      },
+      ...list,
+    ]);
+    go("approvals");
+  }
+
+  function approvePo(approvalId: string) {
+    const approval = approvalList.find((a) => a.id === approvalId);
+    if (!approval || approval.status !== "Pending") return;
+    setApprovalList((list) =>
+      list.map((a) =>
+        a.id === approvalId ? { ...a, status: "Approved" as const } : a,
+      ),
+    );
+    const poId = approval.title.split(" ")[0];
+    const isSpc =
+      approval.title.includes(SPC02_SKU) ||
+      poId === SPC02_PO_ID ||
+      approval.title.includes("Okello Farms");
+    if (isSpc) {
+      setPoList((list) =>
+        list.map((po) =>
+          po.id === poId || po.items.includes(SPC02_SKU)
+            ? { ...po, status: "Received" as const }
+            : po,
+        ),
+      );
+      setProductList((list) =>
+        list.map((p) =>
+          p.sku === SPC02_SKU
+            ? { ...p, stock: p.stock + SPC02_RESTOCK_QTY }
+            : p,
+        ),
+      );
+      setTasksList((list) =>
+        list.map((t) =>
+          t.id === "t2" ? { ...t, status: "Done" as const } : t,
+        ),
+      );
+      setNotificationList((list) => [
+        {
+          id: `n-recv-${Date.now()}`,
+          text: `${SPC02_SKU} restock received · inventory updated`,
+          urgent: false,
+          at: "JUST NOW",
+        },
+        ...list.filter((n) => n.text !== "SPC-02 stock critical"),
+      ]);
+    }
+  }
+
   function runCommand(q: string) {
     const query = q.toLowerCase().trim();
     setCmdQuery(q);
+    if (
+      query.includes("remind") &&
+      (query.includes("overdue") || query.includes("invoice"))
+    ) {
+      setCmdResults(overdueOver30);
+      setCmdPhase("results");
+      return;
+    }
     if (query.includes("unpaid") && query.includes("30")) {
-      setCmdResults(unpaidOver30());
+      setCmdResults(overdueOver30);
       setCmdPhase("results");
       return;
     }
@@ -140,7 +339,7 @@ export function KasiFlowDemo() {
       go("finance");
       return;
     }
-    setCmdResults(unpaidOver30());
+    setCmdResults(overdueOver30);
     setCmdPhase("results");
   }
 
@@ -280,6 +479,37 @@ export function KasiFlowDemo() {
           </header>
 
           <main className="px-4 py-6 md:px-6">
+            {flowBanner && (
+              <div
+                className={cn(
+                  "mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#C7FF00]/40 bg-[#C7FF00]/10 px-4 py-3 text-sm",
+                )}
+              >
+                <span>{flowBanner}</span>
+                <div className="flex gap-2">
+                  <Link
+                    href="/demo/kasi-intelligence"
+                    className="text-xs text-[#6a8f00] underline dark:text-[#C7FF00]"
+                  >
+                    Kasi Intelligence
+                  </Link>
+                  <button
+                    type="button"
+                    className="text-xs opacity-60"
+                    onClick={() => {
+                      setFlowBanner(null);
+                      try {
+                        sessionStorage.removeItem(AUTOMATION_BANNER_KEY);
+                      } catch {
+                        /* ignore */
+                      }
+                    }}
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
             {view === "home" && (
               <div>
                 <DemoBadge />
@@ -305,7 +535,7 @@ export function KasiFlowDemo() {
                   <div className={cn("rounded-xl border p-4", panel)}>
                     <p className="text-sm font-medium">Open tasks</p>
                     <ul className="mt-3 space-y-2 text-sm">
-                      {tasks
+                      {tasksList
                         .filter((t) => t.status === "Open")
                         .slice(0, 4)
                         .map((t) => (
@@ -330,7 +560,7 @@ export function KasiFlowDemo() {
                     <p className="text-sm font-medium">Needs attention</p>
                     <ul className="mt-3 space-y-2 text-sm">
                       <li>
-                        {unpaidOver30().length} unpaid invoices over 30 days
+                        {overdueOver30.length} unpaid invoices over 30 days
                       </li>
                       <li>{stockAlerts.length} stock alerts</li>
                       <li>{pendingApprovals.length} pending approvals</li>
@@ -357,6 +587,7 @@ export function KasiFlowDemo() {
                 customerId={customerId}
                 setCustomerId={setCustomerId}
                 updateStatus={updateStatus}
+                updateCustomerField={updateCustomerField}
                 noteDraft={noteDraft}
                 setNoteDraft={setNoteDraft}
                 addNote={addNote}
@@ -403,10 +634,11 @@ export function KasiFlowDemo() {
                           <th className="px-4 py-3 font-medium">Amount</th>
                           <th className="px-4 py-3 font-medium">Status</th>
                           <th className="px-4 py-3 font-medium">Due</th>
+                          <th className="px-4 py-3 font-medium">Last action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {invoices.map((i) => (
+                        {invoiceList.map((i) => (
                           <tr
                             key={i.id}
                             className="border-t border-black/5 dark:border-white/5"
@@ -429,6 +661,15 @@ export function KasiFlowDemo() {
                                 </span>
                               )}
                             </td>
+                            <td className="px-4 py-3 text-xs">
+                              {i.remindedAt ? (
+                                <span className="font-medium text-[#6a8f00] dark:text-[#C7FF00]">
+                                  Reminded · {i.remindedAt}
+                                </span>
+                              ) : (
+                                <span className={muted}>-</span>
+                              )}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -436,7 +677,7 @@ export function KasiFlowDemo() {
                   )}
                   {financeTab === "payments" && (
                     <ul className="divide-y divide-black/5 p-4 text-sm dark:divide-white/5">
-                      {invoices
+                      {invoiceList
                         .filter((i) => i.status === "Paid")
                         .map((i) => (
                           <li
@@ -494,10 +735,24 @@ export function KasiFlowDemo() {
                 <DemoBadge />
                 <h1 className="mt-3 text-2xl font-semibold">Inventory</h1>
                 {stockAlerts.length > 0 && (
-                  <div className="mt-4 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
-                    {stockAlerts.length} product
-                    {stockAlerts.length === 1 ? "" : "s"} at or below reorder
-                    level
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+                    <span>
+                      {stockAlerts.length} product
+                      {stockAlerts.length === 1 ? "" : "s"} at or below reorder
+                      level
+                      {stockAlerts.some((p) => p.sku === SPC02_SKU)
+                        ? ` · ${SPC02_SKU} critical`
+                        : ""}
+                    </span>
+                    {stockAlerts.some((p) => p.sku === SPC02_SKU) && (
+                      <button
+                        type="button"
+                        onClick={createSpcPo}
+                        className="rounded-md bg-[#C7FF00] px-3 py-1.5 text-xs font-medium text-black"
+                      >
+                        Create purchase order
+                      </button>
+                    )}
                   </div>
                 )}
                 <div className={cn("mt-4 overflow-x-auto rounded-xl border", panel)}>
@@ -511,7 +766,7 @@ export function KasiFlowDemo() {
                       </tr>
                     </thead>
                     <tbody>
-                      {products.map((p) => (
+                      {productList.map((p) => (
                         <tr
                           key={p.id}
                           className="border-t border-black/5 dark:border-white/5"
@@ -548,7 +803,7 @@ export function KasiFlowDemo() {
                     dark ? "divide-white/5" : "divide-black/5",
                   )}
                 >
-                  {purchaseOrders.map((po) => (
+                  {poList.map((po) => (
                     <li
                       key={po.id}
                       className="flex flex-wrap items-center justify-between gap-2 px-4 py-3"
@@ -698,7 +953,7 @@ export function KasiFlowDemo() {
                 title="Tasks"
                 panel={panel}
                 muted={muted}
-                items={tasks.map((t) => ({
+                items={tasksList.map((t) => ({
                   id: t.id,
                   primary: t.title,
                   secondary: `${t.owner} · ${t.due} · ${t.priority}`,
@@ -708,17 +963,44 @@ export function KasiFlowDemo() {
             )}
 
             {view === "approvals" && (
-              <SimpleList
-                title="Approvals"
-                panel={panel}
-                muted={muted}
-                items={approvals.map((a) => ({
-                  id: a.id,
-                  primary: a.title,
-                  secondary: `${a.requester}${a.amount ? ` · ${formatTzs(a.amount)}` : ""}`,
-                  tag: a.status,
-                }))}
-              />
+              <div>
+                <DemoBadge />
+                <h1 className="mt-3 text-2xl font-semibold">Approvals</h1>
+                <ul className="mt-6 space-y-2">
+                  {approvalList.map((a) => (
+                    <li
+                      key={a.id}
+                      className={cn(
+                        "flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm",
+                        panel,
+                      )}
+                    >
+                      <div>
+                        <p className="font-medium">{a.title}</p>
+                        <p className={cn("text-xs", muted)}>
+                          {a.requester}
+                          {a.amount ? ` · ${formatTzs(a.amount)}` : ""}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <StatusPill status={a.status} />
+                        {a.status === "Pending" && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              approvePo(a.id);
+                              go("inventory");
+                            }}
+                            className="rounded-md bg-[#C7FF00] px-3 py-1.5 text-xs font-medium text-black"
+                          >
+                            Approve
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             {view === "notifications" && (
@@ -726,7 +1008,7 @@ export function KasiFlowDemo() {
                 <DemoBadge />
                 <h1 className="mt-3 text-2xl font-semibold">Notifications</h1>
                 <ul className="mt-6 space-y-2">
-                  {notifications.map((n) => (
+                  {notificationList.map((n) => (
                     <li
                       key={n.id}
                       className={cn(
@@ -741,6 +1023,9 @@ export function KasiFlowDemo() {
                         </span>
                       )}
                       {n.text}
+                      {n.at ? (
+                        <span className={cn("ml-2 text-xs", muted)}>{n.at}</span>
+                      ) : null}
                     </li>
                   ))}
                 </ul>
@@ -1014,6 +1299,7 @@ function CrmView({
   customerId,
   setCustomerId,
   updateStatus,
+  updateCustomerField,
   noteDraft,
   setNoteDraft,
   addNote,
@@ -1025,6 +1311,10 @@ function CrmView({
   customerId: string;
   setCustomerId: (id: string) => void;
   updateStatus: (s: CustomerStatus) => void;
+  updateCustomerField: (
+    field: "email" | "phone" | "company",
+    value: string,
+  ) => void;
   noteDraft: string;
   setNoteDraft: (v: string) => void;
   addNote: () => void;
@@ -1060,13 +1350,48 @@ function CrmView({
         </ul>
         <div className={cn("rounded-xl border p-5", panel)}>
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
+            <div className="min-w-0 flex-1">
               <h2 className="text-xl font-semibold">{customer.name}</h2>
-              <p className={cn("text-sm", muted)}>{customer.company}</p>
-              <p className="mt-2 text-sm">
-                {customer.email} · {customer.phone}
-              </p>
-              <p className="mt-1 text-sm">
+              <label className="mt-3 block text-xs">
+                <span className={muted}>Company</span>
+                <input
+                  className={cn(
+                    "mt-1 block w-full rounded-md border px-2 py-1.5 text-sm",
+                    panel,
+                  )}
+                  value={customer.company}
+                  onChange={(e) =>
+                    updateCustomerField("company", e.target.value)
+                  }
+                />
+              </label>
+              <label className="mt-2 block text-xs">
+                <span className={muted}>Email</span>
+                <input
+                  className={cn(
+                    "mt-1 block w-full rounded-md border px-2 py-1.5 text-sm",
+                    panel,
+                  )}
+                  value={customer.email}
+                  onChange={(e) =>
+                    updateCustomerField("email", e.target.value)
+                  }
+                />
+              </label>
+              <label className="mt-2 block text-xs">
+                <span className={muted}>Phone</span>
+                <input
+                  className={cn(
+                    "mt-1 block w-full rounded-md border px-2 py-1.5 text-sm",
+                    panel,
+                  )}
+                  value={customer.phone}
+                  onChange={(e) =>
+                    updateCustomerField("phone", e.target.value)
+                  }
+                />
+              </label>
+              <p className="mt-3 text-sm">
                 Lifetime value {formatTzs(customer.value)}
               </p>
             </div>

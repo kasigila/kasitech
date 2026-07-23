@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { DemoChrome } from "@/components/site/DemoChrome";
+import { MpesaOverlay } from "@/components/demo/MpesaOverlay";
 import { cn } from "@/lib/cn";
 import {
   abandonedCarts,
@@ -24,6 +25,7 @@ import {
   sizeGuide,
   wishlistIds,
   type Product,
+  type LookPiece,
 } from "./data";
 
 type View =
@@ -89,14 +91,19 @@ export function SokoDemo() {
   const [sizeRec, setSizeRec] = useState<{ size: string; note: string } | null>(
     null,
   );
+  const [sizeHold, setSizeHold] = useState<{ size: string } | null>(null);
 
   // Look
+  const [lookSlots, setLookSlots] = useState<LookPiece[]>(
+    () => campaignLook.pieces.map((p) => ({ ...p })),
+  );
   const [lookSelected, setLookSelected] = useState<string[]>(
     campaignLook.pieces.map((p) => p.productId),
   );
 
   // Checkout
   const [payment, setPayment] = useState<"mpesa" | "airtel" | "card">("mpesa");
+  const [mpesaOpen, setMpesaOpen] = useState(false);
   const [delivery, setDelivery] = useState<"dar" | "tz" | "intl">("dar");
   const [phone, setPhone] = useState("+255 7");
   const [accountTab, setAccountTab] = useState<
@@ -197,7 +204,30 @@ export function SokoDemo() {
     setOrderId(id);
     setCart([]);
     setCartOpen(false);
+    setMpesaOpen(false);
     setView("confirm");
+  }
+
+  function requestCheckout() {
+    if (payment === "mpesa") {
+      setMpesaOpen(true);
+      return;
+    }
+    placeOrder();
+  }
+
+  function swapLookPiece(index: number, newProductId: string) {
+    setLookSlots((prev) => {
+      const oldId = prev[index]?.productId;
+      return prev.map((slot, i) =>
+        i === index ? { ...slot, productId: newProductId } : slot,
+      );
+    });
+    setLookSelected((prev) => {
+      const oldId = lookSlots[index]?.productId;
+      if (!oldId || !prev.includes(oldId)) return prev;
+      return [...prev.filter((x) => x !== oldId), newProductId];
+    });
   }
 
   function switchMode(next: "customer" | "business") {
@@ -367,6 +397,7 @@ export function SokoDemo() {
             }
             onOpen={openProduct}
             onFindSize={() => setView("size")}
+            heldSize={sizeHold?.size ?? null}
           />
         ) : view === "size" ? (
           <SizeFinder
@@ -381,6 +412,7 @@ export function SokoDemo() {
             fitPref={fitPref}
             setFitPref={setFitPref}
             sizeRec={sizeRec}
+            sizeHold={sizeHold}
             onRecommend={() =>
               setSizeRec(
                 recommendSize({
@@ -392,6 +424,9 @@ export function SokoDemo() {
                 }),
               )
             }
+            onHoldSize={() => {
+              if (sizeRec) setSizeHold({ size: sizeRec.size });
+            }}
             onShop={() => {
               if (sizeRec) setSizeFilter(sizeRec.size);
               setView("shop");
@@ -399,19 +434,22 @@ export function SokoDemo() {
           />
         ) : view === "look" ? (
           <CompleteTheLook
+            slots={lookSlots}
             selected={lookSelected}
             setSelected={setLookSelected}
+            onSwap={swapLookPiece}
             onAddOne={(id) => {
               const p = getProduct(id);
               if (!p) return;
               addToCart(id, p.colors[0].name, p.sizes[0]);
             }}
             onAddLook={() => {
-              lookSelected.forEach((id) => {
-                const p = getProduct(id);
+              lookSlots.forEach((slot) => {
+                const p = getProduct(slot.productId);
                 if (!p) return;
+                if (!lookSelected.includes(slot.productId)) return;
                 addToCart(
-                  id,
+                  slot.productId,
                   p.colors[0].name,
                   p.sizes.includes("M") ? "M" : p.sizes[0],
                   1,
@@ -432,7 +470,7 @@ export function SokoDemo() {
             setPhone={setPhone}
             cartTotal={cartTotal}
             deliveryFee={deliveryFee}
-            onPlace={placeOrder}
+            onPlace={requestCheckout}
             onBack={() => setCartOpen(true)}
           />
         ) : view === "confirm" && orderId ? (
@@ -453,6 +491,14 @@ export function SokoDemo() {
           />
         ) : null}
       </main>
+
+      <MpesaOverlay
+        open={mpesaOpen}
+        amountLabel={formatTzs(cartTotal + deliveryFee)}
+        phoneHint={phone.trim() || "07XX XXX XXX"}
+        onSuccess={placeOrder}
+        onCancel={() => setMpesaOpen(false)}
+      />
 
       {/* Cart drawer / bottom sheet */}
       {cartOpen && (
@@ -929,6 +975,7 @@ function ProductView({
   onAdd,
   onOpen,
   onFindSize,
+  heldSize,
 }: {
   product: Product;
   colorIdx: number;
@@ -944,6 +991,7 @@ function ProductView({
   onAdd: () => void;
   onOpen: (id: string) => void;
   onFindSize: () => void;
+  heldSize: string | null;
 }) {
   const stock = product.stock[size] ?? 0;
   const related = product.related
@@ -989,6 +1037,12 @@ function ProductView({
             {product.name}
           </h1>
           <p className="mt-3 text-lg">{formatTzs(product.price)}</p>
+          {heldSize && (
+            <p className="mt-3 border border-black/15 bg-white/70 px-3 py-2 text-sm">
+              We held your size <strong>{heldSize}</strong> for 48 hours - Gold
+              perk.
+            </p>
+          )}
           <p className="mt-4 text-sm leading-relaxed text-black/70">
             {product.description}
           </p>
@@ -1141,7 +1195,9 @@ function SizeFinder({
   fitPref,
   setFitPref,
   sizeRec,
+  sizeHold,
   onRecommend,
+  onHoldSize,
   onShop,
 }: {
   heightCm: number;
@@ -1155,7 +1211,9 @@ function SizeFinder({
   fitPref: "fitted" | "regular" | "relaxed";
   setFitPref: (v: "fitted" | "regular" | "relaxed") => void;
   sizeRec: { size: string; note: string } | null;
+  sizeHold: { size: string } | null;
   onRecommend: () => void;
+  onHoldSize: () => void;
   onShop: () => void;
 }) {
   return (
@@ -1234,10 +1292,24 @@ function SizeFinder({
             </p>
             <p className="mt-2 font-[Georgia,serif] text-4xl">{sizeRec.size}</p>
             <p className="mt-2 text-sm text-black/65">{sizeRec.note}</p>
+            {sizeHold?.size === sizeRec.size ? (
+              <p className="mt-4 border border-black/10 bg-[#F4F2EA] px-3 py-2 text-sm">
+                We held your size <strong>{sizeHold.size}</strong> for 48 hours -
+                Gold perk.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={onHoldSize}
+                className="mt-4 w-full border border-black bg-white py-3 text-[12px] tracking-[0.14em] uppercase"
+              >
+                Hold size {sizeRec.size} for 48 hours
+              </button>
+            )}
             <button
               type="button"
               onClick={onShop}
-              className="mt-4 text-[12px] tracking-[0.14em] uppercase underline"
+              className="mt-3 text-[12px] tracking-[0.14em] uppercase underline"
             >
               Shop size {sizeRec.size}
             </button>
@@ -1281,13 +1353,17 @@ function Field({
 }
 
 function CompleteTheLook({
+  slots,
   selected,
   setSelected,
+  onSwap,
   onAddOne,
   onAddLook,
 }: {
+  slots: LookPiece[];
   selected: string[];
   setSelected: (ids: string[]) => void;
+  onSwap: (index: number, newProductId: string) => void;
   onAddOne: (id: string) => void;
   onAddLook: () => void;
 }) {
@@ -1302,6 +1378,25 @@ function CompleteTheLook({
     const p = getProduct(id);
     return sum + (p?.price ?? 0);
   }, 0);
+  const lookTotal = slots.reduce((sum, slot) => {
+    const p = getProduct(slot.productId);
+    return sum + (p?.price ?? 0);
+  }, 0);
+
+  const swapOptionsFor = (currentId: string) => {
+    const current = getProduct(currentId);
+    if (!current) return [];
+    return products
+      .filter(
+        (p) =>
+          p.id !== currentId &&
+          p.available &&
+          (p.category === current.category ||
+            (current.category === "Accessories" &&
+              p.category === "Accessories")),
+      )
+      .slice(0, 3);
+  };
 
   return (
     <div>
@@ -1312,6 +1407,13 @@ function CompleteTheLook({
         {campaignLook.title}
       </h1>
       <p className="mt-2 text-sm text-black/60">{campaignLook.subtitle}</p>
+      <p className="mt-3 text-sm">
+        Look total{" "}
+        <strong className="font-[Georgia,serif] text-xl">
+          {formatTzs(lookTotal)}
+        </strong>
+        <span className="text-black/50"> · swap one piece to rewrite the story</span>
+      </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
@@ -1325,57 +1427,83 @@ function CompleteTheLook({
         </div>
         <div>
           <p className="text-sm text-black/65">
-            Select the pieces you want. Add one at a time or take the full look.
+            Select the pieces you want. Swap one item and watch the outfit price
+            update.
           </p>
           <ul className="mt-6 space-y-4">
-            {campaignLook.pieces.map((piece) => {
+            {slots.map((piece, index) => {
               const p = getProduct(piece.productId);
               if (!p) return null;
               const on = selected.includes(p.id);
+              const swaps = swapOptionsFor(p.id);
               return (
                 <li
-                  key={p.id}
+                  key={`${piece.role}-${p.id}`}
                   className={cn(
-                    "flex gap-3 border p-3",
+                    "border p-3",
                     on ? "border-black bg-white/60" : "border-black/10",
                   )}
                 >
-                  <button
-                    type="button"
-                    className="relative h-24 w-20 shrink-0 overflow-hidden"
-                    onClick={() => toggle(p.id)}
-                  >
-                    <Image
-                      src={p.images[0]}
-                      alt={p.name}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
-                  </button>
-                  <div className="flex flex-1 flex-col">
-                    <p className="text-[10px] tracking-[0.14em] uppercase text-black/45">
-                      {piece.role}
-                    </p>
-                    <p className="font-medium">{p.name}</p>
-                    <p className="text-sm">{formatTzs(p.price)}</p>
-                    <div className="mt-auto flex gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => toggle(p.id)}
-                        className="border border-black/20 px-2.5 py-1 text-[11px] uppercase"
-                      >
-                        {on ? "Selected" : "Select"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onAddOne(p.id)}
-                        className="bg-black px-2.5 py-1 text-[11px] text-white uppercase"
-                      >
-                        Add one
-                      </button>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      className="relative h-24 w-20 shrink-0 overflow-hidden"
+                      onClick={() => toggle(p.id)}
+                    >
+                      <Image
+                        src={p.images[0]}
+                        alt={p.name}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </button>
+                    <div className="flex flex-1 flex-col">
+                      <p className="text-[10px] tracking-[0.14em] uppercase text-black/45">
+                        {piece.role}
+                      </p>
+                      <p className="font-medium">{p.name}</p>
+                      <p className="text-sm">{formatTzs(p.price)}</p>
+                      <div className="mt-auto flex gap-2 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => toggle(p.id)}
+                          className="border border-black/20 px-2.5 py-1 text-[11px] uppercase"
+                        >
+                          {on ? "Selected" : "Select"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onAddOne(p.id)}
+                          className="bg-black px-2.5 py-1 text-[11px] text-white uppercase"
+                        >
+                          Add one
+                        </button>
+                      </div>
                     </div>
                   </div>
+                  {swaps.length > 0 && (
+                    <div className="mt-3 border-t border-black/10 pt-3">
+                      <p className="text-[10px] tracking-[0.14em] uppercase text-black/45">
+                        Swap for
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {swaps.map((alt) => (
+                          <button
+                            key={alt.id}
+                            type="button"
+                            onClick={() => onSwap(index, alt.id)}
+                            className="border border-black/15 px-2.5 py-1.5 text-left text-[11px] hover:border-black"
+                          >
+                            {alt.name}
+                            <span className="mt-0.5 block text-black/50">
+                              {formatTzs(alt.price)}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </li>
               );
             })}

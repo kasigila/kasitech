@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { DemoChrome } from "@/components/site/DemoChrome";
+import { MpesaOverlay } from "@/components/demo/MpesaOverlay";
 import { cn } from "@/lib/cn";
 import {
   announcements,
@@ -23,7 +24,8 @@ import {
   programs,
   schedule,
   strengthOptions,
-  studentCourses,
+  studentCourses as initialStudentCourses,
+  type Course,
   suggestFromFuture,
   type Campus,
   type DegreeLevel,
@@ -132,6 +134,15 @@ export function NuruDemo() {
   const [essay, setEssay] = useState("");
   const [payMethod, setPayMethod] = useState<"mpesa" | "card">("mpesa");
   const [payDone, setPayDone] = useState(false);
+  const [mpesaApplyOpen, setMpesaApplyOpen] = useState(false);
+
+  const [portalCourses, setPortalCourses] = useState<Course[]>(() =>
+    initialStudentCourses.map((c) => ({ ...c })),
+  );
+  const [feePaid, setFeePaid] = useState(feeBalance.paid);
+  const [feeDue, setFeeDue] = useState(feeBalance.due);
+  const [mpesaFeesOpen, setMpesaFeesOpen] = useState(false);
+  const [gradeMoment, setGradeMoment] = useState<string | null>(null);
 
   // Future builder
   const [fi, setFi] = useState<string[]>([]);
@@ -706,7 +717,10 @@ export function NuruDemo() {
                 {!payDone ? (
                   <button
                     type="button"
-                    onClick={() => setPayDone(true)}
+                    onClick={() => {
+                      if (payMethod === "mpesa") setMpesaApplyOpen(true);
+                      else setPayDone(true);
+                    }}
                     className="w-full bg-[#F5C518] py-3 text-sm font-semibold"
                   >
                     Pay application fee (demo)
@@ -850,7 +864,7 @@ export function NuruDemo() {
           <div className="mt-6 rounded-2xl border border-[#1E4FD6]/15 bg-white/70 p-5">
             {portalTab === "courses" && (
               <ul className="divide-y divide-[#1E4FD6]/10">
-                {studentCourses.map((c) => (
+                {portalCourses.map((c) => (
                   <li
                     key={c.code}
                     className="flex flex-wrap items-center justify-between gap-2 py-3"
@@ -889,37 +903,55 @@ export function NuruDemo() {
               </ul>
             )}
             {portalTab === "grades" && (
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="text-[#1a1a1a]/50">
-                    <th className="py-2 font-medium">Course</th>
-                    <th className="py-2 font-medium">Grade</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {studentCourses.map((c) => (
-                    <tr key={c.code} className="border-t border-[#1E4FD6]/10">
-                      <td className="py-3">{c.name}</td>
-                      <td className="py-3 font-semibold">{c.grade}</td>
+              <>
+                {gradeMoment && (
+                  <p
+                    className="mb-4 rounded-xl border border-[#F5C518] bg-[#F5C518]/25 px-4 py-3 text-sm"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {gradeMoment}
+                  </p>
+                )}
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="text-[#1a1a1a]/50">
+                      <th className="py-2 font-medium">Course</th>
+                      <th className="py-2 font-medium">Grade</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {portalCourses.map((c) => (
+                      <tr key={c.code} className="border-t border-[#1E4FD6]/10">
+                        <td className="py-3">{c.name}</td>
+                        <td className="py-3 font-semibold">{c.grade.trim() || "-"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
             )}
             {portalTab === "fees" && (
               <div className="space-y-4">
                 <p className="text-sm text-[#1a1a1a]/60">{feeBalance.term}</p>
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <Stat label="Paid" value={formatTzs(feeBalance.paid)} />
-                  <Stat label="Balance due" value={formatTzs(feeBalance.due)} />
+                  <Stat label="Paid" value={formatTzs(feePaid)} />
+                  <Stat label="Balance due" value={formatTzs(feeDue)} />
                   <Stat label="Next due" value={feeBalance.nextDue} />
                 </div>
-                <button
-                  type="button"
-                  className="bg-[#1E4FD6] px-5 py-2.5 text-sm text-white"
-                >
-                  Pay balance (demo)
-                </button>
+                {feeDue > 0 ? (
+                  <button
+                    type="button"
+                    className="bg-[#1E4FD6] px-5 py-2.5 text-sm text-white"
+                    onClick={() => setMpesaFeesOpen(true)}
+                  >
+                    Pay balance with M-Pesa
+                  </button>
+                ) : (
+                  <p className="text-sm text-[#1E4FD6]">
+                    Term balance cleared. Grades may update within 24 hours.
+                  </p>
+                )}
               </div>
             )}
             {portalTab === "announcements" && (
@@ -1015,6 +1047,34 @@ export function NuruDemo() {
           )}
           {futureStep === 3 && futureResult && (
             <div className="mt-8 space-y-8">
+              <div>
+                <h2 className="text-lg font-semibold text-[#1E4FD6]">
+                  Your path
+                </h2>
+                <p className="mt-1 text-sm text-[#1a1a1a]/65">
+                  Interest → Program → Job
+                </p>
+                <div className="mt-4 space-y-4">
+                  {futureResult.paths.map((path) => (
+                    <div
+                      key={path.program}
+                      className="rounded-2xl border border-[#1E4FD6]/15 bg-white/80 p-4"
+                    >
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
+                        <span className="rounded-full bg-[#1E4FD6]/10 px-3 py-1 text-[#1E4FD6]">
+                          {path.interest}
+                        </span>
+                        <span className="text-[#1a1a1a]/40">→</span>
+                        <span className="font-semibold">{path.program}</span>
+                        <span className="text-[#1a1a1a]/40">→</span>
+                        <span className="rounded-full bg-[#F5C518]/35 px-3 py-1">
+                          {path.job}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div>
                 <h2 className="text-lg font-semibold text-[#1E4FD6]">
                   Programs that fit
@@ -1123,6 +1183,39 @@ export function NuruDemo() {
         ))}
       </nav>
       <div className="h-14 md:hidden" />
+
+      <MpesaOverlay
+        open={mpesaApplyOpen}
+        amountLabel="TZS 50,000"
+        phoneHint={personal.phone.trim() || "07XX XXX XXX"}
+        onCancel={() => setMpesaApplyOpen(false)}
+        onSuccess={() => {
+          setMpesaApplyOpen(false);
+          setPayDone(true);
+        }}
+      />
+      <MpesaOverlay
+        open={mpesaFeesOpen}
+        amountLabel={formatTzs(feeDue)}
+        onCancel={() => setMpesaFeesOpen(false)}
+        onSuccess={() => {
+          setMpesaFeesOpen(false);
+          const paidNow = feeDue;
+          setFeePaid((p) => p + paidNow);
+          setFeeDue(0);
+          setPortalTab("grades");
+          setPortalCourses((prev) =>
+            prev.map((c) =>
+              c.code === "ENT 210" && !c.grade.trim()
+                ? { ...c, grade: "B+", status: "Completed" as const }
+                : c,
+            ),
+          );
+          setGradeMoment(
+            "Fee confirmed · Venture Design Studio grade posted: B+",
+          );
+        }}
+      />
     </div>
   );
 }

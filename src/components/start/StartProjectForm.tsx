@@ -29,11 +29,11 @@ const needIds: Need[] = [
 ];
 
 const needs: { id: Need; label: string }[] = [
-  { id: "presence", label: "A BETTER DIGITAL PRESENCE" },
-  { id: "sell", label: "SELLING OR BOOKING ONLINE" },
-  { id: "system", label: "A CUSTOM SYSTEM" },
-  { id: "automation", label: "AUTOMATION / AI" },
-  { id: "unsure", label: "I'M NOT SURE" },
+  { id: "presence", label: "A WEBSITE" },
+  { id: "sell", label: "COMMERCE / BOOKING" },
+  { id: "system", label: "PLATFORM / SOFTWARE" },
+  { id: "automation", label: "AI / AUTOMATION" },
+  { id: "unsure", label: "NOT SURE YET" },
 ];
 
 const goalsByNeed: Record<Need, string[]> = {
@@ -239,13 +239,11 @@ export function StartProjectForm() {
           {refId}
         </p>
         <h1 className="mt-6 font-display text-5xl tracking-[-0.04em] md:text-7xl">
-          OPENING WHATSAPP…
+          WE&apos;VE GOT IT.
         </h1>
         <p className="mt-6 max-w-lg text-lg text-kasi-grey">
-          Your brief is ready to send on WhatsApp, and a copy was emailed to
-          KasiTech. First time only: check iCloud (and Spam) for a FormSubmit
-          activation link and tap Confirm, or later briefs won&apos;t arrive.
-          If WhatsApp didn&apos;t open, tap below. We reply within 24 hours on
+          Your brief is ready. We&apos;ll open WhatsApp so nothing gets lost, and
+          a copy is emailed to KasiTech. Expect a reply within 24 hours on
           business days.
         </p>
         <div className="mt-10 space-y-4 text-sm">
@@ -300,16 +298,28 @@ export function StartProjectForm() {
         0{step} / 04 · REPLY WITHIN 24H
       </p>
 
+      {/* Progress */}
+      <div className="mt-6 flex gap-1.5" aria-hidden>
+        {[1, 2, 3, 4].map((s) => (
+          <span
+            key={s}
+            className={cn(
+              "h-0.5 flex-1 transition",
+              s <= step ? "bg-kasi-green" : "bg-kasi-border",
+            )}
+          />
+        ))}
+      </div>
+
       {step === 1 && (
         <>
-          <h1 className="mt-6 font-display text-4xl tracking-[-0.04em] md:text-6xl">
-            WHAT DO YOU
+          <h1 className="mt-8 font-display text-4xl tracking-[-0.04em] md:text-6xl">
+            WHAT ARE WE
             <br />
-            NEED HELP WITH?
+            BUILDING?
           </h1>
           <p className="mt-4 text-sm text-kasi-grey">
-            Taking a limited number of new projects. This brief goes straight to
-            WhatsApp so nothing gets lost.
+            A short brief. Conversational, not paperwork. Limited new projects.
           </p>
           <div className="mt-10 space-y-3">
             {needs.map((n) => (

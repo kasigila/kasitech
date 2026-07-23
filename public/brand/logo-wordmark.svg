@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 100" role="img" aria-label="KasiTech">
+  <rect width="420" height="100" fill="#F4F2EA"/>
+  <!-- Wordmark: Kas + i-stem + Tech; green tittle on i -->
+  <text
+    x="28"
+    y="66"
+    fill="#090909"
+    font-family="Space Grotesk, Outfit, Helvetica Neue, Arial, sans-serif"
+    font-size="48"
+    font-weight="500"
+    letter-spacing="-1.2"
+  >Kas</text>
+  <!-- i without relying on font tittle -->
+  <text
+    x="118"
+    y="66"
+    fill="#090909"
+    font-family="Space Grotesk, Outfit, Helvetica Neue, Arial, sans-serif"
+    font-size="48"
+    font-weight="500"
+    letter-spacing="-1.2"
+  >ı</text>
+  <circle cx="128" cy="32" r="5" fill="#C7FF00"/>
+  <text
+    x="138"
+    y="66"
+    fill="#090909"
+    font-family="Space Grotesk, Outfit, Helvetica Neue, Arial, sans-serif"
+    font-size="48"
+    font-weight="500"
+    letter-spacing="-1.2"
+  >Tech</text>
+</svg>

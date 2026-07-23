@@ -20,6 +20,7 @@ export type Invoice = {
   issued: string;
   due: string;
   daysOverdue: number;
+  remindedAt?: string;
 };
 
 export type Expense = {
@@ -444,7 +445,14 @@ export const approvals: Approval[] = [
   },
 ];
 
-export const notifications = [
+export type DemoNotification = {
+  id: string;
+  text: string;
+  urgent: boolean;
+  at?: string;
+};
+
+export const notifications: DemoNotification[] = [
   { id: "n1", text: "4 invoices overdue > 30 days", urgent: true },
   { id: "n2", text: "SPC-02 stock critical", urgent: true },
   { id: "n3", text: "2 approvals waiting", urgent: false },
@@ -469,11 +477,16 @@ export function formatTzs(n: number) {
   return `TZS ${n.toLocaleString("en-TZ")}`;
 }
 
-export function unpaidOver30() {
-  return invoices.filter((i) => i.status === "Overdue" && i.daysOverdue > 30);
+export function unpaidOver30(list: Invoice[] = invoices) {
+  return list.filter((i) => i.status === "Overdue" && i.daysOverdue > 30);
 }
 
+export const SPC02_SKU = "SPC-02";
+export const SPC02_PO_ID = "PO-438";
+export const SPC02_RESTOCK_QTY = 80;
+
 export const commandSuggestions = [
+  "remind overdue invoices",
   "show unpaid invoices over 30 days",
   "show stock alerts",
   "show pending approvals",

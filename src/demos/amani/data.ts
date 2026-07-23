@@ -43,6 +43,7 @@ export type Insight = {
   date: string;
   excerpt: string;
   readMin: number;
+  body?: string;
 };
 
 export type CaseMilestone = {
@@ -218,6 +219,15 @@ export const insights: Insight[] = [
     excerpt:
       "A structured approach to sequencing markets, capital, talent, and regulatory readiness across five countries.",
     readMin: 24,
+    body: `Expansion across East Africa rarely fails for lack of ambition. It fails when capital, talent, and regulatory reality diverge from the map on the slide.
+
+This playbook opens with market sequencing: score corridors on FX stability, import dependency, and time-to-first revenue. Kenya and Rwanda often lead when logistics and payments rails are mature. Uganda may follow as a build market with staged capex. Ethiopia belongs in a deferred lane until FX and repatriation rules are legible to your treasury team.
+
+Capital structure comes next. Ring-fenced SPVs per country, shared services for finance and HR, and a committee that can stop funding when milestones miss. We document kill criteria up front so boards do not debate them mid-crisis.
+
+Operating model is the third pillar. Country P&Ls, a regional PMO, and decision cycles measured in weeks, not quarters. The firms that win treat expansion as a portfolio, not a chain of heroic exceptions.
+
+This report is fictional AMANI demo content for the KasiTech concept. It illustrates how institutional counsel packages thinking for executives evaluating regional moves.`,
   },
   {
     id: "ins-3",
@@ -321,6 +331,47 @@ export const mapCountries = [
   { id: "et", name: "Ethiopia", status: "Deferred", x: 62, y: 22 },
 ] as const;
 
+export type MapCountryId = (typeof mapCountries)[number]["id"];
+
+export const defaultExpansionSequence: MapCountryId[] = [
+  "ke",
+  "rw",
+  "ug",
+  "tz",
+  "et",
+];
+
+export const countryFocusNotes: Record<
+  MapCountryId,
+  { timelineNote: string; mapNote: string }
+> = {
+  ke: {
+    timelineNote:
+      "Kenya live: Nairobi hub operational, payments and distributor network scaled first.",
+    mapNote: "Live market · revenue ahead of year-one plan",
+  },
+  rw: {
+    timelineNote:
+      "Rwanda live: Kigali launch used as regulatory template for smaller markets.",
+    mapNote: "Live market · shared services pilot",
+  },
+  ug: {
+    timelineNote:
+      "Uganda in build: logistics corridor staged; capex gated to warehouse milestone.",
+    mapNote: "Build phase · capital committee review monthly",
+  },
+  tz: {
+    timelineNote:
+      "Tanzania HQ: group treasury and PMO anchor decisions for the portfolio.",
+    mapNote: "HQ · mandate origin and capital allocation",
+  },
+  et: {
+    timelineNote:
+      "Ethiopia deferred: FX repatriation and import timing still unclear. Revisit when treasury can model three scenarios with confidence.",
+    mapNote: "Deferred · FX and repatriation watchlist",
+  },
+};
+
 export const careers = [
   {
     id: "c1",
@@ -420,3 +471,17 @@ export const bizAnalytics = {
   avgSession: "4m 12s",
   downloadRate: "11%",
 };
+
+export function buildEnquiryBrief(input: {
+  name: string;
+  email: string;
+  company: string;
+  message: string;
+}): string {
+  const org = input.company.trim() || "Organisation not provided";
+  const snippet =
+    input.message.trim().length > 120
+      ? input.message.trim().slice(0, 120) + "…"
+      : input.message.trim();
+  return `${input.name} (${input.email}) from ${org} is exploring: ${snippet} AMANI will route this to the right practice lead within two business days.`;
+}

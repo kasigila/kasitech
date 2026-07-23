@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { projects } from "@/data/projects";
+import { getProjectBlurb } from "@/data/project-blurbs";
 import { projectCovers } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
 
+/** Hero preview - cycles all concept demos. */
 export function HeroProductWindow() {
   const [index, setIndex] = useState(0);
 
@@ -18,12 +20,13 @@ export function HeroProductWindow() {
   }, []);
 
   const project = projects[index];
+  const blurb = getProjectBlurb(project.slug, project.description);
 
   return (
     <div className="relative mx-auto w-full max-w-md md:mx-0">
       <div className="mb-3 flex items-end justify-between gap-3">
         <p className="max-w-[14rem] text-sm leading-relaxed text-kasi-grey">
-          What your site could feel like: hospitality, commerce, software, and more. Open an example.
+          Examples of what yours could feel like. Tap one to try it.
         </p>
         <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
           {project.number} / {String(projects.length).padStart(2, "0")}
@@ -61,8 +64,8 @@ export function HeroProductWindow() {
                 <h3 className="mt-2 font-display text-xl tracking-[-0.02em]">
                   {project.name}
                 </h3>
-                <p className="mt-1 text-xs text-kasi-grey">
-                  {project.tags.join(" · ")}
+                <p className="mt-2 text-sm leading-relaxed text-kasi-grey">
+                  {blurb}
                 </p>
                 <p className="mt-3 text-xs text-kasi-ivory/70 group-hover:text-kasi-green">
                   Try demo ↗
@@ -87,6 +90,13 @@ export function HeroProductWindow() {
             />
           ))}
         </div>
+
+        <Link
+          href="/work#concepts"
+          className="mt-5 inline-block text-[12px] tracking-wide text-kasi-grey transition hover:text-kasi-green"
+        >
+          Browse all examples →
+        </Link>
       </div>
     </div>
   );

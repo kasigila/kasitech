@@ -22,6 +22,8 @@ import {
   specialties,
   timeSlots,
   heroImage,
+  getDoctorFitReasons,
+  getCareCard,
   type Doctor,
   type Insurance,
   type Language,
@@ -134,6 +136,19 @@ export function AfyaDemo() {
   }, [filters]);
 
   const doctor = doctorId ? getDoctor(doctorId) : null;
+
+  const fitReasons = useMemo(() => {
+    const d =
+      doctor ??
+      (doctorId ? getDoctor(doctorId) : undefined);
+    if (!d || !bookTime) return [];
+    return getDoctorFitReasons(d, bookType);
+  }, [doctor, doctorId, bookType, bookTime]);
+
+  const careCard = useMemo(
+    () => getCareCard(bookType),
+    [bookType],
+  );
 
   function go(next: View) {
     setView(next);
@@ -730,6 +745,27 @@ export function AfyaDemo() {
               </select>
             </div>
 
+            {fitReasons.length > 0 && (
+              <div
+                className="rounded-xl border border-[#7A8F7A]/35 bg-[#E8EEE8]/60 p-4"
+                aria-live="polite"
+              >
+                <p className="text-sm font-medium text-[#1B2A4A]">
+                  Why this clinician fits
+                </p>
+                <ul className="mt-2 space-y-1.5 text-sm text-[#3A4A66]">
+                  {fitReasons.map((reason) => (
+                    <li key={reason} className="flex gap-2">
+                      <span className="text-[#7A8F7A]" aria-hidden>
+                        ·
+                      </span>
+                      <span>{reason}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div>
               <label htmlFor="afya-book-name" className={labelCls}>
                 Your full name
@@ -789,6 +825,35 @@ export function AfyaDemo() {
             <p className="mt-2 text-sm text-[#6B756B]">
               Confirmation ID: keep this for check-in
             </p>
+
+            <div className="mt-8 rounded-xl border border-[#D8DED8] bg-[#FAF9F6] p-5 text-left">
+              <p className="text-sm font-medium text-[#1B2A4A]">Care card</p>
+              <p className="mt-3 text-xs uppercase tracking-[0.12em] text-[#6B756B]">
+                What to bring
+              </p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#3A4A66]">
+                {careCard.bring.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <p className="mt-4 text-xs uppercase tracking-[0.12em] text-[#6B756B]">
+                NHIF
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-[#3A4A66]">
+                {careCard.nhifNote}
+              </p>
+              {careCard.telehealthNote && (
+                <>
+                  <p className="mt-4 text-xs uppercase tracking-[0.12em] text-[#6B756B]">
+                    Telehealth
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-[#3A4A66]">
+                    {careCard.telehealthNote}
+                  </p>
+                </>
+              )}
+            </div>
+
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <button
                 type="button"
@@ -987,10 +1052,21 @@ export function AfyaDemo() {
                         </span>
                       </div>
                       {openResult === r.id && r.status === "Ready" && (
-                        <p className="mt-3 rounded-lg bg-[#E8EEE8] p-3 text-sm text-[#1B2A4A]">
-                          Demo result: within expected range. Discuss with your
-                          clinician at your next visit.
-                        </p>
+                        <div className="mt-3 space-y-3 rounded-lg bg-[#E8EEE8] p-3 text-sm text-[#1B2A4A]">
+                          {r.resultValue && (
+                            <p className="font-mono text-xs text-[#3A4A66]">
+                              {r.resultValue}
+                            </p>
+                          )}
+                          {r.plainLanguage ? (
+                            <p className="leading-relaxed">{r.plainLanguage}</p>
+                          ) : (
+                            <p>
+                              Demo result: within expected range. Discuss with
+                              your clinician at your next visit.
+                            </p>
+                          )}
+                        </div>
                       )}
                     </button>
                   </li>

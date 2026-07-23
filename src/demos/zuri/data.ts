@@ -62,7 +62,120 @@ export type DemoBooking = {
   status: "confirmed" | "arriving" | "in-house" | "departed";
   total: number;
   addons: string[];
+  /** Set when created from guest checkout; shown in business list */
+  justNow?: boolean;
 };
+
+export type ItineraryItem = {
+  time: string;
+  title: string;
+  note: string;
+  highlighted?: boolean;
+};
+
+/** Personal day view after booking; reflects spa / transfer add-ons */
+export function buildPersonalItinerary(selectedAddonIds: string[]): ItineraryItem[] {
+  const hasSpa = selectedAddonIds.includes("spa");
+  const hasTransfer = selectedAddonIds.includes("airport-transfer");
+  const hasBreakfast = selectedAddonIds.includes("breakfast");
+  const hasStoneTown = selectedAddonIds.includes("stone-town");
+  const hasDinner = selectedAddonIds.includes("private-dinner");
+
+  const items: ItineraryItem[] = [];
+
+  if (hasTransfer) {
+    items.push({
+      time: "Arrival",
+      title: "Private airport transfer",
+      note: "Driver meets you landside at ZNZ with cool towels. About forty-five minutes to Zuri.",
+      highlighted: true,
+    });
+  }
+
+  for (const moment of dayMoments) {
+    let note = moment.blurb;
+    let highlighted = false;
+
+    if (moment.id === "spa" && hasSpa) {
+      note = "Your coastal spa ritual is reserved. Pavilion or in-villa, team confirms by SMS.";
+      highlighted = true;
+    } else if (moment.id === "breakfast" && hasBreakfast) {
+      note = "Daily breakfast included on your terrace or at Ocean Terrace.";
+      highlighted = true;
+    } else if (moment.id === "stone-town" && hasStoneTown) {
+      note = "Half-day Stone Town guide is on your stay. Concierge shares meet time tonight.";
+      highlighted = true;
+    } else if (moment.id === "dinner" && hasDinner) {
+      note = "Private beach dinner is held for you. Menu and time confirmed before sunset.";
+      highlighted = true;
+    }
+
+    items.push({
+      time: moment.time,
+      title: moment.title,
+      note,
+      highlighted,
+    });
+  }
+
+  return items;
+}
+
+const conciergeKeywords: { keys: string[]; id: string }[] = [
+  { keys: ["tomorrow", "today", "plan", "itinerary", "do"], id: "tomorrow" },
+  { keys: ["massage", "spa", "ritual", "treatment"], id: "massage" },
+  { keys: ["breakfast", "morning meal", "brunch"], id: "breakfast-time" },
+  {
+    keys: ["airport", "transfer", "transport", "flight", "pickup", "znz"],
+    id: "airport",
+  },
+  { keys: ["book", "reserve", "room", "stay"], id: "tomorrow" },
+];
+
+/** Match free-text Ask Zuri questions to demo answers */
+export function findConciergeByQuery(raw: string): ConciergeQA | null {
+  const q = raw.trim().toLowerCase();
+  if (!q) return null;
+
+  const exact = conciergeQuestions.find(
+    (c) => c.question.toLowerCase() === q,
+  );
+  if (exact) return exact;
+
+  let best: ConciergeQA | null = null;
+  let bestScore = 0;
+
+  for (const entry of conciergeKeywords) {
+    const template = conciergeQuestions.find((c) => c.id === entry.id);
+    if (!template) continue;
+    let score = 0;
+    for (const key of entry.keys) {
+      if (q.includes(key)) score += key.length;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      best = template;
+    }
+  }
+
+  if (best) {
+    return {
+      ...best,
+      question: raw.trim(),
+    };
+  }
+
+  return {
+    id: "custom",
+    question: raw.trim(),
+    answer:
+      "I can help with your rhythm at Zuri, spa rituals, airport transfers, or starting a reservation. Try asking about tomorrow, a massage, breakfast times, or transport from the airport.",
+    actions: [
+      { label: "See Your Day", target: "day" },
+      { label: "Start booking", target: "book" },
+    ],
+  };
+}
 
 export type GuestRequest = {
   id: string;

@@ -52,13 +52,23 @@ export type MenuItem = {
   popular?: boolean;
 };
 
+export type SeatingZone = "Indoor" | "Terrace" | "Chef's Counter";
+
+export type FloorTable = {
+  id: string;
+  label: string;
+  seats: number;
+  zone: SeatingZone;
+};
+
 export type Reservation = {
   id: string;
   name: string;
   partySize: number;
   date: string;
   time: string;
-  seating: "Indoor" | "Terrace" | "Chef's Counter";
+  seating: SeatingZone;
+  table?: string;
   occasion: string;
   status: "confirmed" | "seated" | "cancelled";
 };
@@ -94,7 +104,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["gluten", "dairy"],
     spice: 0,
     image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80",
     popular: true,
   },
   {
@@ -108,7 +118,7 @@ export const menuItems: MenuItem[] = [
     allergens: [],
     spice: 2,
     image:
-      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1604329760661-e7bcd82b4bd7?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "sp-octopus",
@@ -121,7 +131,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["shellfish"],
     spice: 1,
     image:
-      "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1551244072-9deb7893327e?auto=format&fit=crop&w=900&q=80",
     popular: true,
   },
   {
@@ -135,7 +145,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["gluten"],
     spice: 0,
     image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1603048297172-c92544798d3a?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "ff-brisket",
@@ -162,7 +172,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["sesame", "soy"],
     spice: 2,
     image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1529193591184-68409fbb647c?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "ff-chicken",
@@ -202,7 +212,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["shellfish", "dairy", "gluten"],
     spice: 2,
     image:
-      "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1565680018434-2f54bd5a6e6d?auto=format&fit=crop&w=900&q=80",
     popular: true,
   },
   {
@@ -216,7 +226,7 @@ export const menuItems: MenuItem[] = [
     allergens: [],
     spice: 2,
     image:
-      "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1615141982883-c531d8d0e11f?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "sf-oysters",
@@ -229,7 +239,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["shellfish"],
     spice: 1,
     image:
-      "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1572448862527-46a491f5b3b4?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "mn-pilau",
@@ -242,7 +252,7 @@ export const menuItems: MenuItem[] = [
     allergens: [],
     spice: 2,
     image:
-      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "mn-steak",
@@ -269,7 +279,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["nuts", "sesame"],
     spice: 1,
     image:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1611171711912-ebcda86a42b8?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "ds-chocolate",
@@ -295,7 +305,7 @@ export const menuItems: MenuItem[] = [
     allergens: ["dairy"],
     spice: 1,
     image:
-      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1550258987-0e22282907b5?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "dr-negroni",
@@ -307,7 +317,7 @@ export const menuItems: MenuItem[] = [
     allergens: [],
     spice: 0,
     image:
-      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1551751299-1b51cab2694c?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "dr-ginger",
@@ -337,9 +347,22 @@ export const menuItems: MenuItem[] = [
 ];
 
 export const heroImage =
-  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1800&q=80";
+  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1800&q=80";
 
 export const seatingOptions = ["Indoor", "Terrace", "Chef's Counter"] as const;
+
+export const floorTables: FloorTable[] = [
+  { id: "in-1", label: "I1", seats: 2, zone: "Indoor" },
+  { id: "in-2", label: "I2", seats: 4, zone: "Indoor" },
+  { id: "in-3", label: "I3", seats: 4, zone: "Indoor" },
+  { id: "in-4", label: "I4", seats: 6, zone: "Indoor" },
+  { id: "te-1", label: "T1", seats: 2, zone: "Terrace" },
+  { id: "te-2", label: "T2", seats: 4, zone: "Terrace" },
+  { id: "te-3", label: "T3", seats: 4, zone: "Terrace" },
+  { id: "cc-1", label: "C1", seats: 2, zone: "Chef's Counter" },
+  { id: "cc-2", label: "C2", seats: 2, zone: "Chef's Counter" },
+  { id: "cc-3", label: "C3", seats: 4, zone: "Chef's Counter" },
+];
 
 export const occasions = [
   "Just dining",

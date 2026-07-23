@@ -13,12 +13,15 @@ import {
   suggestedAutomation,
   suggestedQueries,
   thenOptions,
+  unknownAnswer,
   whenOptions,
   type AutomationAction,
   type EvidenceSource,
   type HistoryItem,
   type QueryAnswer,
 } from "./data";
+
+const FLOW_RULE_KEY = "kasi-automation-approved";
 
 type View = "ask" | "answer" | "automation" | "opportunity" | "history";
 
@@ -77,7 +80,7 @@ export function KasiIntelligenceDemo() {
       setInspected(inspectionOrder.slice(0, i));
       if (i >= inspectionOrder.length) {
         window.clearInterval(id);
-        const resolved = resolveQuery(query);
+        const resolved = resolveQuery(query) ?? unknownAnswer(query);
         setAnswer(resolved);
         setInspecting(false);
         setHistory((h) => [
@@ -98,6 +101,23 @@ export function KasiIntelligenceDemo() {
     setThenActs((prev) =>
       prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a],
     );
+  }
+
+  function approveAutomationToFlow(label: string) {
+    try {
+      sessionStorage.setItem(
+        FLOW_RULE_KEY,
+        JSON.stringify({
+          label,
+          when,
+          ifCond,
+          then: thenActs,
+          at: new Date().toISOString(),
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
   }
 
   function loadSuggestedAutomation() {
@@ -246,6 +266,11 @@ export function KasiIntelligenceDemo() {
 
           {answer && !inspecting && (
             <div className="mt-10 space-y-10">
+              {answer.id === "unknown" && (
+                <p className="font-mono text-[10px] tracking-[0.18em] text-amber-400">
+                  I DON&apos;T KNOW YET · MISSING DATA
+                </p>
+              )}
               <div className="border border-white/10 bg-[#222] p-6">
                 <p className="font-mono text-[10px] tracking-wider text-[#C7FF00]">
                   EXPLANATION
@@ -404,7 +429,12 @@ export function KasiIntelligenceDemo() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setAutoApproved(true)}
+                    onClick={() => {
+                      setAutoApproved(true);
+                      approveAutomationToFlow(
+                        `WHEN ${when} IF ${ifCond} THEN ${thenActs.join(", ")}`,
+                      );
+                    }}
                     className="bg-[#C7FF00] px-4 py-2 text-xs font-semibold text-black"
                   >
                     Approve (demo)
@@ -412,8 +442,8 @@ export function KasiIntelligenceDemo() {
                 </div>
               ) : (
                 <p className="mt-5 text-sm text-[#C7FF00]">
-                  Approved: automation armed in demo mode. No live actions
-                  fired.
+                  Approved. Rule written for Kasi Flow - open that demo to see
+                  it appear as an automation banner. No live actions fired.
                 </p>
               )}
             </div>
@@ -512,7 +542,13 @@ export function KasiIntelligenceDemo() {
               </p>
               <button
                 type="button"
-                onClick={() => setOppPhase("approved")}
+                onClick={() => {
+                  loadSuggestedAutomation();
+                  setAutoApproved(true);
+                  setAutoPreview(true);
+                  approveAutomationToFlow(suggestedAutomation.preview);
+                  setOppPhase("approved");
+                }}
                 className="mt-5 bg-[#C7FF00] px-4 py-2 text-xs font-semibold text-black"
               >
                 Approve automation
@@ -523,8 +559,8 @@ export function KasiIntelligenceDemo() {
           {oppPhase === "approved" && (
             <div className="mt-8 border border-[#C7FF00]/40 p-5">
               <p className="text-sm text-[#C7FF00]">
-                Approved. Lead-response automation is armed in this demo: no
-                external messages were sent.
+                Approved. Lead-response automation is armed - open Kasi Flow to
+                see the rule land. No external messages were sent.
               </p>
               <button
                 type="button"
@@ -551,7 +587,11 @@ export function KasiIntelligenceDemo() {
                   type="button"
                   onClick={() => {
                     setQuery(h.query);
-                    setAnswer(answers[h.answerId] ?? resolveQuery(h.query));
+                    setAnswer(
+                      answers[h.answerId] ??
+                        resolveQuery(h.query) ??
+                        unknownAnswer(h.query),
+                    );
                     setInspected([...inspectionOrder]);
                     setInspecting(false);
                     go("answer");

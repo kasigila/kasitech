@@ -233,3 +233,21 @@ export function formatTzs(amount: number) {
 export function getFeaturedEvent() {
   return events.find((e) => e.id === featuredEventId) ?? events[0];
 }
+
+export const floorPlanZones = [
+  {
+    id: "booths-a",
+    label: "VIP BOOTHS · ROW A",
+    style: { left: "6%", top: "10%", width: "88%", height: "14%" },
+  },
+  {
+    id: "booths-mid",
+    label: "SIGNATURE BOOTHS",
+    style: { left: "32%", top: "26%", width: "42%", height: "16%" },
+  },
+  {
+    id: "booths-b",
+    label: "VIP BOOTHS · ROW B",
+    style: { left: "6%", top: "68%", width: "40%", height: "14%" },
+  },
+] as const;

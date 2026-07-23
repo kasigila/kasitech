@@ -87,6 +87,7 @@ export type Alert = {
   severity: "Critical" | "Warn" | "Info";
   message: string;
   time: string;
+  shipmentId?: string;
 };
 
 export const demoTrackId = "ATL-48291";
@@ -162,7 +163,16 @@ export function estimateQuote(opts: {
   width: number;
   height: number;
   goods: string;
-}): { base: number; fuel: number; handling: number; total: number; days: number } {
+}): {
+  base: number;
+  fuel: number;
+  handling: number;
+  total: number;
+  days: number;
+  actualKg: number;
+  volumetricKg: number;
+  chargeableKg: number;
+} {
   const vol = (opts.length * opts.width * opts.height) / 5000;
   const chargeable = Math.max(opts.weightKg, vol);
   const distanceFactor =
@@ -186,7 +196,16 @@ export function estimateQuote(opts: {
   const total = base + fuel + handling;
   const days =
     distanceFactor > 1.2 ? 3 : opts.origin === opts.destination ? 1 : 2;
-  return { base, fuel, handling, total, days };
+  return {
+    base,
+    fuel,
+    handling,
+    total,
+    days,
+    actualKg: opts.weightKg,
+    volumetricKg: Math.round(vol * 10) / 10,
+    chargeableKg: Math.round(chargeable * 10) / 10,
+  };
 }
 
 export function formatTzs(n: number) {
@@ -415,6 +434,7 @@ export const fleetAlerts: Alert[] = [
     severity: "Critical",
     message: "Temperature excursion risk on pharma lane ATL-48102",
     time: "10:18",
+    shipmentId: "ATL-48102",
   },
 ];
 

@@ -91,6 +91,8 @@ export type PortalResult = {
   orderedBy: string;
   date: string;
   status: "Ready" | "Pending";
+  plainLanguage?: string;
+  resultValue?: string;
 };
 
 export type BizProvider = {
@@ -310,6 +312,63 @@ export function getDoctor(id: string) {
   return doctors.find((d) => d.id === id);
 }
 
+export function getDoctorFitReasons(
+  doctor: Doctor,
+  visitType: "In-person" | "Telehealth",
+): string[] {
+  const reasons: string[] = [];
+  reasons.push(
+    `Speaks ${doctor.languages.slice(0, 2).join(" and ")}${doctor.languages.length > 2 ? ", and more" : ""}`,
+  );
+  if (doctor.insurance.includes("NHIF")) {
+    reasons.push("Accepts NHIF for eligible visits");
+  } else {
+    reasons.push(`Plans: ${doctor.insurance.slice(0, 3).join(", ")}`);
+  }
+  if (visitType === "Telehealth" && doctor.telehealth) {
+    reasons.push("Telehealth slot with secure video check-in");
+  } else if (doctor.telehealth) {
+    reasons.push("Telehealth available if you need a follow-up from home");
+  } else {
+    reasons.push("In-person care at " + doctor.clinic);
+  }
+  return reasons;
+}
+
+export type CareCard = {
+  bring: string[];
+  nhifNote: string;
+  telehealthNote?: string;
+};
+
+export function getCareCard(
+  visitType: "In-person" | "Telehealth",
+): CareCard {
+  if (visitType === "Telehealth") {
+    return {
+      bring: [
+        "Photo ID ready for screen share",
+        "List of current medications",
+        "Quiet room and stable connection",
+      ],
+      nhifNote:
+        "NHIF telehealth claims vary by facility. Bring your member number; reception will confirm coverage before your visit.",
+      telehealthNote:
+        "Join from the portal 5 minutes early. Link activates at appointment time (demo).",
+    };
+  }
+  return {
+    bring: [
+      "National ID or passport",
+      "Insurance card or NHIF member number",
+      "Prior labs or referral letters if you have them",
+    ],
+    nhifNote:
+      "If using NHIF, arrive 15 minutes early for card verification at reception.",
+    telehealthNote: undefined,
+  };
+}
+
 export const portalAppointments: PortalAppointment[] = [
   {
     id: "PA-221",
@@ -408,6 +467,9 @@ export const portalResults: PortalResult[] = [
     orderedBy: "Dr. Asha Mwangi",
     date: "20 Jul 2026",
     status: "Ready",
+    resultValue: "Total cholesterol 5.1 mmol/L · LDL 3.2 · HDL 1.3",
+    plainLanguage:
+      "Your cholesterol is in a moderate range. LDL is slightly above the ideal target many clinicians use for heart risk. This does not mean you need medication today, but it is worth discussing diet, activity, and family history at your cardiology visit.",
   },
   {
     id: "RES-74",

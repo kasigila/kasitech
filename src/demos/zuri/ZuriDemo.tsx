@@ -7,12 +7,14 @@ import { DemoChrome } from "@/components/site/DemoChrome";
 import { cn } from "@/lib/cn";
 import {
   addons,
+  buildPersonalItinerary,
   conciergeQuestions,
   contentBlocks,
   coordinates,
   dayMoments,
   diningNotes,
   experiences,
+  findConciergeByQuery,
   heroImage,
   initialBookings,
   initialGuestRequests,
@@ -228,6 +230,7 @@ export default function ZuriDemo() {
         addons: booking.selectedAddons
           .map((id) => addons.find((a) => a.id === id)?.name ?? "")
           .filter(Boolean),
+        justNow: true,
       };
       setBizBookings((list) => [newBooking, ...list]);
     }
@@ -854,7 +857,7 @@ export default function ZuriDemo() {
               )}
 
               {bookingStep === 9 && booking.bookingRef && (
-                <div className="space-y-4 text-center">
+                <div className="space-y-6 text-center">
                   <p className="text-[11px] tracking-[0.18em] text-[#52777A]">
                     YOU&apos;RE CONFIRMED
                   </p>
@@ -868,6 +871,44 @@ export default function ZuriDemo() {
                     {selectedRoomData?.name} · {booking.checkIn} to{" "}
                     {booking.checkOut} · {formatMoney(grandTotal)}
                   </p>
+                  <div className="mx-auto max-w-md border border-[#27251F]/15 bg-[#E8DDCB]/35 px-4 py-5 text-left">
+                    <p className="text-[11px] tracking-[0.18em] text-[#52777A]">
+                      YOUR DAY AT ZURI
+                    </p>
+                    <p className="mt-1 text-xs text-[#27251F]/60">
+                      Personal rhythm{booking.selectedAddons.length ? ", updated for your add-ons" : ""}.
+                    </p>
+                    <ul className="mt-4 space-y-0 border-t border-[#27251F]/10">
+                      {buildPersonalItinerary(booking.selectedAddons).map(
+                        (item) => (
+                          <li
+                            key={`${item.time}-${item.title}`}
+                            className={cn(
+                              "border-b border-[#27251F]/10 py-3",
+                              item.highlighted && "bg-[#52777A]/10 px-2 -mx-2",
+                            )}
+                          >
+                            <div className="flex gap-3">
+                              <span className="w-14 shrink-0 font-mono text-xs text-[#52777A]">
+                                {item.time}
+                              </span>
+                              <div>
+                                <p
+                                  className="text-base"
+                                  style={serifStyle}
+                                >
+                                  {item.title}
+                                </p>
+                                <p className="mt-1 text-xs leading-relaxed text-[#27251F]/70">
+                                  {item.note}
+                                </p>
+                              </div>
+                            </div>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
                   <p className="text-xs text-[#27251F]/55">
                     Confirmation appears in Business View → Bookings.
                   </p>
@@ -978,6 +1019,13 @@ function GuestView({
   setDayMoment: (m: DayMoment | null) => void;
   setConcierge: (q: ConciergeQA | null) => void;
 }) {
+  const [askText, setAskText] = useState("");
+
+  function submitAsk() {
+    const match = findConciergeByQuery(askText);
+    if (match) setConcierge(match);
+  }
+
   return (
     <>
       {/* Hero */}
@@ -1255,9 +1303,30 @@ function GuestView({
             YOUR CONCIERGE.
           </h2>
           <p className="mt-4 max-w-xl text-sm text-[#27251F]/75">
-            Predefined questions with actionable answers, demo of an intelligent
-            guest assistant.
+            Predefined questions with actionable answers, or type your own. Demo
+            of an intelligent guest assistant.
           </p>
+          <form
+            className="mt-8 flex flex-col gap-2 sm:flex-row"
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitAsk();
+            }}
+          >
+            <input
+              value={askText}
+              onChange={(e) => setAskText(e.target.value)}
+              placeholder="Ask anything: spa, airport transfer, tomorrow…"
+              className="flex-1 border border-[#27251F]/20 bg-[#F7F3EA] px-4 py-3 text-sm placeholder:text-[#27251F]/40"
+            />
+            <button
+              type="submit"
+              disabled={!askText.trim()}
+              className="bg-[#27251F] px-6 py-3 text-[11px] tracking-[0.14em] text-[#F7F3EA] disabled:opacity-40"
+            >
+              ASK ZURI
+            </button>
+          </form>
           <div className="mt-10 grid gap-3 sm:grid-cols-2">
             {conciergeQuestions.map((q) => (
               <button
@@ -1404,10 +1473,22 @@ function BusinessView({
                 return (
                   <div
                     key={b.id}
-                    className="flex flex-col gap-2 border border-[#27251F]/10 p-4 sm:flex-row sm:items-center sm:justify-between"
+                    className={cn(
+                      "flex flex-col gap-2 border p-4 sm:flex-row sm:items-center sm:justify-between",
+                      b.justNow
+                        ? "border-[#52777A] bg-[#E8DDCB]/50"
+                        : "border-[#27251F]/10",
+                    )}
                   >
                     <div>
-                      <p className="font-mono text-xs text-[#52777A]">{b.id}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-mono text-xs text-[#52777A]">{b.id}</p>
+                        {b.justNow && (
+                          <span className="bg-[#52777A] px-2 py-0.5 font-mono text-[9px] tracking-[0.16em] text-[#F7F3EA]">
+                            JUST NOW
+                          </span>
+                        )}
+                      </div>
                       <p className="mt-1 font-medium">{b.guest}</p>
                       <p className="text-sm text-[#27251F]/65">
                         {room?.name} · {b.checkIn} → {b.checkOut} · {b.guests}{" "}

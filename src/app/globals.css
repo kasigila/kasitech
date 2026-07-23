@@ -74,3 +74,19 @@ body {
 .text-balance {
   text-wrap: balance;
 }
+
+/* Fluid display scale for hero-level type */
+.kasi-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(2.75rem, 7.5vw, 5.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+
+.kasi-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--kasi-grey);
+}

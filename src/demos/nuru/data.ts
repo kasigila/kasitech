@@ -461,14 +461,14 @@ export const studentCourses: Course[] = [
     code: "ENT 210",
     name: "Venture Design Studio",
     credits: 4,
-    grade: ": ",
+    grade: "",
     status: "In progress",
   },
   {
     code: "FIN 205",
     name: "SME Financial Modeling",
     credits: 3,
-    grade: ": ",
+    grade: "",
     status: "In progress",
   },
   {
@@ -710,7 +710,20 @@ export function suggestFromFuture(input: {
     new Set(picks.flatMap((p) => p.careers).slice(0, 6)),
   );
 
-  return { programs: picks, careers };
+  const paths = picks.map((p) => ({
+    interest:
+      input.interests.find((i) =>
+        p.interestTags.some((t) =>
+          i.toLowerCase().includes(t.toLowerCase().split(" ")[0] ?? ""),
+        ),
+      ) ??
+      input.interests[0] ??
+      "What energizes you",
+    program: p.name,
+    job: p.careers[0] ?? "Graduate role",
+  }));
+
+  return { programs: picks, careers, paths };
 }
 
 export const heroImage =

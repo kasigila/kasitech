@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { DemoChrome } from "@/components/site/DemoChrome";
 import {
   atlasColors as c,
@@ -14,7 +14,8 @@ import {
   demoTrackId,
   drivers,
   estimateQuote,
-  fleetAlerts,
+  fleetAlerts as initialFleetAlerts,
+  type Alert,
   formatTzs,
   goodsTypes,
   mono,
@@ -89,8 +90,31 @@ export function AtlasDemo() {
   const [portalTab, setPortalTab] = useState<PortalTab>("shipments");
   const [fleetTab, setFleetTab] = useState<FleetTab>("vehicles");
   const [bizTab, setBizTab] = useState<BizTab>("overview");
+  const [quoteMathStep, setQuoteMathStep] = useState(0);
+  const [alerts, setAlerts] = useState<Alert[]>(() => [...initialFleetAlerts]);
+  const [shipmentEtas, setShipmentEtas] = useState<Record<string, string>>({});
 
   const currentStop = trackStops[Math.min(activeStop, trackStops.length - 1)];
+
+  const displayShipments = useMemo(
+    () =>
+      bizShipments.map((s) => ({
+        ...s,
+        eta: shipmentEtas[s.id] ?? s.eta,
+      })),
+    [shipmentEtas],
+  );
+
+  const resolveAlert = useCallback((alertId: string) => {
+    const alert = alerts.find((a) => a.id === alertId);
+    setAlerts((prev) => prev.filter((a) => a.id !== alertId));
+    if (alert?.shipmentId) {
+      setShipmentEtas((prev) => ({
+        ...prev,
+        [alert.shipmentId!]: "24 Jul 14:30 (revised, cold chain cleared)",
+      }));
+    }
+  }, [alerts]);
 
   const quotePreview = useMemo(() => {
     const w = Number(weight) || 0;
@@ -140,6 +164,7 @@ export function AtlasDemo() {
     e.preventDefault();
     if (!quotePreview) return;
     setQuote(quotePreview);
+    setQuoteMathStep(0);
   }
 
   function bookShipment() {
@@ -364,6 +389,13 @@ export function AtlasDemo() {
               </h1>
               <p className="mt-1 text-sm text-[#5A6A7A]">
                 Mwanza → Arusha · ETA today 11:00-13:00
+              </p>
+              <p
+                className="mt-2 inline-block border border-[#FF6A00]/35 bg-[#FFF4EC] px-3 py-1.5 text-xs text-[#1E4A7A]"
+                style={mono}
+                role="status"
+              >
+                Delayed 18 min at hub · delivery window still 11:00-13:00 EAT
               </p>
             </div>
             <form className="flex gap-2" onSubmit={runTrack}>
@@ -654,6 +686,42 @@ export function AtlasDemo() {
               >
                 Estimate
               </p>
+              <div className="mt-4 space-y-2 border border-[#D0D7DE] bg-[#F4F6F8] p-4 text-sm">
+                <p
+                  className="text-[11px] uppercase tracking-[0.12em] text-[#1E4A7A]"
+                  style={mono}
+                >
+                  Chargeable weight
+                </p>
+                {(
+                  [
+                    `Actual weight: ${quote.actualKg} kg`,
+                    `Volumetric (L×W×H ÷ 5000): ${quote.volumetricKg} kg`,
+                    quote.volumetricKg > quote.actualKg
+                      ? `Billable: volumetric wins at ${quote.chargeableKg} kg`
+                      : `Billable: actual weight at ${quote.chargeableKg} kg`,
+                  ] as const
+                )
+                  .slice(0, quoteMathStep + 1)
+                  .map((line) => (
+                    <p key={line} className="text-[#0F1A24]" style={mono}>
+                      {line}
+                    </p>
+                  ))}
+                {quoteMathStep < 2 && (
+                  <button
+                    type="button"
+                    className="mt-2 text-xs font-medium text-[#FF6A00] underline-offset-2 hover:underline"
+                    onClick={() =>
+                      setQuoteMathStep((s) => Math.min(2, s + 1))
+                    }
+                  >
+                    {quoteMathStep === 0
+                      ? "Show volumetric step"
+                      : "Show billable weight"}
+                  </button>
+                )}
+              </div>
               <dl className="mt-4 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-[#5A6A7A]">Base freight</dt>
@@ -787,7 +855,7 @@ export function AtlasDemo() {
                   </tr>
                 </thead>
                 <tbody>
-                  {bizShipments.map((s) => (
+                  {displayShipments.map((s) => (
                     <tr key={s.id} className="border-b border-[#F4F6F8]">
                       <td className="px-4 py-3" style={mono}>
                         <button
@@ -1103,26 +1171,48 @@ export function AtlasDemo() {
 
             {fleetTab === "alerts" && (
               <ul className="divide-y divide-[#F4F6F8]">
-                {fleetAlerts.map((a) => (
-                  <li key={a.id} className="flex gap-4 px-4 py-4 text-sm">
-                    <span
-                      className={`shrink-0 text-[11px] uppercase tracking-[0.1em] ${
-                        a.severity === "Critical"
-                          ? "text-[#FF6A00]"
-                          : a.severity === "Warn"
-                            ? "text-[#1E4A7A]"
-                            : "text-[#5A6A7A]"
-                      }`}
-                      style={mono}
-                    >
-                      {a.severity}
-                    </span>
-                    <div>
-                      <p>{a.message}</p>
-                      <p className="mt-1 text-xs text-[#5A6A7A]" style={mono}>
-                        {a.time}
-                      </p>
+                {alerts.length === 0 && (
+                  <li className="px-4 py-8 text-center text-sm text-[#5A6A7A]">
+                    No open alerts.
+                  </li>
+                )}
+                {alerts.map((a) => (
+                  <li
+                    key={a.id}
+                    className="flex flex-wrap items-start justify-between gap-4 px-4 py-4 text-sm"
+                  >
+                    <div className="flex gap-4">
+                      <span
+                        className={`shrink-0 text-[11px] uppercase tracking-[0.1em] ${
+                          a.severity === "Critical"
+                            ? "text-[#FF6A00]"
+                            : a.severity === "Warn"
+                              ? "text-[#1E4A7A]"
+                              : "text-[#5A6A7A]"
+                        }`}
+                        style={mono}
+                      >
+                        {a.severity}
+                      </span>
+                      <div>
+                        <p>{a.message}</p>
+                        <p className="mt-1 text-xs text-[#5A6A7A]" style={mono}>
+                          {a.time}
+                          {a.shipmentId
+                            ? ` · ${a.shipmentId} ETA ${displayShipments.find((s) => s.id === a.shipmentId)?.eta ?? ""}`
+                            : ""}
+                        </p>
+                      </div>
                     </div>
+                    {a.id === "a3" && (
+                      <button
+                        type="button"
+                        className={btnBlue + " shrink-0 text-xs"}
+                        onClick={() => resolveAlert(a.id)}
+                      >
+                        Resolve alert
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -1185,7 +1275,7 @@ export function AtlasDemo() {
                     ["On-time delivery", bizAnalytics.onTime],
                     ["Fuel burn (7d)", bizAnalytics.fuelBurnL],
                     ["Invoices due", bizInvoices.filter((i) => i.status !== "Paid").length],
-                    ["Open alerts", fleetAlerts.length],
+                    ["Open alerts", alerts.length],
                     ["POD capture", bizAnalytics.podCapture],
                   ] as const
                 ).map(([t, v]) => (
@@ -1212,7 +1302,7 @@ export function AtlasDemo() {
                   </tr>
                 </thead>
                 <tbody>
-                  {bizShipments.map((s) => (
+                  {displayShipments.map((s) => (
                     <tr key={s.id} className="border-b border-[#F4F6F8]">
                       <td className="px-4 py-3" style={mono}>
                         {s.id}

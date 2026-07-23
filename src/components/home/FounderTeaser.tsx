@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export function FounderTeaser() {
   return (
-    <section className="bg-kasi-ivory px-5 py-28 text-kasi-black md:px-8 md:py-36">
-      <div className="mx-auto grid max-w-[1400px] items-center gap-12 lg:grid-cols-2">
+    <section className="bg-kasi-ivory px-5 py-24 text-kasi-black md:px-8 md:py-32">
+      <div className="mx-auto grid max-w-[1400px] items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
         <div className="relative flex aspect-[4/5] items-end overflow-hidden bg-kasi-black p-8 md:p-12">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,#242424,transparent_55%)]" />
           <div className="relative">
@@ -18,28 +18,28 @@ export function FounderTeaser() {
           </div>
         </div>
         <div>
-          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
             FOUNDER
           </p>
-          <h2 className="mt-6 font-display text-5xl leading-[0.95] tracking-[-0.04em] md:text-6xl">
+          <h2 className="mt-5 font-display text-5xl leading-[0.95] tracking-[-0.04em] md:text-6xl">
             KAREN MARIE
             <br />
             KASIGILA
           </h2>
-          <p className="mt-4 text-sm text-kasi-black/70">Founder, KasiTech</p>
-          <p className="mt-2 font-mono text-[11px] tracking-[0.12em] text-kasi-grey">
+          <p className="mt-4 text-sm text-kasi-black/65">Founder, KasiTech</p>
+          <p className="mt-2 font-mono text-[11px] tracking-[0.12em] text-kasi-black/45">
             Data Science × Technology × Entrepreneurship
           </p>
-          <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-black/75">
+          <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-black/70">
             KasiTech exists because digital products should make businesses work
             better, not just look finished. From Dar es Salaam, building for
             operators who need speed without shortcuts.
           </p>
           <Link
             href="/founder"
-            className="mt-8 inline-block text-sm tracking-wide hover:underline"
+            className="mt-8 inline-block text-sm tracking-wide underline decoration-kasi-black/25 underline-offset-4 transition hover:decoration-kasi-black"
           >
-            Meet the Founder →
+            MEET THE FOUNDER →
           </Link>
         </div>
       </div>

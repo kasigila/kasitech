@@ -1,5 +1,15 @@
 export type ProjectStatus = "ready" | "coming";
 
+export type WorkFilterId =
+  | "all"
+  | "websites"
+  | "commerce"
+  | "hospitality"
+  | "entertainment"
+  | "platforms"
+  | "systems"
+  | "ai";
+
 export type Project = {
   id: string;
   number: string;
@@ -9,14 +19,31 @@ export type Project = {
   tags: string[];
   summary: string;
   description: string;
+  /** Short try-this line on Work concept cards */
+  hook: string;
   featured?: boolean;
+  /** Portfolio taxonomy for Work page filters */
+  filters: Exclude<WorkFilterId, "all">[];
   routes: ("website" | "sell" | "platform" | "automation")[];
   keywords: string[];
   status: ProjectStatus;
   accent: string;
   caseStudyPath: string;
   demoPath: string;
+  /** Always concept demos in this catalogue */
+  kind: "concept";
 };
+
+export const workFilters: { id: WorkFilterId; label: string }[] = [
+  { id: "all", label: "ALL" },
+  { id: "websites", label: "Websites" },
+  { id: "commerce", label: "Commerce" },
+  { id: "hospitality", label: "Hospitality" },
+  { id: "entertainment", label: "Entertainment" },
+  { id: "platforms", label: "Platforms" },
+  { id: "systems", label: "Internal Systems" },
+  { id: "ai", label: "AI / Automation" },
+];
 
 export const projects: Project[] = [
   {
@@ -29,7 +56,9 @@ export const projects: Project[] = [
     summary: "Digital hospitality · Booking · Guest experience",
     description:
       "A complete digital guest journey, from discovering Zanzibar to booking the stay.",
+    hook: "Try Ask Zuri",
     featured: true,
+    filters: ["hospitality", "commerce"],
     routes: ["sell"],
     keywords: [
       "hotel",
@@ -46,6 +75,7 @@ export const projects: Project[] = [
     accent: "#E8DDCB",
     caseStudyPath: "/work/zuri",
     demoPath: "/demo/zuri",
+    kind: "concept",
   },
   {
     id: "moto",
@@ -57,6 +87,8 @@ export const projects: Project[] = [
     summary: "Restaurant · Reservations · Ordering",
     description:
       "Open-fire dining with menu, reservations, ordering, and kitchen-ready operations.",
+    hook: "Try the kitchen board",
+    filters: ["hospitality", "commerce"],
     routes: ["sell"],
     keywords: [
       "restaurant",
@@ -72,6 +104,7 @@ export const projects: Project[] = [
     accent: "#C45C26",
     caseStudyPath: "/work/moto",
     demoPath: "/demo/moto",
+    kind: "concept",
   },
   {
     id: "noir",
@@ -83,7 +116,9 @@ export const projects: Project[] = [
     summary: "Events · Ticketing · VIP reservations",
     description:
       "Nightlife energy with event discovery, ticketing, and interactive VIP floor plans.",
+    hook: "Try the VIP pass",
     featured: true,
+    filters: ["entertainment", "commerce"],
     routes: ["sell"],
     keywords: [
       "nightlife",
@@ -99,6 +134,7 @@ export const projects: Project[] = [
     accent: "#FF2A2A",
     caseStudyPath: "/work/noir",
     demoPath: "/demo/noir",
+    kind: "concept",
   },
   {
     id: "soko",
@@ -110,7 +146,9 @@ export const projects: Project[] = [
     summary: "Ecommerce · Payments · Inventory",
     description:
       "Premium fashion ecommerce with size tools, local payments, and operational inventory.",
+    hook: "Try Find My Size",
     featured: true,
+    filters: ["commerce"],
     routes: ["sell"],
     keywords: [
       "ecommerce",
@@ -127,6 +165,7 @@ export const projects: Project[] = [
     accent: "#F4F2EA",
     caseStudyPath: "/work/soko",
     demoPath: "/demo/soko",
+    kind: "concept",
   },
   {
     id: "nest",
@@ -138,6 +177,8 @@ export const projects: Project[] = [
     summary: "Real Estate · Search · Listings",
     description:
       "Property discovery with maps, filters, viewings, and neighborhood intelligence.",
+    hook: "Explore a neighborhood day",
+    filters: ["platforms", "websites"],
     routes: ["sell", "platform"],
     keywords: [
       "real estate",
@@ -154,6 +195,7 @@ export const projects: Project[] = [
     accent: "#2F5D50",
     caseStudyPath: "/work/nest",
     demoPath: "/demo/nest",
+    kind: "concept",
   },
   {
     id: "afya",
@@ -165,6 +207,8 @@ export const projects: Project[] = [
     summary: "Healthcare · Appointments · Portal",
     description:
       "Trusted care journeys: find a doctor, book, and manage a calm patient portal.",
+    hook: "Book a care slot",
+    filters: ["websites", "platforms"],
     routes: ["website", "platform"],
     keywords: [
       "healthcare",
@@ -180,6 +224,7 @@ export const projects: Project[] = [
     accent: "#7A8F7A",
     caseStudyPath: "/work/afya",
     demoPath: "/demo/afya",
+    kind: "concept",
   },
   {
     id: "amani",
@@ -191,6 +236,8 @@ export const projects: Project[] = [
     summary: "Corporate · Content · Credibility",
     description:
       "Institutional presence for strategy firms, law practices, and professional services.",
+    hook: "Open the expansion case",
+    filters: ["websites"],
     routes: ["website"],
     keywords: [
       "law",
@@ -207,6 +254,7 @@ export const projects: Project[] = [
     accent: "#C4A574",
     caseStudyPath: "/work/amani",
     demoPath: "/demo/amani",
+    kind: "concept",
   },
   {
     id: "atlas",
@@ -218,6 +266,8 @@ export const projects: Project[] = [
     summary: "Logistics · Tracking · Operations",
     description:
       "Shipment tracking, quoting, fleet visibility, and B2B logistics portals.",
+    hook: "Track ATL-48291",
+    filters: ["platforms", "systems"],
     routes: ["platform", "automation"],
     keywords: [
       "logistics",
@@ -233,6 +283,7 @@ export const projects: Project[] = [
     accent: "#FF6A00",
     caseStudyPath: "/work/atlas",
     demoPath: "/demo/atlas",
+    kind: "concept",
   },
   {
     id: "nuru",
@@ -244,6 +295,8 @@ export const projects: Project[] = [
     summary: "Education · Admissions · Portal",
     description:
       "Program discovery, applications, and student portals that reduce admissions friction.",
+    hook: "Build your future path",
+    filters: ["websites", "platforms"],
     routes: ["website", "platform"],
     keywords: [
       "school",
@@ -259,6 +312,7 @@ export const projects: Project[] = [
     accent: "#1E4FD6",
     caseStudyPath: "/work/nuru",
     demoPath: "/demo/nuru",
+    kind: "concept",
   },
   {
     id: "impact",
@@ -270,6 +324,8 @@ export const projects: Project[] = [
     summary: "Nonprofit · Storytelling · Donations",
     description:
       "Human stories, transparent impact reporting, and donation journeys that build trust.",
+    hook: "Follow a donation",
+    filters: ["websites"],
     routes: ["website"],
     keywords: [
       "ngo",
@@ -284,6 +340,7 @@ export const projects: Project[] = [
     accent: "#8B7355",
     caseStudyPath: "/work/impact",
     demoPath: "/demo/impact",
+    kind: "concept",
   },
   {
     id: "kasi-flow",
@@ -295,7 +352,9 @@ export const projects: Project[] = [
     summary: "Operations · CRM · Analytics",
     description:
       "Custom business software for CRM, finance, inventory, team, and command-driven ops.",
+    hook: "Try the command bar",
     featured: true,
+    filters: ["systems", "platforms"],
     routes: ["platform", "automation"],
     keywords: [
       "dashboard",
@@ -313,6 +372,7 @@ export const projects: Project[] = [
     accent: "#C7FF00",
     caseStudyPath: "/work/kasi-flow",
     demoPath: "/demo/kasi-flow",
+    kind: "concept",
   },
   {
     id: "kasi-intelligence",
@@ -324,6 +384,8 @@ export const projects: Project[] = [
     summary: "AI · Data · Automation",
     description:
       "Ask your business questions, see evidence, and approve automations before they run.",
+    hook: "Ask with evidence",
+    filters: ["ai"],
     routes: ["automation"],
     keywords: [
       "ai",
@@ -339,10 +401,16 @@ export const projects: Project[] = [
     accent: "#C7FF00",
     caseStudyPath: "/work/kasi-intelligence",
     demoPath: "/demo/kasi-intelligence",
+    kind: "concept",
   },
 ];
 
 export const featuredProjects = projects.filter((p) => p.featured);
+
+export function filterProjects(filter: WorkFilterId) {
+  if (filter === "all") return projects;
+  return projects.filter((p) => p.filters.includes(filter));
+}
 
 export function getProject(slug: string) {
   return projects.find((p) => p.slug === slug);
@@ -358,25 +426,25 @@ export type PortfolioRoute = {
 export const portfolioRoutes: PortfolioRoute[] = [
   {
     id: "website",
-    title: "I NEED A WEBSITE",
+    title: "A WEBSITE",
     description: "Brand, corporate, healthcare, education, and local business.",
     projectSlugs: ["amani", "afya", "nuru", "impact"],
   },
   {
     id: "sell",
-    title: "I NEED TO SELL OR TAKE BOOKINGS",
+    title: "SELL / TAKE BOOKINGS",
     description: "Ecommerce, hospitality, restaurants, and events.",
     projectSlugs: ["zuri", "moto", "noir", "soko", "nest"],
   },
   {
     id: "platform",
-    title: "I NEED A PLATFORM OR SYSTEM",
+    title: "A PLATFORM / SYSTEM",
     description: "Portals, marketplaces, dashboards, and operational software.",
     projectSlugs: ["kasi-flow", "nest", "atlas", "afya", "nuru"],
   },
   {
     id: "automation",
-    title: "I WANT TO AUTOMATE MY BUSINESS",
+    title: "AUTOMATE MY BUSINESS",
     description: "AI, data, workflows, and integrations.",
     projectSlugs: ["kasi-intelligence", "kasi-flow", "atlas"],
   },

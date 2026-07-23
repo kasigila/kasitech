@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DemoChrome } from "@/components/site/DemoChrome";
 import {
   categories,
   condensedStyle,
+  floorTables,
   formatTzs,
   heroImage,
   menuItems as initialMenu,
@@ -26,6 +27,14 @@ type CustomerSection = "home" | "menu" | "order" | "book";
 type TimeMode = "auto" | "lunch" | "dinner";
 type CartLine = { itemId: string; qty: number };
 
+type GuestOrderPhase = "grill" | "preparing" | "ready";
+
+function guestStatusCopy(phase: GuestOrderPhase) {
+  if (phase === "grill") return "Your food is on the grill.";
+  if (phase === "preparing") return "We're preparing your order.";
+  return "Your order is ready for pickup.";
+}
+
 function uid(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 }
@@ -45,6 +54,8 @@ export function MotoDemo() {
   const [schedule, setSchedule] = useState("ASAP");
   const [address, setAddress] = useState("");
   const [orderConfirm, setOrderConfirm] = useState<string | null>(null);
+  const [guestOrderPhase, setGuestOrderPhase] =
+    useState<GuestOrderPhase | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const [partySize, setPartySize] = useState(2);
@@ -52,6 +63,7 @@ export function MotoDemo() {
   const [bookTime, setBookTime] = useState("19:00");
   const [seating, setSeating] =
     useState<(typeof seatingOptions)[number]>("Indoor");
+  const [selectedTableId, setSelectedTableId] = useState<string | null>("in-2");
   const [occasion, setOccasion] =
     useState<(typeof occasions)[number]>("Just dining");
   const [guestName, setGuestName] = useState("");
@@ -63,6 +75,47 @@ export function MotoDemo() {
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
 
   const lunch = timeMode === "auto" ? isLunchHour() : timeMode === "lunch";
+
+  useEffect(() => {
+    if (!orderConfirm) {
+      setGuestOrderPhase(null);
+      return;
+    }
+    setGuestOrderPhase("grill");
+    const t1 = setTimeout(() => {
+      setGuestOrderPhase("preparing");
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === orderConfirm ? { ...o, status: "preparing" } : o,
+        ),
+      );
+    }, 2800);
+    const t2 = setTimeout(() => {
+      setGuestOrderPhase("ready");
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === orderConfirm ? { ...o, status: "ready" } : o,
+        ),
+      );
+    }, 5800);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [orderConfirm]);
+
+  const bookedTableIds = useMemo(() => {
+    const set = new Set<string>();
+    reservations.forEach((r) => {
+      if (r.table) {
+        const t = floorTables.find(
+          (ft) => ft.label === r.table && ft.zone === r.seating,
+        );
+        if (t) set.add(t.id);
+      }
+    });
+    return set;
+  }, [reservations]);
 
   const cartDetailed = useMemo(() => {
     return cart
@@ -134,19 +187,22 @@ export function MotoDemo() {
     };
     setOrders((prev) => [record, ...prev]);
     setOrderConfirm(id);
+    setGuestOrderPhase("grill");
     setCart([]);
     setCheckoutOpen(false);
   }
 
   function confirmBooking() {
-    if (!guestName.trim()) return;
+    if (!guestName.trim() || !selectedTableId) return;
+    const table = floorTables.find((t) => t.id === selectedTableId);
     const reservation: Reservation = {
       id: uid("RSV"),
       name: guestName.trim(),
       partySize,
       date: bookDate,
       time: bookTime,
-      seating,
+      seating: table?.zone ?? seating,
+      table: table?.label,
       occasion,
       status: "confirmed",
     };
@@ -447,14 +503,52 @@ export function MotoDemo() {
               <p className="mt-3 text-3xl uppercase" style={condensedStyle}>
                 {orderConfirm}
               </p>
+              {guestOrderPhase && (
+                <div className="mt-5 border border-white/10 bg-[#1A1614]/80 p-4">
+                  <p className="font-mono text-[10px] tracking-[0.14em] text-[#8A7E74]">
+                    LIVE STATUS
+                  </p>
+                  <p className="mt-2 text-lg uppercase text-[#F3EDE4]" style={condensedStyle}>
+                    {guestStatusCopy(guestOrderPhase)}
+                  </p>
+                  <div className="mt-4 flex gap-2">
+                    {(
+                      [
+                        ["grill", "On the grill"],
+                        ["preparing", "Preparing"],
+                        ["ready", "Ready"],
+                      ] as const
+                    ).map(([key, label]) => {
+                      const order = ["grill", "preparing", "ready"].indexOf(
+                        guestOrderPhase,
+                      );
+                      const step = ["grill", "preparing", "ready"].indexOf(key);
+                      const active = step <= order;
+                      return (
+                        <div
+                          key={key}
+                          className={`flex-1 border px-2 py-2 text-center font-mono text-[9px] uppercase tracking-[0.1em] ${
+                            active
+                              ? "border-[#C45C26] bg-[#C45C26]/15 text-[#C45C26]"
+                              : "border-white/15 text-[#8A7E74]"
+                          }`}
+                        >
+                          {label}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               <p className="mt-3 text-sm text-[#F3EDE4]/75">
-                Demo checkout complete. Kitchen has your ticket: this ID is
-                fictional demo data.
+                Demo checkout complete. Switch to Business View to see the
+                kitchen ticket.
               </p>
               <button
                 type="button"
                 onClick={() => {
                   setOrderConfirm(null);
+                  setGuestOrderPhase(null);
                   setSection("menu");
                 }}
                 className="mt-6 border border-[#F3EDE4]/40 px-4 py-2 text-xs uppercase tracking-[0.14em]"
@@ -642,7 +736,9 @@ export function MotoDemo() {
                   {bookConfirm.date} at {bookConfirm.time}
                 </li>
                 <li>
-                  {bookConfirm.seating} · {bookConfirm.occasion}
+                  {bookConfirm.seating}
+                  {bookConfirm.table ? ` · Table ${bookConfirm.table}` : ""} ·{" "}
+                  {bookConfirm.occasion}
                 </li>
               </ul>
               <button
@@ -733,14 +829,89 @@ export function MotoDemo() {
 
               <fieldset>
                 <legend className="font-mono text-[10px] tracking-[0.14em] text-[#8A7E74]">
-                  SEATING
+                  SEATING · FLOOR MAP
+                </legend>
+                <p className="mt-1 text-xs text-[#F3EDE4]/55">
+                  Tap a table to choose zone and seat. Grey tables are already
+                  held for tonight.
+                </p>
+                <div className="mt-4 space-y-4">
+                  {(
+                    [
+                      "Indoor",
+                      "Terrace",
+                      "Chef's Counter",
+                    ] as const
+                  ).map((zone) => (
+                    <div key={zone}>
+                      <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#C45C26]">
+                        {zone}
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {floorTables
+                          .filter((t) => t.zone === zone)
+                          .map((t) => {
+                            const held = bookedTableIds.has(t.id);
+                            const selected = selectedTableId === t.id;
+                            const tooSmall = partySize > t.seats;
+                            return (
+                              <button
+                                key={t.id}
+                                type="button"
+                                disabled={held || tooSmall}
+                                onClick={() => {
+                                  setSelectedTableId(t.id);
+                                  setSeating(t.zone);
+                                }}
+                                className={`min-w-[3.25rem] border px-3 py-2 font-mono text-xs ${
+                                  held || tooSmall
+                                    ? "cursor-not-allowed border-white/10 text-[#8A7E74]/50 line-through"
+                                    : selected
+                                      ? "border-[#C45C26] bg-[#C45C26] text-[#1A1614]"
+                                      : "border-white/15 text-[#F3EDE4]/80 hover:border-[#C45C26]"
+                                }`}
+                                title={`Seats ${t.seats}`}
+                              >
+                                {t.label}
+                                <span className="mt-0.5 block text-[8px] opacity-70">
+                                  {t.seats}p
+                                </span>
+                              </button>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {selectedTableId && (
+                  <p className="mt-3 text-sm text-[#F3EDE4]/75">
+                    Selected:{" "}
+                    <span className="text-[#C45C26]">
+                      {floorTables.find((t) => t.id === selectedTableId)?.label}{" "}
+                      · {seating}
+                    </span>
+                  </p>
+                )}
+              </fieldset>
+
+              <fieldset>
+                <legend className="font-mono text-[10px] tracking-[0.14em] text-[#8A7E74]">
+                  SEATING TYPE
                 </legend>
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {seatingOptions.map((s) => (
                     <button
                       key={s}
                       type="button"
-                      onClick={() => setSeating(s)}
+                      onClick={() => {
+                        setSeating(s);
+                        const first = floorTables.find(
+                          (t) => t.zone === s && t.seats >= partySize,
+                        );
+                        if (first && !bookedTableIds.has(first.id)) {
+                          setSelectedTableId(first.id);
+                        }
+                      }}
                       className={`px-2 py-3 text-[11px] uppercase tracking-[0.1em] ${
                         seating === s
                           ? "bg-[#8B1E1E] text-[#F3EDE4]"
@@ -774,7 +945,8 @@ export function MotoDemo() {
 
               <button
                 type="submit"
-                className="w-full bg-[#C45C26] py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-[#1A1614]"
+                disabled={!selectedTableId}
+                className="w-full bg-[#C45C26] py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-[#1A1614] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Confirm reservation
               </button>
@@ -930,6 +1102,49 @@ export function MotoDemo() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+
+          <div className="mt-10">
+            <h3
+              className="text-xl uppercase text-[#C45C26]"
+              style={condensedStyle}
+            >
+              Kitchen board
+            </h3>
+            <p className="mt-1 font-mono text-[10px] tracking-[0.12em] text-[#8A7E74]">
+              New guest orders appear at the top · Preparing tickets pulse
+            </p>
+            <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+              {orders.map((o) => (
+                <div
+                  key={o.id}
+                  className={`min-w-[220px] shrink-0 border p-4 ${
+                    o.status === "preparing"
+                      ? "animate-pulse border-[#C45C26] bg-[#C45C26]/10"
+                      : "border-white/10 bg-[#2A2420]/40"
+                  }`}
+                >
+                  <div className="flex justify-between gap-2">
+                    <span className="font-mono text-xs text-[#C45C26]">
+                      {o.id}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase text-[#F3EDE4]">
+                      {o.status}
+                    </span>
+                  </div>
+                  <ul className="mt-2 space-y-0.5 text-sm text-[#F3EDE4]/85">
+                    {o.items.map((it, idx) => (
+                      <li key={idx}>
+                        {it.qty}× {it.name}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 font-mono text-[10px] text-[#8A7E74]">
+                    {o.type} · {o.scheduledFor}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
 

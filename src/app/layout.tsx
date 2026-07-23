@@ -30,6 +30,25 @@ export const metadata: Metadata = {
   description:
     "Premium digital technology studio in Dar es Salaam. Websites, booking, ecommerce, software, and AI systems built to work.",
   metadataBase: new URL("https://kasitechinnovations.com"),
+  openGraph: {
+    title: "KasiTech: Digital products that work",
+    description:
+      "Premium digital technology studio in Dar es Salaam. Websites, booking, ecommerce, software, and AI systems built to work.",
+    url: "https://kasitechinnovations.com",
+    siteName: "KasiTech",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KasiTech: Digital products that work",
+    description:
+      "Premium digital technology studio in Dar es Salaam. Websites, booking, ecommerce, software, and AI systems built to work.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

@@ -41,7 +41,7 @@ export function Footer() {
         <div>
           <p className="font-display text-2xl tracking-[-0.03em]">KasiTech</p>
           <p className="mt-3 max-w-xs text-sm text-kasi-grey">
-            Digital technology studio.
+            Digital technology studio. Products that work.
           </p>
           <p className="mt-6 text-sm text-kasi-ivory/80">Dar es Salaam, Tanzania.</p>
           <p className="text-sm text-kasi-grey">Working worldwide.</p>
@@ -54,12 +54,18 @@ export function Footer() {
           {[
             ["/work", "Work"],
             ["/capabilities", "Capabilities"],
-            ["/about", "About"],
             ["/company", "Company"],
-            ["/card", "Digital Card"],
+            ["/founder", "Founder"],
+            ["/start", "Start a Project"],
             ["/faq", "FAQ"],
+            ["/lab", "Lab"],
+            ["/card", "Digital Card"],
           ].map(([href, label]) => (
-            <Link key={href} href={href} className="text-kasi-ivory/80 hover:text-kasi-green">
+            <Link
+              key={href}
+              href={href}
+              className="text-kasi-ivory/80 transition hover:text-kasi-green"
+            >
               {label}
             </Link>
           ))}
@@ -106,7 +112,7 @@ export function Footer() {
             </a>
           ) : (
             <Link href="/start" className="text-sm text-kasi-grey hover:text-kasi-green">
-              Start my project →
+              Start a project →
             </Link>
           )}
         </div>

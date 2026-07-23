@@ -25,7 +25,7 @@ export function BuyCtas({
             : "border border-kasi-green bg-kasi-green px-5 py-3 text-sm text-kasi-black"
         }
       >
-        {compact ? "Start my project →" : "START MY PROJECT ↗"}
+        {compact ? "Start a project →" : "START A PROJECT →"}
       </Link>
       {hasWhatsApp() && (
         <a

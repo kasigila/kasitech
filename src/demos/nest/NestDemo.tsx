@@ -19,6 +19,9 @@ import {
   placeCategories,
   propertyTypes,
   viewingSlots,
+  getTuesdayDayStrip,
+  buildViewingWhatsAppMessage,
+  demoAgentWhatsApp,
   type Listing,
   type LocationId,
   type PlaceCategory,
@@ -1151,6 +1154,11 @@ function CompareView({
                       />
                     </button>
                     <p className="font-medium">{l.title}</p>
+                    {l.compareTag && (
+                      <span className="mt-1 inline-block border border-[#C4A574]/60 bg-[#F3F1EC] px-2 py-0.5 text-[10px] tracking-wider uppercase text-[#2F5D50]">
+                        {l.compareTag}
+                      </span>
+                    )}
                     <button
                       type="button"
                       onClick={() => onRemove(l.id)}
@@ -1183,6 +1191,14 @@ function CompareView({
                   ))}
                 </tr>
               ))}
+              <tr className="border-t border-[#2F5D50]/10">
+                <td className="py-2.5 pr-4 text-[#1C2420]/55">Fit tag</td>
+                {items.map((l) => (
+                  <td key={l.id} className="py-2.5 pr-4 text-sm">
+                    {l.compareTag ?? "Not tagged"}
+                  </td>
+                ))}
+              </tr>
             </tbody>
           </table>
         </div>
@@ -1320,6 +1336,12 @@ function NeighborhoodView({
   listings: Listing[];
   onOpen: (id: string) => void;
 }) {
+  const areaLabel = nbLocation === "All" ? "Dar" : nbLocation;
+  const dayStrip = useMemo(
+    () => getTuesdayDayStrip(nbLocation),
+    [nbLocation],
+  );
+
   return (
     <div>
       <p className="text-[11px] tracking-[0.16em] uppercase text-[#2F5D50]/70">
@@ -1375,6 +1397,31 @@ function NeighborhoodView({
             {c}
           </button>
         ))}
+      </div>
+
+      <div className="mt-6 border border-[#2F5D50]/15 bg-white/50 p-4">
+        <p className="text-[11px] tracking-[0.14em] uppercase text-[#2F5D50]/70">
+          A Tuesday in {areaLabel}
+        </p>
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+          {dayStrip.map((item) => (
+            <div
+              key={item.label}
+              className="min-w-[140px] shrink-0 border border-[#2F5D50]/12 bg-[#F3F1EC] px-3 py-2.5"
+            >
+              <p className="font-mono text-[10px] text-[#1C2420]/45">
+                {item.time}
+              </p>
+              <p className="mt-1 text-[10px] tracking-wider uppercase text-[#2F5D50]">
+                {item.label}
+              </p>
+              <p className="mt-1 text-xs font-medium">{item.placeName}</p>
+              <p className="mt-0.5 text-[10px] text-[#1C2420]/50">
+                ~{item.travelMin} min from home
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -1559,6 +1606,28 @@ function BookedView({
   type: string;
   onDone: () => void;
 }) {
+  const agent = getAgent(listing.agentId);
+  const [copied, setCopied] = useState(false);
+  const waMessage = buildViewingWhatsAppMessage({
+    listingTitle: listing.title,
+    date,
+    time,
+    type,
+    confirmId: id,
+    agentName: agent?.name ?? "NEST agent",
+  });
+  const waUrl = `https://wa.me/${demoAgentWhatsApp}?text=${encodeURIComponent(waMessage)}`;
+
+  async function copyMessage() {
+    try {
+      await navigator.clipboard.writeText(waMessage);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-md py-12 text-center">
       <p className="text-[11px] tracking-[0.18em] uppercase text-[#2F5D50]/70">
@@ -1575,6 +1644,38 @@ function BookedView({
       <p className="mt-4 font-mono text-[10px] tracking-[0.14em] text-[#1C2420]/40">
         DEMO DATA · FICTIONAL BOOKING
       </p>
+
+      {agent && (
+        <div className="mt-8 border border-[#2F5D50]/15 bg-white/50 p-4 text-left">
+          <p className="text-[11px] tracking-[0.14em] uppercase text-[#2F5D50]/70">
+            Message your agent on WhatsApp
+          </p>
+          <p className="mt-2 whitespace-pre-wrap text-left text-xs leading-relaxed text-[#1C2420]/75">
+            {waMessage}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={copyMessage}
+              className="flex-1 border border-[#2F5D50]/25 py-2.5 text-[11px] uppercase"
+            >
+              {copied ? "Copied" : "Copy message"}
+            </button>
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-[#2F5D50] py-2.5 text-center text-[11px] tracking-[0.12em] text-white uppercase"
+            >
+              Open WhatsApp
+            </a>
+          </div>
+          <p className="mt-2 text-[10px] text-[#1C2420]/45">
+            Demo link · {agent.name}
+          </p>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={onDone}

@@ -134,8 +134,8 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L"],
     stock: { XS: 5, S: 10, M: 9, L: 4 },
     images: [
-      "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1618932260643-eee4a2c4d807?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Bias-cut silk cami with adjustable straps. Layer under the blazer or wear alone for evening.",
@@ -344,8 +344,8 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L"],
     stock: { XS: 1, S: 3, M: 4, L: 2 },
     images: [
-      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Bias slip with a low back and subtle shimmer. For dinners that start late.",
@@ -360,7 +360,7 @@ export const campaignLook: CampaignLook = {
   title: "BETWEEN WORLDS",
   subtitle: "Collection 02 · Four pieces, one evening",
   image:
-    "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1600&q=80",
+    "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1600&q=80",
   pieces: [
     { productId: "silk-slip-cami", role: "Base" },
     { productId: "wide-leg-trouser", role: "Trouser" },

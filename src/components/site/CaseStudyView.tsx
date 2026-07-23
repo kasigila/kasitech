@@ -51,14 +51,22 @@ export function CaseStudyView({ slug }: { slug: string }) {
         <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-green">
           KASI CONCEPT / {content.conceptCode}
         </p>
+        <div className="mt-3 flex flex-wrap items-center gap-3 font-mono text-[10px] tracking-[0.14em] text-kasi-grey">
+          {project && (
+            <>
+              <span>{project.industry.toUpperCase()}</span>
+              <span aria-hidden>·</span>
+            </>
+          )}
+          <span>KASITECH CONCEPT</span>
+          <span aria-hidden>·</span>
+          <span>CAPABILITY DEMO</span>
+        </div>
         <h1 className="mt-6 font-display text-5xl tracking-[-0.04em] md:text-7xl">
           {content.name}
         </h1>
         <p className="mt-6 max-w-2xl text-xl leading-relaxed text-kasi-ivory/90">
           {content.strategic}
-        </p>
-        <p className="mt-4 font-mono text-[10px] tracking-[0.16em] text-kasi-grey">
-          FICTIONAL DEMO · SHOWS WHAT WE CAN BUILD
         </p>
 
         <div className="mt-10 flex flex-wrap gap-4">
@@ -72,7 +80,7 @@ export function CaseStudyView({ slug }: { slug: string }) {
             href="/start"
             className="border border-kasi-border px-6 py-3 text-sm text-kasi-ivory"
           >
-            Build something like this →
+            Start a similar project →
           </Link>
           {hasWhatsApp() && (
             <a
@@ -86,16 +94,28 @@ export function CaseStudyView({ slug }: { slug: string }) {
           )}
         </div>
 
-        <div className="relative mt-14 aspect-[21/9] w-full overflow-hidden border border-kasi-border">
-          <SafeImage
-            src={cover}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="100vw"
-            priority
-            fallbackLabel={content.name}
-          />
+        <div className="mt-14">
+          <div className="overflow-hidden border border-kasi-border bg-[#0d0d0d]">
+            <div className="flex items-center gap-2 border-b border-kasi-border px-3 py-2.5">
+              <span className="h-2 w-2 rounded-full bg-kasi-border" />
+              <span className="h-2 w-2 rounded-full bg-kasi-border" />
+              <span className="h-2 w-2 rounded-full bg-kasi-border" />
+              <span className="ml-2 truncate font-mono text-[10px] tracking-[0.08em] text-kasi-grey">
+                kasitech · {slug}
+              </span>
+            </div>
+            <div className="relative aspect-[21/9] w-full overflow-hidden">
+              <SafeImage
+                src={cover}
+                alt={`${content.name} interface`}
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority
+                fallbackLabel={content.name}
+              />
+            </div>
+          </div>
         </div>
 
         {/* 60-second digest */}
@@ -215,6 +235,20 @@ export function CaseStudyView({ slug }: { slug: string }) {
             Keep exploring the demo →
           </Link>
         </section>
+
+        {project && (
+          <section className="mt-20 border-t border-kasi-border pt-12">
+            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
+              KEEP EXPLORING
+            </p>
+            <Link
+              href="/work"
+              className="mt-4 inline-block font-display text-2xl tracking-[-0.03em] hover:text-kasi-green"
+            >
+              View all work →
+            </Link>
+          </section>
+        )}
       </div>
     </article>
   );
