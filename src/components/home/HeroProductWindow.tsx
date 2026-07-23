@@ -15,7 +15,7 @@ export function HeroProductWindow() {
   useEffect(() => {
     const id = setInterval(() => {
       setIndex((i) => (i + 1) % projects.length);
-    }, 4200);
+    }, 2400);
     return () => clearInterval(id);
   }, []);
 
@@ -40,7 +40,7 @@ export function HeroProductWindow() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.28 }}
           >
             <Link
               href={project.demoPath}
