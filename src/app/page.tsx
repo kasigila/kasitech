@@ -77,14 +77,14 @@ export default function HomePage() {
       </section>
 
       <BeautifulIsntEnough />
+      <div id="work">
+        <SelectedWork />
+      </div>
       <WhatWeBuild />
       <div id="shipped">
         <ShippedWork />
       </div>
       <HowWeEngage />
-      <div id="work">
-        <SelectedWork />
-      </div>
       <AllDemosStrip />
       <PortfolioRouter />
       <HowWeThink />
