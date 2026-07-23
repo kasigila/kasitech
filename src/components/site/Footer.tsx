@@ -57,6 +57,7 @@ export function Footer() {
             ["/about", "About"],
             ["/company", "Company"],
             ["/card", "Digital Card"],
+            ["/faq", "FAQ"],
           ].map(([href, label]) => (
             <Link key={href} href={href} className="text-kasi-ivory/80 hover:text-kasi-green">
               {label}
@@ -101,7 +102,7 @@ export function Footer() {
           </div>
           {hasEmail() ? (
             <a href={emailHref()} className="text-sm hover:text-kasi-green">
-              Email
+              {social.email}
             </a>
           ) : (
             <Link href="/start" className="text-sm text-kasi-grey hover:text-kasi-green">

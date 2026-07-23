@@ -4,8 +4,12 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
 import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
-import { emailHref, hasEmail } from "@/lib/social";
+import { emailHref, hasEmail, social } from "@/lib/social";
 import { cn } from "@/lib/cn";
+import {
+  buildEnquiryMessage,
+  type EnquiryPayload,
+} from "@/lib/enquiry";
 
 type Need =
   | "presence"
@@ -55,6 +59,21 @@ const goalsByNeed: Record<Need, string[]> = {
   ],
 };
 
+const budgets = [
+  "Exploring / not sure yet",
+  "Under $2,000",
+  "$2,000 – $5,000",
+  "$5,000 – $10,000",
+  "$10,000+",
+];
+
+const timelines = [
+  "As soon as possible",
+  "Within 1 month",
+  "1–3 months",
+  "Flexible / planning ahead",
+];
+
 const STORAGE_KEY = "kasi-project-submissions";
 
 export function StartProjectForm() {
@@ -64,12 +83,17 @@ export function StartProjectForm() {
   const [company, setCompany] = useState("");
   const [website, setWebsite] = useState("");
   const [brief, setBrief] = useState("");
+  const [budget, setBudget] = useState("");
+  const [timeline, setTimeline] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
+  const [sending, setSending] = useState(false);
   const [refId, setRefId] = useState("");
+  const [waHref, setWaHref] = useState("");
+  const [mailHref, setMailHref] = useState("");
 
   const goalOptions = useMemo(
     () => (need ? goalsByNeed[need] : []),
@@ -106,12 +130,14 @@ export function StartProjectForm() {
     if (!company.trim()) e.company = "Tell us the business name.";
     if (!brief.trim() || brief.trim().length < 20)
       e.brief = "Give us a short brief: at least a couple of sentences.";
+    if (!budget) e.budget = "Pick a budget range so we can scope honestly.";
+    if (!timeline) e.timeline = "When do you want to move?";
     setErrors(e);
     if (Object.keys(e).length) return;
     setStep(4);
   }
 
-  function submit() {
+  async function submit() {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = "Enter your name.";
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
@@ -121,17 +147,20 @@ export function StartProjectForm() {
     setErrors(e);
     if (Object.keys(e).length) return;
 
+    setSending(true);
     const id = `KT-${Date.now().toString().slice(-6)}`;
-    const payload = {
+    const payload: EnquiryPayload = {
       id,
       need,
       goals,
-      company,
-      website,
-      brief,
-      name,
-      email,
-      phone,
+      company: company.trim(),
+      website: website.trim(),
+      brief: brief.trim(),
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      budget,
+      timeline,
       createdAt: new Date().toISOString(),
     };
 
@@ -142,9 +171,40 @@ export function StartProjectForm() {
       // ignore
     }
 
+    // Best-effort server delivery (Formspree / Resend when configured)
+    try {
+      await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      // WhatsApp is the guaranteed path
+    }
+
+    const message = buildEnquiryMessage(payload);
+    const wa = hasWhatsApp()
+      ? whatsappUrl(message)
+      : "";
+    const mail = hasEmail()
+      ? `${emailHref()}?subject=${encodeURIComponent(
+          `Project enquiry ${id}: ${company}`,
+        )}&body=${encodeURIComponent(message)}`
+      : "";
+
     track("form_complete", { need: need ?? "unknown", ref: id });
     setRefId(id);
+    setWaHref(wa);
+    setMailHref(mail);
     setDone(true);
+    setSending(false);
+
+    // Guaranteed human delivery: open WhatsApp with the full brief
+    if (wa) {
+      window.location.href = wa;
+    } else if (mail) {
+      window.location.href = mail;
+    }
   }
 
   if (done) {
@@ -154,40 +214,48 @@ export function StartProjectForm() {
           {refId}
         </p>
         <h1 className="mt-6 font-display text-5xl tracking-[-0.04em] md:text-7xl">
-          GOT IT.
+          OPENING WHATSAPP…
         </h1>
-        <p className="mt-6 max-w-md text-lg text-kasi-grey">
-          Your brief is ready. Send it to KasiTech via WhatsApp so we can review
-          it and follow up.
+        <p className="mt-6 max-w-lg text-lg text-kasi-grey">
+          Your brief is ready to send. If WhatsApp didn&apos;t open, tap below.
+          We reply within 24 hours on business days.
         </p>
         <div className="mt-10 space-y-4 text-sm">
-          {hasWhatsApp() && (
+          {waHref && (
             <a
-              href={whatsappUrl(
-                `Hi KasiTech: project ${refId} for ${company}.\n\nNeed: ${need}\nGoals: ${goals.join(", ")}\n\n${brief}\n\n:  ${name}\n${email}\n${phone}`,
-              )}
+              href={waHref}
               className="inline-block border border-kasi-green bg-kasi-green px-5 py-3 text-kasi-black"
               onClick={() =>
                 track("whatsapp_click", { source: "start_success" })
               }
             >
-              Send via WhatsApp →
+              Send on WhatsApp →
             </a>
           )}
-          {hasEmail() && (
+          {mailHref && (
             <div>
               <a
-                href={`${emailHref()}?subject=${encodeURIComponent(
-                  `Project enquiry ${refId}: ${company}`,
-                )}&body=${encodeURIComponent(
-                  `Hi KasiTech,\n\nReference: ${refId}\nCompany: ${company}\nNeed: ${need}\nGoals: ${goals.join(", ")}\n\n${brief}\n\n:  ${name}\n${email}\n${phone}`,
-                )}`}
+                href={mailHref}
                 className="inline-block text-kasi-green hover:underline"
               >
                 Or send via email →
               </a>
             </div>
           )}
+          <p className="pt-4 text-kasi-grey">
+            Prefer to message first? WhatsApp{" "}
+            <span className="text-kasi-ivory">+1 269 861 3487</span>
+            {hasEmail() && (
+              <>
+                {" "}
+                or email{" "}
+                <a href={emailHref()} className="text-kasi-green hover:underline">
+                  {social.email}
+                </a>
+              </>
+            )}
+            .
+          </p>
           <div>
             <Link href="/" className="text-kasi-grey hover:text-kasi-ivory">
               Back home
@@ -201,7 +269,7 @@ export function StartProjectForm() {
   return (
     <div className="mx-auto max-w-2xl px-5 py-28 md:px-8">
       <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-        0{step} / 04
+        0{step} / 04 · REPLY WITHIN 24H
       </p>
 
       {step === 1 && (
@@ -211,6 +279,10 @@ export function StartProjectForm() {
             <br />
             NEED HELP WITH?
           </h1>
+          <p className="mt-4 text-sm text-kasi-grey">
+            Taking a limited number of new projects. This brief goes straight to
+            WhatsApp so nothing gets lost.
+          </p>
           <div className="mt-10 space-y-3">
             {needs.map((n) => (
               <button
@@ -336,6 +408,56 @@ export function StartProjectForm() {
                 <p className="mt-2 text-sm text-red-400">{errors.brief}</p>
               )}
             </label>
+            <fieldset>
+              <legend className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
+                BUDGET RANGE
+              </legend>
+              <div className="mt-3 space-y-2">
+                {budgets.map((b) => (
+                  <button
+                    key={b}
+                    type="button"
+                    onClick={() => setBudget(b)}
+                    className={cn(
+                      "block w-full border px-4 py-3 text-left text-sm transition",
+                      budget === b
+                        ? "border-kasi-green bg-kasi-green/10"
+                        : "border-kasi-border hover:border-kasi-grey",
+                    )}
+                  >
+                    {b}
+                  </button>
+                ))}
+              </div>
+              {errors.budget && (
+                <p className="mt-2 text-sm text-red-400">{errors.budget}</p>
+              )}
+            </fieldset>
+            <fieldset>
+              <legend className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
+                TIMELINE
+              </legend>
+              <div className="mt-3 space-y-2">
+                {timelines.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setTimeline(t)}
+                    className={cn(
+                      "block w-full border px-4 py-3 text-left text-sm transition",
+                      timeline === t
+                        ? "border-kasi-green bg-kasi-green/10"
+                        : "border-kasi-border hover:border-kasi-grey",
+                    )}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+              {errors.timeline && (
+                <p className="mt-2 text-sm text-red-400">{errors.timeline}</p>
+              )}
+            </fieldset>
           </div>
           <div className="mt-10 flex gap-4">
             <button
@@ -363,6 +485,9 @@ export function StartProjectForm() {
             <br />
             WE REACH YOU?
           </h1>
+          <p className="mt-4 text-sm text-kasi-grey">
+            Next step opens WhatsApp with your brief so we can reply fast.
+          </p>
           <div className="mt-10 space-y-6">
             <label className="block">
               <span className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
@@ -399,7 +524,7 @@ export function StartProjectForm() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="mt-2 w-full border border-kasi-border bg-transparent px-4 py-3 text-sm outline-none focus:border-kasi-green"
-                placeholder="+255…"
+                placeholder="+255… or your WhatsApp number"
               />
               {errors.phone && (
                 <p className="mt-2 text-sm text-red-400">{errors.phone}</p>
@@ -411,15 +536,17 @@ export function StartProjectForm() {
               type="button"
               onClick={() => setStep(3)}
               className="text-sm text-kasi-grey"
+              disabled={sending}
             >
               ← Back
             </button>
             <button
               type="button"
               onClick={submit}
-              className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
+              disabled={sending}
+              className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black disabled:opacity-60"
             >
-              SEND PROJECT →
+              {sending ? "PREPARING…" : "CONTINUE ON WHATSAPP →"}
             </button>
           </div>
         </>

@@ -10,23 +10,23 @@ export function AllDemosStrip() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-              ALL 12 DEMOS
+              EXAMPLE PRODUCTS
             </p>
             <h2 className="mt-4 font-display text-3xl tracking-[-0.03em] md:text-5xl">
-              EVERY INDUSTRY.
+              PICK AN INDUSTRY.
               <br />
-              A WORKING PRODUCT.
+              TRY THE EXPERIENCE.
             </h2>
             <p className="mt-4 max-w-xl text-kasi-grey">
-              Homepage features four. All twelve are interactive: click any to
-              open the live demo.
+              Twelve interactive examples. Find the one closest to what you need
+              and click in — that&apos;s the kind of product we build.
             </p>
           </div>
           <Link
             href="/work/all"
             className="text-sm text-kasi-green hover:underline"
           >
-            Browse all work →
+            Browse all examples →
           </Link>
         </div>
 

@@ -62,6 +62,7 @@ export const cover = {
   checkout:
     "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1600&q=80",
   code: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1600&q=80",
+  ai: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&q=80",
 } as const;
 
 export const projectCovers: Record<string, string> = {
@@ -76,7 +77,7 @@ export const projectCovers: Record<string, string> = {
   nuru: cover.education,
   impact: cover.community,
   "kasi-flow": cover.dashboard,
-  "kasi-intelligence": cover.dashboard,
+  "kasi-intelligence": cover.ai,
   "000": cover.website,
 };
 

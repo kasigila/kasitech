@@ -2,8 +2,10 @@ import Link from "next/link";
 import { HeroProductWindow } from "@/components/home/HeroProductWindow";
 import { BeautifulIsntEnough } from "@/components/home/BeautifulIsntEnough";
 import { WhatWeBuild } from "@/components/home/WhatWeBuild";
+import { ShippedWork } from "@/components/home/ShippedWork";
 import { SelectedWork } from "@/components/home/SelectedWork";
 import { PortfolioRouter } from "@/components/home/PortfolioRouter";
+import { HowWeEngage } from "@/components/home/HowWeEngage";
 import { HowWeThink } from "@/components/home/HowWeThink";
 import { KasiMeansSpeed } from "@/components/home/KasiMeansSpeed";
 import { WhyKasiTech } from "@/components/home/WhyKasiTech";
@@ -11,6 +13,7 @@ import { BeyondClientWork } from "@/components/home/BeyondClientWork";
 import { FounderTeaser } from "@/components/home/FounderTeaser";
 import { FinalCTA } from "@/components/home/FinalCTA";
 import { AllDemosStrip } from "@/components/home/AllDemosStrip";
+import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
 
 export default function HomePage() {
   return (
@@ -36,14 +39,25 @@ export default function HomePage() {
               >
                 START A PROJECT ↗
               </Link>
+              {hasWhatsApp() && (
+                <a
+                  href={whatsappUrl()}
+                  className="text-sm text-kasi-grey hover:text-kasi-ivory"
+                >
+                  WhatsApp →
+                </a>
+              )}
               <a
-                href="#work"
+                href="#shipped"
                 className="text-sm text-kasi-grey hover:text-kasi-ivory"
               >
-                See live demos ↓
+                See shipped work ↓
               </a>
             </div>
-            <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-kasi-border pt-6 text-[12px] text-kasi-grey">
+            <p className="mt-6 text-[12px] text-kasi-grey">
+              Reply within 24 hours on business days · Limited new projects
+            </p>
+            <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-kasi-border pt-6 text-[12px] text-kasi-grey">
               <p>Dar es Salaam, Tanzania · Working worldwide</p>
               <p className="flex items-center gap-2">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-kasi-green" />
@@ -62,6 +76,10 @@ export default function HomePage() {
 
       <BeautifulIsntEnough />
       <WhatWeBuild />
+      <div id="shipped">
+        <ShippedWork />
+      </div>
+      <HowWeEngage />
       <div id="work">
         <SelectedWork />
       </div>

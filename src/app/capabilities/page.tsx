@@ -82,8 +82,8 @@ export default function CapabilitiesPage() {
           WHAT WE DO.
         </h1>
         <p className="mt-6 max-w-xl text-lg text-kasi-grey">
-          Four categories. Each one shows a real product example: not a word
-          list.
+          Four categories. Each one pairs the craft with an interactive concept
+          demo — examples of what we can build, not client case studies.
         </p>
 
         <div className="mt-20 space-y-28">
@@ -127,7 +127,7 @@ export default function CapabilitiesPage() {
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5">
                           <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-green">
-                            LIVE EXAMPLE
+                            CONCEPT DEMO
                           </p>
                           <p className="mt-2 font-display text-2xl">
                             {example?.name}

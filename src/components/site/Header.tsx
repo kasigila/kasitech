@@ -121,6 +121,18 @@ export function Header() {
                 </Link>
               </div>
             ))}
+            {hasWhatsApp() && (
+              <a
+                href={whatsappUrl()}
+                onClick={() => {
+                  setPanel(null);
+                  track("whatsapp_click", { source: "header" });
+                }}
+                className="text-[13px] tracking-[0.04em] text-kasi-ivory/85 transition hover:text-kasi-green"
+              >
+                WhatsApp
+              </a>
+            )}
             <Link
               href="/start"
               onClick={() => {

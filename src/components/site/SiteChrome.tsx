@@ -9,6 +9,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isDemo = pathname?.startsWith("/demo/");
   const isCard = pathname === "/card";
+  const skipIntro = pathname === "/start" || pathname === "/faq";
 
   // Standalone surfaces: demos + digital business card (no site chrome / intro)
   if (isDemo || isCard) {
@@ -17,7 +18,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <BrandIntro />
+      {!skipIntro && <BrandIntro />}
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

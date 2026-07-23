@@ -31,6 +31,9 @@ export function FinalCTA() {
             </a>
           )}
         </div>
+        <p className="mt-6 text-[12px] text-kasi-grey">
+          We reply within 24 hours on business days.
+        </p>
       </div>
     </section>
   );

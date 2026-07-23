@@ -13,13 +13,13 @@ export function SelectedWork() {
           SELECTED CONCEPTS
         </p>
         <h2 className="mt-6 max-w-3xl font-display text-4xl leading-[1.05] tracking-[-0.04em] md:text-6xl">
-          DON&apos;T TAKE
+          SEE WHAT YOURS
           <br />
-          OUR WORD FOR IT.
+          COULD LOOK LIKE.
         </h2>
         <p className="mt-6 text-lg text-kasi-grey">
-          Four featured demonstrations: then all twelve live products below.
-          Each is a Kasi Concept built to show how we think.
+          These are example products, not client case studies. Each one shows
+          how a business like yours might work with KasiTech.
         </p>
       </div>
 
