@@ -23,7 +23,7 @@ export function HeroProductWindow() {
     <div className="relative mx-auto w-full max-w-md md:mx-0">
       <div className="mb-3 flex items-end justify-between gap-3">
         <p className="max-w-[14rem] text-sm leading-relaxed text-kasi-grey">
-          What your site could feel like — hospitality, commerce, software, and more. Open an example.
+          What your site could feel like: hospitality, commerce, software, and more. Open an example.
         </p>
         <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
           {project.number} / {String(projects.length).padStart(2, "0")}

@@ -1448,8 +1448,8 @@ function CheckoutView({
           {(
             [
               ["dar", "Dar es Salaam: same-day", "Free"],
-              ["tz", "Tanzania mainland: 2–4 days", "TZS 15,000"],
-              ["intl", "International: 7–12 days", "TZS 85,000"],
+              ["tz", "Tanzania mainland: 2-4 days", "TZS 15,000"],
+              ["intl", "International: 7-12 days", "TZS 85,000"],
             ] as const
           ).map(([id, label, fee]) => (
             <button

@@ -52,7 +52,7 @@ export const juneSalesAnswer: QueryAnswer = {
   summary:
     "June revenue fell 14% vs May. The drop concentrated in two channels and one product line, not a company-wide collapse.",
   explanation: [
-    "Online store orders dropped 22% after a 9-day payment gateway outage (7–15 June).",
+    "Online store orders dropped 22% after a 9-day payment gateway outage (7-15 June).",
     "Spice gift boxes (SPC-02) stocked out mid-month; that SKU alone was 11% of May revenue.",
     "Walk-in traffic at Masaki was stable; Arusha weekend traffic dipped 8% during rains.",
     "Return rate stayed flat at 3.1%: quality is not the driver.",
@@ -83,8 +83,8 @@ export const juneSalesAnswer: QueryAnswer = {
   ],
   citations: [
     "Sales ledger · Jun 2026 · demo extract",
-    "Inventory snapshots · SPC-02 zero stock 12–28 Jun",
-    "Gateway incident log · 7–15 Jun (9 days)",
+    "Inventory snapshots · SPC-02 zero stock 12-28 Jun",
+    "Gateway incident log · 7-15 Jun (9 days)",
     "Store footfall · Masaki & Arusha counters",
   ],
 };
@@ -159,7 +159,7 @@ export const opportunity = {
   headline:
     "We lost 14 leads yesterday because average response time exceeded two hours",
   detail:
-    "Inquiry volume peaked 14:00–17:00. Median first reply was 2h 41m. Leads unanswered after 2 hours converted at 4% vs 31% under 30 minutes.",
+    "Inquiry volume peaked 14:00-17:00. Median first reply was 2h 41m. Leads unanswered after 2 hours converted at 4% vs 31% under 30 minutes.",
   evidence: [
     "CRM · 14 new inquiries · 22 Jul",
     "Median response 2h 41m (target < 30m)",

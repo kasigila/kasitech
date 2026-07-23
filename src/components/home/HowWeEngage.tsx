@@ -10,7 +10,7 @@ const tiers = [
       "Contact / enquiry paths",
       "Launch-ready build",
     ],
-    time: "Typically 2–4 weeks",
+    time: "Typically 2-4 weeks",
   },
   {
     name: "COMMERCE",
@@ -21,7 +21,7 @@ const tiers = [
       "Order or reservation handling",
       "Admin basics you can run",
     ],
-    time: "Typically 4–8 weeks",
+    time: "Typically 4-8 weeks",
   },
   {
     name: "CUSTOM",
@@ -73,7 +73,7 @@ export function HowWeEngage() {
         </h2>
         <p className="mt-6 max-w-xl text-lg text-kasi-grey">
           Taking a limited number of new projects. Quotes follow a short
-          discovery — so scope stays honest for both sides.
+          discovery, so scope stays honest for both sides.
         </p>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">

@@ -83,7 +83,7 @@ export default function CapabilitiesPage() {
         </h1>
         <p className="mt-6 max-w-xl text-lg text-kasi-grey">
           Four categories. Each one pairs the craft with an interactive concept
-          demo — examples of what we can build, not client case studies.
+          demo, with examples of what we can build, not client case studies.
         </p>
 
         <div className="mt-20 space-y-28">

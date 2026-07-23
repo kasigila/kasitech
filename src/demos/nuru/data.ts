@@ -264,7 +264,7 @@ export const programs: Program[] = [
     ],
     requirements: [
       "Form VI or diploma",
-      "Portfolio of 8–12 works",
+      "Portfolio of 8-12 works",
       "Statement of purpose",
     ],
     faculty: [
@@ -490,31 +490,31 @@ export const studentCourses: Course[] = [
 export const schedule: ScheduleItem[] = [
   {
     day: "Mon",
-    time: "09:00–11:00",
+    time: "09:00-11:00",
     course: "Venture Design Studio",
     room: "Studio B",
   },
   {
     day: "Tue",
-    time: "11:15–13:15",
+    time: "11:15-13:15",
     course: "SME Financial Modeling",
     room: "Lab 3",
   },
   {
     day: "Wed",
-    time: "14:00–16:00",
+    time: "14:00-16:00",
     course: "Venture Design Studio",
     room: "Studio B",
   },
   {
     day: "Thu",
-    time: "09:00–10:30",
+    time: "09:00-10:30",
     course: "Career Lab",
     room: "Hall A",
   },
   {
     day: "Fri",
-    time: "10:00–12:00",
+    time: "10:00-12:00",
     course: "SME Financial Modeling",
     room: "Lab 3",
   },
@@ -537,7 +537,7 @@ export const announcements: Announcement[] = [
     id: "a3",
     title: "Library hours extended",
     date: "8 Jul 2026",
-    body: "Exam-prep hours: Mon–Thu until 22:00 through end of July.",
+    body: "Exam-prep hours: Mon-Thu until 22:00 through end of July.",
   },
 ];
 

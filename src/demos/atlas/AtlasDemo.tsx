@@ -363,7 +363,7 @@ export function AtlasDemo() {
                 {demoTrackId}
               </h1>
               <p className="mt-1 text-sm text-[#5A6A7A]">
-                Mwanza → Arusha · ETA today 11:00–13:00
+                Mwanza → Arusha · ETA today 11:00-13:00
               </p>
             </div>
             <form className="flex gap-2" onSubmit={runTrack}>
@@ -444,7 +444,7 @@ export function AtlasDemo() {
                   Current:{" "}
                   <span className="text-[#FF6A00]">{currentStop.label}</span>
                   {" · "}
-                  ETA window 11:00–13:00 EAT
+                  ETA window 11:00-13:00 EAT
                 </p>
               </div>
 

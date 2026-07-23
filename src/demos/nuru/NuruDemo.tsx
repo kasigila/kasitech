@@ -662,7 +662,7 @@ export function NuruDemo() {
             {applyStep === 3 && (
               <label className="block text-sm">
                 <span className="text-[#1a1a1a]/60">
-                  Why this program? (150–500 words)
+                  Why this program? (150-500 words)
                 </span>
                 <textarea
                   rows={6}

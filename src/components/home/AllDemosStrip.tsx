@@ -19,7 +19,7 @@ export function AllDemosStrip() {
             </h2>
             <p className="mt-4 max-w-xl text-kasi-grey">
               Twelve interactive examples. Find the one closest to what you need
-              and click in — that&apos;s the kind of product we build.
+              and click in. That&apos;s the kind of product we build.
             </p>
           </div>
           <Link

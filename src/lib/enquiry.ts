@@ -17,13 +17,13 @@ export type EnquiryPayload = {
 
 export function buildEnquiryMessage(p: EnquiryPayload) {
   return [
-    `Hi KasiTech — new project enquiry ${p.id}`,
+    `Hi KasiTech: new project enquiry ${p.id}`,
     ``,
     `Company: ${p.company}`,
-    `Need: ${p.need ?? "—"}`,
-    `Goals: ${p.goals.join(", ") || "—"}`,
-    `Budget: ${p.budget || "—"}`,
-    `Timeline: ${p.timeline || "—"}`,
+    `Need: ${p.need ?? "-"}`,
+    `Goals: ${p.goals.join(", ") || "-"}`,
+    `Budget: ${p.budget || "-"}`,
+    `Timeline: ${p.timeline || "-"}`,
     p.website ? `Website: ${p.website}` : null,
     ``,
     p.brief,

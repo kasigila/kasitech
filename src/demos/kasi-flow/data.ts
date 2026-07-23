@@ -147,7 +147,7 @@ export const customers: Customer[] = [
     phone: "+255 758 990 331",
     status: "Active",
     value: 8900000,
-    notes: ["Seasonal peak Oct–Dec."],
+    notes: ["Seasonal peak Oct-Dec."],
     history: [
       { date: "15 Jul", event: "PO received" },
       { date: "8 Jul", event: "Paid INV-1038" },

@@ -14,7 +14,7 @@ export default function PrivacyPage() {
         </p>
         <p>
           Enquiry data may be stored briefly in your browser, sent to us via
-          WhatsApp or email, and — when configured — processed by our form
+          WhatsApp or email, and when configured, processed by our form
           delivery providers solely to deliver your message.
         </p>
         <p>

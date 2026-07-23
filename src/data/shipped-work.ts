@@ -6,7 +6,7 @@ export const shippedWork = [
     url: "https://climatefinance.co.tz/index.html",
     role: "Website",
     summary:
-      "A live institutional site for climate finance in Tanzania — services, impact, partners, and a clear call to collaborate.",
+      "A live institutional site for climate finance in Tanzania: services, impact, partners, and a clear call to collaborate.",
     location: "Tanzania",
     year: "2026",
   },

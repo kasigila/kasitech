@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "FAQ" };
 const faqs = [
   {
     q: "Do you build simple company websites?",
-    a: "Yes. Presence sites — clear story, mobile-first, enquiry paths — are a core offering. Start there if you need credibility online first.",
+    a: "Yes. Presence sites (clear story, mobile-first, enquiry paths) are a core offering. Start there if you need credibility online first.",
   },
   {
     q: "Are the demos on the homepage real client projects?",
@@ -16,11 +16,11 @@ const faqs = [
   },
   {
     q: "How long does a website take?",
-    a: "A focused presence site is typically 2–4 weeks. Booking or ecommerce is usually 4–8 weeks. Custom systems are scoped after discovery.",
+    a: "A focused presence site is typically 2-4 weeks. Booking or ecommerce is usually 4-8 weeks. Custom systems are scoped after discovery.",
   },
   {
     q: "How do pricing and quotes work?",
-    a: "We quote after a short discovery so scope stays honest. Use Start a Project to share budget range and goals — we reply within 24 hours on business days.",
+    a: "We quote after a short discovery so scope stays honest. Use Start a Project to share budget range and goals. We reply within 24 hours on business days.",
   },
   {
     q: "What do you need from me?",
@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: "Do you support M-Pesa and local payments?",
-    a: "Yes where the project needs it — especially commerce and booking work for East Africa.",
+    a: "Yes where the project needs it, especially commerce and booking work for East Africa.",
   },
   {
     q: "Who hosts the site?",

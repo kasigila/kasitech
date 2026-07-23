@@ -14,8 +14,8 @@ export function ShippedWork() {
           INTERNET.
         </h2>
         <p className="mt-6 max-w-xl text-lg text-kasi-black/65">
-          Real sites for real organisations. Concept demos below show range —
-          this is work that shipped.
+          Real sites for real organisations. Concept demos below show range.
+          This is work that shipped.
         </p>
 
         <div className="mt-16 space-y-8">

@@ -127,7 +127,7 @@ export const trackStops: TrackStop[] = [
   {
     id: "ofd",
     label: "Out for Delivery",
-    detail: "Courier en route · ETA window 11:00–13:00",
+    detail: "Courier en route · ETA window 11:00-13:00",
     time: "23 Jul 10:05",
     mapX: 44,
     mapY: 18,
@@ -276,7 +276,7 @@ export const bizDocs: DocRow[] = [
 export const bizRoutes: RouteRow[] = [
   {
     id: "r1",
-    name: "Lake–Coast Trunk",
+    name: "Lake-Coast Trunk",
     corridor: "Mwanza → Dar",
     transitHrs: 18,
     active: 6,
@@ -338,7 +338,7 @@ export const vehicles: Vehicle[] = [
     plate: "T 903 KL",
     type: "Trailer",
     driver: "Hassan Ally",
-    route: "Lake–Coast Trunk",
+    route: "Lake-Coast Trunk",
     fuel: 71,
     status: "Loading",
   },

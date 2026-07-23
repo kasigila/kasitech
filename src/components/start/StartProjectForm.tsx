@@ -62,15 +62,15 @@ const goalsByNeed: Record<Need, string[]> = {
 const budgets = [
   "Exploring / not sure yet",
   "Under $2,000",
-  "$2,000 – $5,000",
-  "$5,000 – $10,000",
+  "$2,000 - $5,000",
+  "$5,000 - $10,000",
   "$10,000+",
 ];
 
 const timelines = [
   "As soon as possible",
   "Within 1 month",
-  "1–3 months",
+  "1-3 months",
   "Flexible / planning ahead",
 ];
 

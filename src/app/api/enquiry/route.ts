@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     process.env.ENQUIRY_TO_EMAIL?.trim() || social.email;
 
   // Always email Karen (FormSubmit → iCloud until business inbox exists).
-  // First-ever submit sends an activation link to this inbox — confirm once.
+  // First-ever submit sends an activation link to this inbox. Confirm once.
   if (enquiryTo) {
     try {
       const res = await fetch(
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
             goals: body.goals.join(", "),
             budget: body.budget,
             timeline: body.timeline,
-            website: body.website || "—",
+            website: body.website || "-",
             brief: body.brief,
             reference: body.id,
             message,

@@ -1,6 +1,6 @@
 import { social } from "@/lib/social";
 
-/** KasiTech digital business card — source of truth for /card + vCard. */
+/** KasiTech digital business card: source of truth for /card + vCard. */
 export const businessCard = {
   org: "KasiTech",
   fullName: "Karen Marie Kasigila",
