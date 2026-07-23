@@ -68,7 +68,7 @@ export function BrandIntro() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
             >
-              Swahili · speed · pace · momentum
+              /ˈkɑːsi/ n. speed, pace, momentum
             </motion.p>
           )}
         </motion.div>
