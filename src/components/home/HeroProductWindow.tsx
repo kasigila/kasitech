@@ -93,9 +93,25 @@ export function HeroProductWindow() {
 
         <Link
           href="/work#concepts"
-          className="mt-5 inline-block text-[12px] tracking-wide text-kasi-grey transition hover:text-kasi-green"
+          className="group mt-6 flex w-full items-center justify-between gap-4 border border-kasi-green bg-kasi-green/10 px-5 py-4 transition hover:bg-kasi-green hover:text-kasi-black"
         >
-          Browse all examples →
+          <span className="text-left">
+            <span className="block font-mono text-[10px] tracking-[0.16em] text-kasi-green group-hover:text-kasi-black/70">
+              12 INTERACTIVE EXAMPLES
+            </span>
+            <span className="mt-1.5 block font-display text-xl tracking-[-0.02em] md:text-2xl">
+              Browse all example demos
+            </span>
+            <span className="mt-1 block text-sm text-kasi-grey group-hover:text-kasi-black/75">
+              Hotels, shops, clinics, logistics, and more. Pick one and try it.
+            </span>
+          </span>
+          <span
+            aria-hidden
+            className="shrink-0 font-display text-2xl text-kasi-green transition group-hover:translate-x-1 group-hover:text-kasi-black"
+          >
+            →
+          </span>
         </Link>
       </div>
     </div>

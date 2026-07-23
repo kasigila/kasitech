@@ -24,9 +24,14 @@ export function AllDemosStrip() {
           </div>
           <Link
             href="/work/all"
-            className="text-sm text-kasi-green hover:underline"
+            className="group inline-flex min-w-[16rem] flex-col border border-kasi-green bg-kasi-green/10 px-5 py-4 transition hover:bg-kasi-green hover:text-kasi-black"
           >
-            Browse all examples →
+            <span className="font-mono text-[10px] tracking-[0.16em] text-kasi-green group-hover:text-kasi-black/70">
+              12 INTERACTIVE EXAMPLES
+            </span>
+            <span className="mt-1.5 font-display text-xl tracking-[-0.02em]">
+              Browse all example demos →
+            </span>
           </Link>
         </div>
 
