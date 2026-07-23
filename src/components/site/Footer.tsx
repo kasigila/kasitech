@@ -3,7 +3,19 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
-import { whatsappUrl } from "@/lib/whatsapp";
+import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
+import {
+  emailHref,
+  hasEmail,
+  hasInstagram,
+  hasLinkedIn,
+  social,
+} from "@/lib/social";
+import {
+  IconInstagram,
+  IconLinkedIn,
+  IconWhatsApp,
+} from "@/components/site/SocialIcons";
 
 export function Footer() {
   const [time, setTime] = useState("--:--");
@@ -34,7 +46,7 @@ export function Footer() {
           <p className="mt-6 text-sm text-kasi-ivory/80">Dar es Salaam, Tanzania.</p>
           <p className="text-sm text-kasi-grey">Working worldwide.</p>
           <p className="mt-6 font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
-            DAR — {time} EAT
+            DAR · {time} EAT
           </p>
         </div>
 
@@ -51,23 +63,50 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="grid gap-3 text-sm">
-          <a href="https://linkedin.com" className="hover:text-kasi-green">
-            LinkedIn
-          </a>
-          <a href="https://instagram.com" className="hover:text-kasi-green">
-            Instagram
-          </a>
-          <a
-            href={whatsappUrl()}
-            onClick={() => track("whatsapp_click", { source: "footer" })}
-            className="hover:text-kasi-green"
-          >
-            WhatsApp
-          </a>
-          <a href="mailto:hello@kasitech.co" className="hover:text-kasi-green">
-            Email
-          </a>
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center gap-4">
+            {hasLinkedIn() && (
+              <a
+                href={social.linkedin}
+                className="text-kasi-ivory/80 hover:text-kasi-green"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+              >
+                <IconLinkedIn />
+              </a>
+            )}
+            {hasInstagram() && (
+              <a
+                href={social.instagram}
+                className="text-kasi-ivory/80 hover:text-kasi-green"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+              >
+                <IconInstagram />
+              </a>
+            )}
+            {hasWhatsApp() && (
+              <a
+                href={whatsappUrl()}
+                onClick={() => track("whatsapp_click", { source: "footer" })}
+                className="text-kasi-ivory/80 hover:text-kasi-green"
+                aria-label="WhatsApp"
+              >
+                <IconWhatsApp />
+              </a>
+            )}
+          </div>
+          {hasEmail() ? (
+            <a href={emailHref()} className="text-sm hover:text-kasi-green">
+              Email
+            </a>
+          ) : (
+            <Link href="/start" className="text-sm text-kasi-grey hover:text-kasi-green">
+              Start a Project →
+            </Link>
+          )}
         </div>
       </div>
 

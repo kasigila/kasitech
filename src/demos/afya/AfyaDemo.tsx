@@ -300,7 +300,7 @@ export function AfyaDemo() {
               {[
                 {
                   t: "Search with clarity",
-                  d: "Specialty, language, insurance, and telehealth—filters that matter.",
+                  d: "Specialty, language, insurance, and telehealth, filters that matter.",
                 },
                 {
                   t: "Book with confidence",
@@ -308,7 +308,7 @@ export function AfyaDemo() {
                 },
                 {
                   t: "Portal that stays quiet",
-                  d: "Appointments, results, invoices, and messages—no noise.",
+                  d: "Appointments, results, invoices, and messages, no noise.",
                 },
               ].map((x) => (
                 <div key={x.t}>
@@ -660,7 +660,7 @@ export function AfyaDemo() {
                   <option value="">Select a doctor</option>
                   {doctors.map((d) => (
                     <option key={d.id} value={d.id}>
-                      {d.name} — {d.specialty}
+                      {d.name}: {d.specialty}
                     </option>
                   ))}
                 </select>
@@ -787,7 +787,7 @@ export function AfyaDemo() {
               {confirmId}
             </p>
             <p className="mt-2 text-sm text-[#6B756B]">
-              Confirmation ID — keep this for check-in
+              Confirmation ID: keep this for check-in
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <button
@@ -817,7 +817,7 @@ export function AfyaDemo() {
           </h1>
           <p className="mt-2 text-[#6B756B]">
             Signed in as <span className="text-[#1B2A4A]">Maria Kasigila</span>{" "}
-            — fictional demo account
+            - fictional demo account
           </p>
 
           <div
@@ -1008,7 +1008,7 @@ export function AfyaDemo() {
             Clinic operations
           </h1>
           <p className="mt-2 text-[#6B756B]">
-            Providers, schedules, inquiries, and light analytics — demo data.
+            Providers, schedules, inquiries, and light analytics: demo data.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2" role="tablist">

@@ -620,7 +620,7 @@ export default function ZuriDemo() {
                     {availableRooms.length === 0 && (
                       <p className="text-sm text-[#27251F]/70">
                         No residences match these guests right now. Try fewer
-                        guests, or toggle availability in Business View.
+                        guests or toggle availability in Business View.
                       </p>
                     )}
                     {availableRooms.map((room) => (
@@ -830,7 +830,7 @@ export default function ZuriDemo() {
                     </div>
                   </dl>
                   <p className="mt-4 text-xs text-[#27251F]/55">
-                    Demo checkout only — no real payment is processed.
+                    Demo checkout only: no real payment is processed.
                   </p>
                 </StepShell>
               )}
@@ -847,7 +847,7 @@ export default function ZuriDemo() {
                       {formatMoney(grandTotal)}
                     </p>
                     <p className="text-xs text-[#27251F]/60">
-                      Card · M-Pesa · Bank transfer — demo only
+                      Card · M-Pesa · Bank transfer: demo only
                     </p>
                   </div>
                 </StepShell>
@@ -1010,8 +1010,8 @@ function GuestView({
               DIFFERENTLY HERE.
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-[#E8DDCB]/90 md:text-base">
-              A quiet luxury resort on Zanzibar&apos;s western shore—ocean villas,
-              garden residences, and days that refuse to hurry.
+              A quiet luxury resort on Zanzibar&apos;s western shore, ocean villas,
+              garden residences and days that refuse to hurry.
             </p>
             <button
               type="button"
@@ -1038,7 +1038,7 @@ function GuestView({
               FIND YOUR SPACE.
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#27251F]/75 md:text-base">
-              Three residences along one shoreline. Choose by light, privacy, and
+              Three residences along one shoreline. Choose by light, privacy and
               how close you want the water.
             </p>
           </motion.div>
@@ -1129,7 +1129,7 @@ function GuestView({
             SLOW DAYS. CLEAR WATER.
           </h2>
           <p className="mt-4 max-w-xl text-sm text-[#27251F]/75">
-            Reef mornings, spice walks, and a dhow at dusk—curated to feel like
+            Reef mornings, spice walks, and a dhow at dusk, curated to feel like
             belonging, not a checklist.
           </p>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -1255,7 +1255,7 @@ function GuestView({
             YOUR CONCIERGE.
           </h2>
           <p className="mt-4 max-w-xl text-sm text-[#27251F]/75">
-            Predefined questions with actionable answers—demo of an intelligent
+            Predefined questions with actionable answers, demo of an intelligent
             guest assistant.
           </p>
           <div className="mt-10 grid gap-3 sm:grid-cols-2">
@@ -1285,7 +1285,7 @@ function GuestView({
             READY WHEN YOU ARE.
           </h2>
           <p className="mx-auto mt-4 max-w-md text-sm text-[#E8DDCB]/85">
-            Eight clear steps from dates to confirmation—no opaque fees, no dead
+            Eight clear steps from dates to confirmation, no opaque fees, no dead
             ends.
           </p>
           <button
@@ -1367,7 +1367,7 @@ function BusinessView({
               Business View
             </h2>
             <p className="mt-2 text-sm text-[#27251F]/65">
-              Live demo console — same truth guests see when you toggle inventory.
+              Live demo console: same truth guests see when you toggle inventory.
             </p>
           </div>
           <p className="font-mono text-[10px] tracking-[0.14em] text-[#27251F]/45">

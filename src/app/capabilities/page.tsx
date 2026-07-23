@@ -27,7 +27,7 @@ const caps = [
   {
     id: "commerce",
     title: "COMMERCE",
-    intro: "Selling, booking and payments without unnecessary friction.",
+    intro: "Selling, booking, and payments without unnecessary friction.",
     visual: capabilityVisuals.commerce,
     exampleSlug: "soko",
     previewLabel: "Checkout + booking",
@@ -48,9 +48,9 @@ const caps = [
     exampleSlug: "kasi-flow",
     previewLabel: "Ops dashboard",
     items: [
-      { name: "Custom applications", note: "Not templates — your workflows" },
+      { name: "Custom applications", note: "Not templates: your workflows" },
       { name: "Dashboards", note: "See the business at a glance" },
-      { name: "Portals", note: "Customers and staff, separate views" },
+      { name: "Portals", note: "Customers, and staff, separate views" },
       { name: "CRM", note: "People, history, next actions" },
       { name: "Inventory", note: "Stock that stays honest" },
       { name: "Internal systems", note: "Replace the spreadsheet maze" },
@@ -59,7 +59,7 @@ const caps = [
   {
     id: "intelligence",
     title: "INTELLIGENCE",
-    intro: "Data, AI and automation that reduce manual work.",
+    intro: "Data, AI, and automation that reduce manual work.",
     visual: capabilityVisuals.intelligence,
     exampleSlug: "kasi-intelligence",
     previewLabel: "Ask + automate",
@@ -82,7 +82,7 @@ export default function CapabilitiesPage() {
           WHAT WE DO.
         </h1>
         <p className="mt-6 max-w-xl text-lg text-kasi-grey">
-          Four categories. Each one shows a real product example — not a word
+          Four categories. Each one shows a real product example: not a word
           list.
         </p>
 

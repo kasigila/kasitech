@@ -397,7 +397,7 @@ export function NuruDemo() {
           </div>
           {filtered.length === 0 && (
             <p className="mt-10 text-center text-[#1a1a1a]/55">
-              No programs match — widen a filter and try again.
+              No programs match: widen a filter and try again.
             </p>
           )}
         </main>
@@ -725,7 +725,7 @@ export function NuruDemo() {
                   <strong>{personal.name || "Applicant"}</strong> ·{" "}
                   {personal.email || "email pending"}
                 </p>
-                <p>Program: {program?.name ?? "—"}</p>
+                <p>Program: {program?.name ?? ": "}</p>
                 <p>
                   Documents:{" "}
                   {Object.values(docs).filter(Boolean).length}/3 uploaded
@@ -733,7 +733,7 @@ export function NuruDemo() {
                 <p>Essay: {essay ? "Ready" : "Missing"}</p>
                 <p>Fee: {payDone ? "Paid" : "Unpaid"}</p>
                 <p className="text-[#1a1a1a]/55">
-                  Submitting creates a demo application ID — no real data is
+                  Submitting creates a demo application ID: no real data is
                   sent.
                 </p>
               </div>
@@ -964,7 +964,7 @@ export function NuruDemo() {
             BUILD YOUR FUTURE
           </h1>
           <p className="mt-2 text-[#1a1a1a]/70">
-            Answer three short questions — we suggest programs and careers that
+            Answer three short questions: we suggest programs and careers that
             fit.
           </p>
           <div className="mt-6 flex gap-1">

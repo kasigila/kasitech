@@ -1,8 +1,14 @@
-const WHATSAPP_NUMBER = "255700000000"; // Replace with live number when ready
+/** Set your real WhatsApp number (digits only, country code, no +). */
+const WHATSAPP_NUMBER = "12698613487";
+
+export function hasWhatsApp() {
+  return WHATSAPP_NUMBER.length >= 9;
+}
 
 export function whatsappUrl(message?: string) {
+  if (!hasWhatsApp()) return "/start";
   const text = encodeURIComponent(
-    message ?? "Hi KasiTech — I'd like to start a project.",
+    message ?? "Hi KasiTech: I'd like to start a project.",
   );
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
 }

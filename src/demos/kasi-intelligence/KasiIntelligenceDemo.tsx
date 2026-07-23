@@ -156,7 +156,7 @@ export function KasiIntelligenceDemo() {
           </h1>
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/55">
             Plain-language questions against inhabited demo data. Evidence
-            first—no theatre.
+            first, no theatre.
           </p>
           <div className="mt-10 flex gap-2">
             <input
@@ -254,7 +254,7 @@ export function KasiIntelligenceDemo() {
                 <ul className="mt-5 space-y-2 text-sm text-white/70">
                   {answer.explanation.map((line) => (
                     <li key={line} className="flex gap-2">
-                      <span className="text-[#C7FF00]">—</span>
+                      <span className="text-[#C7FF00]">·</span>
                       <span>{line}</span>
                     </li>
                   ))}
@@ -327,7 +327,7 @@ export function KasiIntelligenceDemo() {
             Automation builder
           </h1>
           <p className="mt-2 text-sm text-white/50">
-            WHEN · IF · THEN — nothing runs without preview and approval.
+            WHEN · IF · THEN: nothing runs without preview and approval.
           </p>
 
           <div className="mt-8 space-y-6">
@@ -412,7 +412,7 @@ export function KasiIntelligenceDemo() {
                 </div>
               ) : (
                 <p className="mt-5 text-sm text-[#C7FF00]">
-                  Approved — automation armed in demo mode. No live actions
+                  Approved: automation armed in demo mode. No live actions
                   fired.
                 </p>
               )}
@@ -523,7 +523,7 @@ export function KasiIntelligenceDemo() {
           {oppPhase === "approved" && (
             <div className="mt-8 border border-[#C7FF00]/40 p-5">
               <p className="text-sm text-[#C7FF00]">
-                Approved. Lead-response automation is armed in this demo — no
+                Approved. Lead-response automation is armed in this demo: no
                 external messages were sent.
               </p>
               <button

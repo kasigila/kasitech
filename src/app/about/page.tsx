@@ -20,7 +20,7 @@ export default function AboutPage() {
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-kasi-grey">
             KasiTech is a premium digital technology studio based in Dar es
             Salaam, Tanzania, with global ambitions. We build websites, commerce,
-            software and intelligent systems—starting where businesses need
+            software and intelligent systems, starting where businesses need
             momentum most.
           </p>
           <div className="mt-10 flex flex-wrap gap-6 text-sm">

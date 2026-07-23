@@ -11,31 +11,40 @@ export default function LabPage() {
           KASI LAB
         </p>
         <h1 className="mt-6 font-display text-5xl tracking-[-0.04em] md:text-7xl">
-          EXPERIMENTS
+          WHERE WE
           <br />
-          IN PUBLIC.
+          EXPERIMENT.
         </h1>
         <p className="mt-8 max-w-2xl text-lg text-kasi-grey">
-          Future technology, interactive research, AI prototypes and data
-          visualization. This is where KasiTech explores before packaging.
+          Interactive research, data prototypes, and future product surfaces.
+          Lab work ships when it is ready to explore, not as a promise card.
         </p>
 
         <article className="mt-16 border border-kasi-border p-8 md:p-12">
           <p className="font-mono text-[11px] tracking-[0.16em] text-kasi-grey">
-            FLAGSHIP EXPERIMENT
+            NEXT UP
           </p>
           <h2 className="mt-4 font-display text-3xl tracking-[-0.03em] md:text-5xl">
             DAR, LIVE
           </h2>
           <p className="mt-6 max-w-xl text-kasi-ivory/85">
-            An interactive Dar es Salaam data experience—neighborhoods, business
-            activity, mobility and public datasets. Ask questions like &quot;Where
-            might a new coffee shop perform well?&quot; Analysis is exploratory,
-            not guaranteed advice.
+            An interactive Dar es Salaam data experience, neighbourhoods,
+            activity and public datasets. Not advice; exploratory analysis.
           </p>
-          <p className="mt-6 font-mono text-[11px] tracking-[0.14em] text-kasi-green">
-            IN PROGRESS · PROTOTYPE SURFACE
+          <p className="mt-8 text-sm text-kasi-grey">
+            Meanwhile, explore the products already live:
           </p>
+          <div className="mt-4 flex flex-wrap gap-4 text-sm">
+            <Link href="/demo/kasi-intelligence" className="text-kasi-green hover:underline">
+              Kasi Intelligence →
+            </Link>
+            <Link href="/demo/kasi-flow" className="text-kasi-green hover:underline">
+              Kasi Flow →
+            </Link>
+            <Link href="/work/all" className="text-kasi-grey hover:text-kasi-ivory">
+              All demos →
+            </Link>
+          </div>
         </article>
 
         <Link href="/company" className="mt-12 inline-block text-sm hover:text-kasi-green">

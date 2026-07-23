@@ -84,7 +84,7 @@ export const neemaStory: Story = {
   title: "THIS IS NEEMA.",
   excerpt:
     "Before the water point, Neema walked ninety minutes each morning. Now she is first in her class.",
-  body: "Neema lives on the edge of Ilemela. For years her mornings began before sunrise—bucket, path, queue—so her younger siblings could drink before school. When IMPACT and the ward committee finished the community water point in March, her walk became twelve minutes. She uses the time for mathematics. Her teacher says she is first in her class for the first time. This is not a metaphor. This is what reliable water does for a teenager who wants to become a nurse.",
+  body: "Neema lives on the edge of Ilemela. For years her mornings began before sunrise, bucket, path, queue, so her younger siblings could drink before school. When IMPACT, and the ward committee finished the community water point in March, her walk became twelve minutes. She uses the time for mathematics. Her teacher says she is first in her class for the first time. This is not a metaphor. This is what reliable water does for a teenager who wants to become a nurse.",
   image:
     "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1600&q=80",
   programId: "water",
@@ -113,9 +113,9 @@ export const stories: Story[] = [
     title: "Aisha teaches girls to code.",
     excerpt:
       "After the digital skills lab, she runs Saturday classes for twenty girls in Temeke.",
-    body: "Aisha finished Form VI with no clear path into tech. The Girls Digital Lab gave her a laptop stipend, mentorship, and a first freelance job. She now teaches Saturdays—HTML, spreadsheets, and confidence—in a room that used to store broken desks.",
+    body: "Aisha finished Form VI with no clear path into tech. The Girls Digital Lab gave her a laptop stipend, mentorship, and a first freelance job. She now teaches Saturdays, HTML, spreadsheets, and confidence, in a room that used to store broken desks.",
     image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=1400&q=80",
     programId: "skills",
   },
   {
@@ -285,7 +285,7 @@ export const reports: Report[] = [
     year: 2025,
     type: "Financial",
     summary:
-      "Income, expenditure, program allocation, and reserves — audited.",
+      "Income, expenditure, program allocation, and reserves: audited.",
   },
   {
     id: "r3",
@@ -323,7 +323,7 @@ export const followPath = [
   {
     id: "program",
     label: "Program",
-    detail: "Clean Water Access — community points & hygiene training",
+    detail: "Clean Water Access: community points & hygiene training",
   },
   {
     id: "region",

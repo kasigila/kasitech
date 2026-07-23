@@ -314,7 +314,7 @@ export const menuItems: MenuItem[] = [
     category: "drinks",
     name: "Fire & Ginger",
     description:
-      "Fresh ginger, chilli syrup, lime, soda — zero proof heat.",
+      "Fresh ginger, chilli syrup, lime, soda: zero proof heat.",
     price: 9000,
     dietary: ["vegan", "gluten-free", "dairy-free"],
     allergens: [],

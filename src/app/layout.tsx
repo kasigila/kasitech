@@ -24,11 +24,11 @@ const mono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "KasiTech — Digital products that work",
+    default: "KasiTech: Digital products that work",
     template: "%s · KasiTech",
   },
   description:
-    "Premium digital technology studio in Dar es Salaam. Websites, booking, ecommerce, software and AI systems built to work.",
+    "Premium digital technology studio in Dar es Salaam. Websites, booking, ecommerce, software, and AI systems built to work.",
   metadataBase: new URL("https://kasitech.co"),
 };
 

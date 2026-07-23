@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { whatsappUrl } from "@/lib/whatsapp";
+import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
 
 export function FinalCTA() {
   return (
@@ -20,12 +22,14 @@ export function FinalCTA() {
           >
             START A PROJECT ↗
           </Link>
-          <a
-            href={whatsappUrl()}
-            className="text-sm text-kasi-grey hover:text-kasi-ivory"
-          >
-            WhatsApp →
-          </a>
+          {hasWhatsApp() && (
+            <a
+              href={whatsappUrl()}
+              className="text-sm text-kasi-grey hover:text-kasi-ivory"
+            >
+              WhatsApp →
+            </a>
+          )}
         </div>
       </div>
     </section>

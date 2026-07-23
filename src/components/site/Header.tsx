@@ -4,8 +4,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
-import { whatsappUrl } from "@/lib/whatsapp";
+import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
+import { hasInstagram, hasLinkedIn, social } from "@/lib/social";
 import { featuredProjects } from "@/data/projects";
+import {
+  IconInstagram,
+  IconLinkedIn,
+  IconWhatsApp,
+} from "@/components/site/SocialIcons";
 
 const nav = [
   { href: "/work", label: "Work", panel: "work" as const },
@@ -248,22 +254,40 @@ export function Header() {
             Start a Project ↗
           </Link>
         </nav>
-        <div className="mt-16 space-y-3 text-sm text-kasi-grey">
-          <a href="https://linkedin.com" target="_blank" rel="noreferrer">
-            LinkedIn
-          </a>
-          <br />
-          <a href="https://instagram.com" target="_blank" rel="noreferrer">
-            Instagram
-          </a>
-          <br />
-          <a
-            href={whatsappUrl()}
-            onClick={() => track("whatsapp_click", { source: "mobile_menu" })}
-          >
-            WhatsApp
-          </a>
-          <p className="pt-4 font-mono text-[11px] tracking-[0.12em]">
+        <div className="mt-16 flex flex-wrap items-center gap-5">
+          {hasLinkedIn() && (
+            <a
+              href={social.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+              className="text-kasi-grey hover:text-kasi-green"
+            >
+              <IconLinkedIn />
+            </a>
+          )}
+          {hasInstagram() && (
+            <a
+              href={social.instagram}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+              className="text-kasi-grey hover:text-kasi-green"
+            >
+              <IconInstagram />
+            </a>
+          )}
+          {hasWhatsApp() && (
+            <a
+              href={whatsappUrl()}
+              onClick={() => track("whatsapp_click", { source: "mobile_menu" })}
+              aria-label="WhatsApp"
+              className="text-kasi-grey hover:text-kasi-green"
+            >
+              <IconWhatsApp />
+            </a>
+          )}
+          <p className="w-full pt-2 font-mono text-[11px] tracking-[0.12em] text-kasi-grey">
             Dar es Salaam, Tanzania
           </p>
         </div>

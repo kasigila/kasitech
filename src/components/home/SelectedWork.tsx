@@ -10,7 +10,7 @@ export function SelectedWork() {
     <section className="bg-kasi-black px-5 py-28 md:px-8 md:py-36">
       <div className="mx-auto max-w-[1400px]">
         <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-          SELECTED WORK
+          SELECTED CONCEPTS
         </p>
         <h2 className="mt-6 max-w-3xl font-display text-4xl leading-[1.05] tracking-[-0.04em] md:text-6xl">
           DON&apos;T TAKE
@@ -18,7 +18,8 @@ export function SelectedWork() {
           OUR WORD FOR IT.
         </h2>
         <p className="mt-6 text-lg text-kasi-grey">
-          Four featured concepts — then all twelve live demos below.
+          Four featured demonstrations: then all twelve live products below.
+          Each is a Kasi Concept built to show how we think.
         </p>
       </div>
 

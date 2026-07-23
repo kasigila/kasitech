@@ -18,7 +18,7 @@ const categories = [
   {
     id: "commerce",
     title: "COMMERCE",
-    body: "Selling, booking and payments without unnecessary friction.",
+    body: "Selling, booking, and payments without unnecessary friction.",
     href: "/capabilities#commerce",
     preview: "Ecommerce · Booking · Ticketing · M-Pesa",
     image: capabilityVisuals.commerce,
@@ -34,7 +34,7 @@ const categories = [
   {
     id: "intelligence",
     title: "INTELLIGENCE",
-    body: "Data, AI and automation that reduce manual work and improve decisions.",
+    body: "Data, AI, and automation that reduce manual work and improve decisions.",
     href: "/capabilities#intelligence",
     preview: "Analytics · AI · Workflows · Integrations",
     image: capabilityVisuals.intelligence,

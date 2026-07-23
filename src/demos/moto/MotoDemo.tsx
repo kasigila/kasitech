@@ -261,8 +261,8 @@ export function MotoDemo() {
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-[#F3EDE4]/85">
               {lunch
-                ? "Lunch fire is lit — lighter plates, cold drinks, walk-ins welcome until 16:00."
-                : "Dinner service — full fire menu, reservations recommended after 19:00."}
+                ? "Lunch fire is lit: lighter plates, cold drinks, walk-ins welcome until 16:00."
+                : "Dinner service: full fire menu, reservations recommended after 19:00."}
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <span className="font-mono text-[10px] tracking-[0.14em] text-[#8A7E74]">
@@ -448,7 +448,7 @@ export function MotoDemo() {
                 {orderConfirm}
               </p>
               <p className="mt-3 text-sm text-[#F3EDE4]/75">
-                Demo checkout complete. Kitchen has your ticket — this ID is
+                Demo checkout complete. Kitchen has your ticket: this ID is
                 fictional demo data.
               </p>
               <button

@@ -606,7 +606,7 @@ function HomeView({
             BETWEEN WORLDS.
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white/80">
-            Soft structure for coastal cities. Linen, silk and tailored ease for
+            Soft structure for coastal cities. Linen, silk, and tailored ease for
             Dar evenings.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -754,7 +754,7 @@ function ShopView({
     <div>
       <h1 className="font-[Georgia,serif] text-3xl md:text-4xl">Shop</h1>
       <p className="mt-2 text-sm text-black/55">
-        Filter by fit, color and availability — {list.length} pieces
+        Filter by fit, color, and availability: {list.length} pieces
       </p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[220px_1fr]">
@@ -1085,7 +1085,7 @@ function ProductView({
 
           <p className="mt-4 text-sm text-black/60">
             {stock > 5
-              ? "In stock — ships within 24h"
+              ? "In stock: ships within 24h"
               : stock > 0
                 ? `Only ${stock} left in ${size}`
                 : "Out of stock in this size"}
@@ -1325,7 +1325,7 @@ function CompleteTheLook({
         </div>
         <div>
           <p className="text-sm text-black/65">
-            Select the pieces you want. Add one at a time, or take the full look.
+            Select the pieces you want. Add one at a time or take the full look.
           </p>
           <ul className="mt-6 space-y-4">
             {campaignLook.pieces.map((piece) => {
@@ -1436,7 +1436,7 @@ function CheckoutView({
       </button>
       <h1 className="mt-4 font-[Georgia,serif] text-3xl">Checkout</h1>
       <p className="mt-2 text-sm text-black/55">
-        Demo checkout — no real charges. {cart.length} item
+        Demo checkout: no real charges. {cart.length} item
         {cart.length === 1 ? "" : "s"}.
       </p>
 
@@ -1447,9 +1447,9 @@ function CheckoutView({
         <div className="mt-2 space-y-2">
           {(
             [
-              ["dar", "Dar es Salaam — same-day", "Free"],
-              ["tz", "Tanzania mainland — 2–4 days", "TZS 15,000"],
-              ["intl", "International — 7–12 days", "TZS 85,000"],
+              ["dar", "Dar es Salaam: same-day", "Free"],
+              ["tz", "Tanzania mainland: 2–4 days", "TZS 15,000"],
+              ["intl", "International: 7–12 days", "TZS 85,000"],
             ] as const
           ).map(([id, label, fee]) => (
             <button
@@ -1702,7 +1702,7 @@ function AccountView({
                 <li key={o.id} className="border border-black/10 p-4 text-sm">
                   <p className="font-medium">{o.id} · Returned</p>
                   <p className="mt-1 text-black/60">
-                    {o.items.join(", ")} — refund processed to original payment.
+                    {o.items.join(", ")}: refund processed to original payment.
                   </p>
                 </li>
               ))}

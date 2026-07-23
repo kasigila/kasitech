@@ -7,7 +7,7 @@ const steps = [
   {
     n: "01",
     t: "UNDERSTAND",
-    d: "Understand business, customer and problem.",
+    d: "Understand business, customer, and problem.",
   },
   {
     n: "02",
@@ -22,7 +22,7 @@ const steps = [
   {
     n: "04",
     t: "IMPROVE",
-    d: "Use performance, analytics and feedback.",
+    d: "Use performance, analytics, and feedback.",
   },
 ];
 

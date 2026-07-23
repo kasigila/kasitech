@@ -317,7 +317,7 @@ export function AtlasDemo() {
                   SHIP SOMETHING
                 </h2>
                 <p className="mt-3 text-sm text-[#5A6A7A]">
-                  Origin, destination, weight, dimensions — get an estimate and
+                  Origin, destination, weight, dimensions: get an estimate and
                   book in one flow.
                 </p>
               </div>
@@ -334,8 +334,8 @@ export function AtlasDemo() {
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {[
               ["Visibility", "Status truth from collection to POD."],
-              ["Quoting", "Chargeable weight and corridor logic."],
-              ["Ops", "Fleet, fuel, alerts — business toggle."],
+              ["Quoting", "Chargeable weight, and corridor logic."],
+              ["Ops", "Fleet, fuel, alerts: business toggle."],
             ].map(([t, d]) => (
               <div key={t} className="border border-[#D0D7DE] bg-white p-5">
                 <p
@@ -745,7 +745,7 @@ export function AtlasDemo() {
             CUSTOMER PORTAL
           </h1>
           <p className="mt-2 text-sm text-[#5A6A7A]">
-            Account: Coastal Traders Ltd — fictional demo
+            Account: Coastal Traders Ltd: fictional demo
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2" style={mono}>
@@ -1141,7 +1141,7 @@ export function AtlasDemo() {
             BUSINESS OPS
           </h1>
           <p className="mt-2 text-sm text-[#5A6A7A]">
-            Shipments, invoices, documents, analytics — flip to Fleet for live
+            Shipments, invoices, documents, analytics: flip to Fleet for live
             board.
           </p>
 

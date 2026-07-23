@@ -111,7 +111,7 @@ export const programs: Program[] = [
     campus: "Dar es Salaam",
     feePerTerm: 1850000,
     overview:
-      "Build ventures that serve East African markets—finance, operations, and founder craft in one program.",
+      "Build ventures that serve East African markets, finance, operations, and founder craft in one program.",
     curriculum: [
       "Venture design studio",
       "Financial modeling for SMEs",
@@ -159,7 +159,7 @@ export const programs: Program[] = [
     campus: "Dar es Salaam",
     feePerTerm: 2100000,
     overview:
-      "Ship reliable systems for local industry—full-stack engineering, mobile, and cloud foundations.",
+      "Ship reliable systems for local industry, full-stack engineering, mobile, and cloud foundations.",
     curriculum: [
       "Programming foundations",
       "Data structures & algorithms",
@@ -206,7 +206,7 @@ export const programs: Program[] = [
     campus: "Mwanza",
     feePerTerm: 1450000,
     overview:
-      "Train for clinic and community care across the Lake Zone—hands-on rotations from year one.",
+      "Train for clinic and community care across the Lake Zone, hands-on rotations from year one.",
     curriculum: [
       "Anatomy & physiology",
       "Community health practice",
@@ -253,7 +253,7 @@ export const programs: Program[] = [
     campus: "Dar es Salaam",
     feePerTerm: 1750000,
     overview:
-      "Visual storytelling for brands, culture, and civic campaigns—studio critique every week.",
+      "Visual storytelling for brands, culture, and civic campaigns, studio critique every week.",
     curriculum: [
       "Typography & layout",
       "Brand systems",
@@ -300,7 +300,7 @@ export const programs: Program[] = [
     campus: "Arusha",
     feePerTerm: 780000,
     overview:
-      "A fast track into secondary classrooms—lesson design, classroom management, and practicum.",
+      "A fast track into secondary classrooms, lesson design, classroom management, and practicum.",
     curriculum: [
       "Lesson planning",
       "Assessment design",
@@ -339,7 +339,7 @@ export const programs: Program[] = [
     campus: "Arusha",
     feePerTerm: 1320000,
     overview:
-      "Connect farms to markets—production planning, cold chain basics, and rural enterprise.",
+      "Connect farms to markets, production planning, cold chain basics, and rural enterprise.",
     curriculum: [
       "Crop & livestock systems",
       "Agri value chains",
@@ -385,7 +385,7 @@ export const programs: Program[] = [
     campus: "Online",
     feePerTerm: 2450000,
     overview:
-      "Decision-grade analytics for operators—Python, statistics, and dashboards that teams actually use.",
+      "Decision-grade analytics for operators. Python, statistics, and dashboards that teams actually use.",
     curriculum: [
       "Statistical inference",
       "Machine learning for business",
@@ -461,14 +461,14 @@ export const studentCourses: Course[] = [
     code: "ENT 210",
     name: "Venture Design Studio",
     credits: 4,
-    grade: "—",
+    grade: ": ",
     status: "In progress",
   },
   {
     code: "FIN 205",
     name: "SME Financial Modeling",
     credits: 3,
-    grade: "—",
+    grade: ": ",
     status: "In progress",
   },
   {
@@ -529,7 +529,7 @@ export const announcements: Announcement[] = [
   },
   {
     id: "a2",
-    title: "Career fair — founders & operators",
+    title: "Career fair: founders & operators",
     date: "12 Jul 2026",
     body: "Meet 24 employers on 2 August in Hall A. Register in the portal by 28 July.",
   },

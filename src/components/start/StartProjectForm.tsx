@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
-import { whatsappUrl } from "@/lib/whatsapp";
+import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
+import { emailHref, hasEmail } from "@/lib/social";
 import { cn } from "@/lib/cn";
 
 type Need =
@@ -104,7 +105,7 @@ export function StartProjectForm() {
     const e: Record<string, string> = {};
     if (!company.trim()) e.company = "Tell us the business name.";
     if (!brief.trim() || brief.trim().length < 20)
-      e.brief = "Give us a short brief — at least a couple of sentences.";
+      e.brief = "Give us a short brief: at least a couple of sentences.";
     setErrors(e);
     if (Object.keys(e).length) return;
     setStep(4);
@@ -156,18 +157,37 @@ export function StartProjectForm() {
           GOT IT.
         </h1>
         <p className="mt-6 max-w-md text-lg text-kasi-grey">
-          Your project is with KasiTech. We&apos;ll review it and be in touch.
+          Your brief is ready. Send it to KasiTech via WhatsApp so we can review
+          it and follow up.
         </p>
         <div className="mt-10 space-y-4 text-sm">
-          <a
-            href={whatsappUrl(
-              `Hi KasiTech — I just submitted project ${refId} for ${company}.`,
-            )}
-            className="inline-block text-kasi-green hover:underline"
-            onClick={() => track("whatsapp_click", { source: "start_success" })}
-          >
-            Prefer WhatsApp? Continue there →
-          </a>
+          {hasWhatsApp() && (
+            <a
+              href={whatsappUrl(
+                `Hi KasiTech: project ${refId} for ${company}.\n\nNeed: ${need}\nGoals: ${goals.join(", ")}\n\n${brief}\n\n:  ${name}\n${email}\n${phone}`,
+              )}
+              className="inline-block border border-kasi-green bg-kasi-green px-5 py-3 text-kasi-black"
+              onClick={() =>
+                track("whatsapp_click", { source: "start_success" })
+              }
+            >
+              Send via WhatsApp →
+            </a>
+          )}
+          {hasEmail() && (
+            <div>
+              <a
+                href={`${emailHref()}?subject=${encodeURIComponent(
+                  `Project enquiry ${refId}: ${company}`,
+                )}&body=${encodeURIComponent(
+                  `Hi KasiTech,\n\nReference: ${refId}\nCompany: ${company}\nNeed: ${need}\nGoals: ${goals.join(", ")}\n\n${brief}\n\n:  ${name}\n${email}\n${phone}`,
+                )}`}
+                className="inline-block text-kasi-green hover:underline"
+              >
+                Or send via email →
+              </a>
+            </div>
+          )}
           <div>
             <Link href="/" className="text-kasi-grey hover:text-kasi-ivory">
               Back home

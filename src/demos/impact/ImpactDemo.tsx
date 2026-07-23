@@ -192,7 +192,7 @@ export function ImpactDemo() {
 
           <section className="mx-auto max-w-5xl px-4 py-16">
             <p className="text-sm tracking-[0.18em] uppercase text-[#8B7355]">
-              After the story — the numbers
+              After the story: the numbers
             </p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {impactStats.map((s) => (
@@ -395,7 +395,7 @@ export function ImpactDemo() {
           <DemoBadge />
           <h1 className="mt-3 text-4xl tracking-tight">Locations</h1>
           <p className="mt-3 text-[#2C2416]/70">
-            Tanzania regions with active IMPACT projects — tap a pin.
+            Tanzania regions with active IMPACT projects: tap a pin.
           </p>
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="relative aspect-[4/5] overflow-hidden border border-[#8B7355]/30 bg-[#EDE6DC]">
@@ -475,7 +475,7 @@ export function ImpactDemo() {
                         selectedProject?.id === p.id && "text-[#8B7355]",
                       )}
                     >
-                      {p.region} — {p.name}
+                      {p.region}: {p.name}
                     </button>
                   </li>
                 ))}
@@ -490,7 +490,7 @@ export function ImpactDemo() {
           <DemoBadge />
           <h1 className="mt-3 text-4xl tracking-tight">Reports</h1>
           <p className="mt-3 max-w-xl text-[#2C2416]/70">
-            Transparency hub — annual, financial, and methodology documents.
+            Transparency hub: annual, financial, and methodology documents.
           </p>
           <div className="mt-10 space-y-3">
             {reports.map((r) => (
@@ -531,7 +531,7 @@ export function ImpactDemo() {
           <DemoBadge />
           <h1 className="mt-3 text-4xl tracking-tight">Partners</h1>
           <p className="mt-3 text-[#2C2416]/70">
-            Local institutions we work beside — not logos without context.
+            Local institutions we work beside: not logos without context.
           </p>
           <ul className="mt-10 divide-y divide-[#8B7355]/20 border-y border-[#8B7355]/20">
             {partners.map((p) => (
@@ -555,7 +555,7 @@ export function ImpactDemo() {
           <DemoBadge />
           <h1 className="mt-3 text-4xl tracking-tight">Donate</h1>
           <p className="mt-2 text-[#2C2416]/70">
-            Choose amount, frequency, and payment — demo confirmation only.
+            Choose amount, frequency, and payment: demo confirmation only.
           </p>
 
           <div className="mt-8 space-y-6">

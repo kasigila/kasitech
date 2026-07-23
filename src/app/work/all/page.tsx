@@ -19,7 +19,7 @@ export default function AllWorkPage() {
           EVERYTHING.
         </h1>
         <p className="mt-6 max-w-xl text-kasi-grey">
-          Each concept is a working product you can click through — guest view
+          Each concept is a working product you can click through: guest view
           and business view where it matters.
         </p>
 

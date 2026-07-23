@@ -50,12 +50,12 @@ export const juneSalesAnswer: QueryAnswer = {
   id: "june-sales",
   query: "Why were sales down in June?",
   summary:
-    "June revenue fell 14% vs May. The drop concentrated in two channels and one product line—not a company-wide collapse.",
+    "June revenue fell 14% vs May. The drop concentrated in two channels and one product line, not a company-wide collapse.",
   explanation: [
     "Online store orders dropped 22% after a 9-day payment gateway outage (7–15 June).",
     "Spice gift boxes (SPC-02) stocked out mid-month; that SKU alone was 11% of May revenue.",
     "Walk-in traffic at Masaki was stable; Arusha weekend traffic dipped 8% during rains.",
-    "Return rate stayed flat at 3.1% — quality is not the driver.",
+    "Return rate stayed flat at 3.1%: quality is not the driver.",
   ],
   sources: ["Sales", "Products", "Locations", "Traffic", "Returns", "Channels"],
   charts: [
@@ -98,7 +98,7 @@ export const profitAnswer: QueryAnswer = {
     "Ceramic mug set (MUG-04): TZS 4.8M gross profit · 58% margin.",
     "Cotton tote (TOT-12): TZS 3.1M · 42% margin on high volume.",
     "Cold brew concentrate (CBW-01): TZS 2.4M · 51% margin.",
-    "Spice gift box underperformed on profit because of stockouts—not margin.",
+    "Spice gift box underperformed on profit because of stockouts, not margin.",
   ],
   sources: ["Products", "Sales"],
   charts: [

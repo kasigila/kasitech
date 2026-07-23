@@ -207,7 +207,7 @@ export const addons: Addon[] = [
   {
     id: "private-dinner",
     name: "Private beach dinner",
-    description: "Table for two on the sand—chef menu, lanterns, and a slow evening.",
+    description: "Table for two on the sand, chef menu, lanterns, and a slow evening.",
     price: 280,
     per: "stay",
   },
@@ -220,7 +220,7 @@ export const dayMoments: DayMoment[] = [
     title: "Sunrise Swim",
     blurb: "The water is still. The day has not decided anything yet.",
     detail:
-      "Guests often begin here—barefoot on the coral sand, a short swim before anyone else wakes. Towels and ginger tea wait on the deck.",
+      "Guests often begin here, barefoot on the coral sand, a short swim before anyone else wakes. Towels, and ginger tea wait on the deck.",
     image:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
   },
@@ -240,7 +240,7 @@ export const dayMoments: DayMoment[] = [
     title: "Stone Town",
     blurb: "Doors, alleyways, and the scent of cloves.",
     detail:
-      "A guided half-day through the UNESCO old town—carved doors, the House of Wonders façade, and a stop at the spice market before the heat peaks.",
+      "A guided half-day through the UNESCO old town, carved doors, the House of Wonders façade, and a stop at the spice market before the heat peaks.",
     image:
       "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=1400&q=80",
   },
@@ -250,7 +250,7 @@ export const dayMoments: DayMoment[] = [
     title: "Spa",
     blurb: "Cool stone floors and ocean air through the screens.",
     detail:
-      "A coastal massage using local oils. Book the pavilion overlooking the garden, or request an in-villa setup for complete privacy.",
+      "A coastal massage using local oils. Book the pavilion overlooking the garden or request an in-villa setup for complete privacy.",
     image:
       "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1400&q=80",
   },
@@ -260,7 +260,7 @@ export const dayMoments: DayMoment[] = [
     title: "Sunset",
     blurb: "Sky turns copper. Dhows cut the horizon.",
     detail:
-      "Join the quiet deck ritual with a glass of something cold, or take a short dhow sail as the light drops behind the mainland.",
+      "Join the quiet deck ritual with a glass of something cold or take a short dhow sail as the light drops behind the mainland.",
     image:
       "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=1400&q=80",
   },
@@ -270,7 +270,7 @@ export const dayMoments: DayMoment[] = [
     title: "Dinner",
     blurb: "Lanterns, grilled catch, and conversation that stretches.",
     detail:
-      "À la carte in the open dining room, or a private table on the sand. Menus lean local—lobster, coconut rice, Zanzibar lime.",
+      "À la carte in the open dining room or a private table on the sand. Menus lean local, lobster, coconut rice, Zanzibar lime.",
     image:
       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80",
   },
@@ -291,7 +291,7 @@ export const conciergeQuestions: ConciergeQA[] = [
     id: "massage",
     question: "Can I book a massage?",
     answer:
-      "Yes. The coastal spa ritual runs ninety minutes and can be held in the pavilion or your villa. Prefer late afternoon—the light is softer and the breeze arrives.",
+      "Yes. The coastal spa ritual runs ninety minutes and can be held in the pavilion or your villa. Prefer late afternoon, the light is softer, and the breeze arrives.",
     actions: [
       { label: "Add spa ritual", target: "spa" },
       { label: "Open booking", target: "book" },
@@ -301,7 +301,7 @@ export const conciergeQuestions: ConciergeQA[] = [
     id: "breakfast-time",
     question: "When is breakfast?",
     answer:
-      "Breakfast is served from 07:00 to 11:00 on the ocean terrace, or anytime in-villa by request. Tell us dietary notes the evening before and the kitchen will adjust.",
+      "Breakfast is served from 07:00 to 11:00 on the ocean terrace or anytime in-villa by request. Tell us dietary notes the evening before and the kitchen will adjust.",
     actions: [
       { label: "Add daily breakfast", target: "book" },
       { label: "Dining notes", target: "eat" },
@@ -328,7 +328,7 @@ export const experiences = [
   },
   {
     title: "Spice farm walk",
-    copy: "Clove, cinnamon, and vanilla under canopy shade—with tea at the farmhouse afterward.",
+    copy: "Clove, cinnamon, and vanilla under canopy shade, with tea at the farmhouse afterward.",
     image:
       "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=80",
   },
@@ -351,14 +351,14 @@ export const diningNotes = [
   },
   {
     title: "Sand Table",
-    copy: "Private beach dinners for two—or four. Lanterns, chef menu, your own stretch of shore.",
+    copy: "Private beach dinners for two, or four. Lanterns, chef menu, your own stretch of shore.",
   },
 ];
 
 export const zanzibarNotes = [
   {
     title: "Stone Town",
-    copy: "UNESCO alleys, carved doors, and the old fort—best before midday heat.",
+    copy: "UNESCO alleys, carved doors, and the old fort, best before midday heat.",
   },
   {
     title: "Tides & light",
@@ -422,7 +422,7 @@ export const initialGuestRequests: GuestRequest[] = [
     id: "req-1",
     guest: "Sofia Mendes",
     room: "Garden Residence 2",
-    request: "Early breakfast tomorrow at 07:15 in villa—gluten-free toast.",
+    request: "Early breakfast tomorrow at 07:15 in villa, gluten-free toast.",
     priority: "medium",
     status: "open",
   },
@@ -438,7 +438,7 @@ export const initialGuestRequests: GuestRequest[] = [
     id: "req-3",
     guest: "Amira Hassan",
     room: "Ocean Villa 3",
-    request: "Confirm private beach dinner on Aug 15—anniversary setup.",
+    request: "Confirm private beach dinner on Aug 15, anniversary setup.",
     priority: "high",
     status: "open",
   },
@@ -467,7 +467,7 @@ export const contentBlocks = [
   {
     id: "day",
     title: "Your Day at Zuri",
-    body: "A suggested rhythm—swim, eat, wander, restore.",
+    body: "A suggested rhythm, swim, eat, wander, restore.",
     status: "draft" as const,
   },
 ];

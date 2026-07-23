@@ -1,18 +1,20 @@
 import Link from "next/link";
-import Image from "next/image";
 
 export function FounderTeaser() {
   return (
     <section className="bg-kasi-ivory px-5 py-28 text-kasi-black md:px-8 md:py-36">
       <div className="mx-auto grid max-w-[1400px] items-center gap-12 lg:grid-cols-2">
-        <div className="relative aspect-[4/5] overflow-hidden bg-kasi-black/5">
-          <Image
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80"
-            alt="Editorial portrait placeholder for founder"
-            fill
-            className="object-cover grayscale"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-          />
+        <div className="relative flex aspect-[4/5] items-end overflow-hidden bg-kasi-black p-8 md:p-12">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,#242424,transparent_55%)]" />
+          <div className="relative">
+            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-green">
+              EST. 2026 · DAR
+            </p>
+            <p className="mt-6 font-display text-6xl leading-none tracking-[-0.05em] text-kasi-ivory md:text-7xl">
+              KM
+              <span className="text-kasi-green">K</span>
+            </p>
+          </div>
         </div>
         <div>
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
@@ -28,8 +30,9 @@ export function FounderTeaser() {
             Data Science × Technology × Entrepreneurship
           </p>
           <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-black/75">
-            KasiTech was founded around a simple belief: digital products should
-            do more than look impressive—they should make businesses work better.
+            KasiTech exists because digital products should make businesses work
+            better, not just look finished. From Dar es Salaam, building for
+            operators who need speed without shortcuts.
           </p>
           <Link
             href="/founder"

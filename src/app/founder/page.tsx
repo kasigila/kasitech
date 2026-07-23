@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Founder" };
@@ -8,15 +7,17 @@ export default function FounderPage() {
   return (
     <div className="px-5 pb-24 pt-32 md:px-8">
       <div className="mx-auto grid max-w-[1400px] gap-12 lg:grid-cols-2">
-        <div className="relative aspect-[4/5] overflow-hidden bg-kasi-border">
-          <Image
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1400&q=80"
-            alt="Editorial portrait for Karen Marie Kasigila"
-            fill
-            className="object-cover grayscale"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            priority
-          />
+        <div className="relative flex aspect-[4/5] items-end overflow-hidden bg-kasi-black p-8 md:p-12">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,#242424,transparent_55%)]" />
+          <div className="relative">
+            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-green">
+              EST. 2026 · DAR ES SALAAM
+            </p>
+            <p className="mt-6 font-display text-6xl leading-none tracking-[-0.05em] text-kasi-ivory md:text-8xl">
+              KM
+              <span className="text-kasi-green">K</span>
+            </p>
+          </div>
         </div>
         <div>
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
@@ -33,19 +34,14 @@ export default function FounderPage() {
           </p>
           <div className="mt-10 space-y-6 text-base leading-relaxed text-kasi-ivory/85">
             <p>
-              KasiTech was founded around a simple belief: digital products
-              should do more than look impressive—they should make businesses
-              work better.
+              KasiTech started in Dar es Salaam around a practical idea: digital
+              products should reduce friction, help people find, book, buy,
+              operate and decide faster, without rushing the craft.
             </p>
             <p>
-              With roots in data science and a builder’s instinct for systems,
-              Karen leads KasiTech to reduce friction across the journeys that
-              matter: find, understand, book, buy, operate, analyze, decide,
-              grow.
-            </p>
-            <p className="text-kasi-grey">
-              This page is about the company&apos;s founding perspective—not a
-              personal portfolio.
+              With a background spanning data science and building systems,
+              Karen leads KasiTech as a technology studio that can start with a
+              website and grow into software, automation, and products.
             </p>
           </div>
           <Link

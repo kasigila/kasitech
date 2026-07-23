@@ -1228,7 +1228,7 @@ function EstimatorView({
         Payment estimator
       </h1>
       <p className="mt-2 text-sm text-[#1C2420]/55">
-        Demo calculator — not a bank quote.
+        Demo calculator: not a bank quote.
       </p>
       <label className="mt-6 block text-sm">
         <span className="text-[11px] tracking-[0.14em] uppercase text-[#1C2420]/50">
@@ -1329,8 +1329,8 @@ function NeighborhoodView({
         Explore the neighborhood
       </h1>
       <p className="mt-3 max-w-xl text-sm text-[#1C2420]/60">
-        Filter places that matter — dining, schools, fitness, shopping, beach and
-        transport — with travel times from each area.
+        Filter places that matter: dining, schools, fitness, shopping, beach and
+        transport: with travel times from each area.
       </p>
 
       <div className="mt-6 flex flex-wrap gap-2">

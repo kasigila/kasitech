@@ -42,7 +42,7 @@ function uid(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 }
 
-/** Pseudo-QR pattern from ticket ID — visual demo only */
+/** Pseudo-QR pattern from ticket ID: visual demo only */
 function DemoQr({ seed }: { seed: string }) {
   const cells = useMemo(() => {
     const size = 21;
@@ -475,7 +475,7 @@ export function NoirDemo() {
             >
               {eventList.map((ev) => (
                 <option key={ev.id} value={ev.id}>
-                  {ev.code} — {ev.dateLabel}
+                  {ev.code}: {ev.dateLabel}
                 </option>
               ))}
             </select>
@@ -501,7 +501,7 @@ export function NoirDemo() {
                     </li>
                   </ul>
                   <p className="mt-4 text-xs text-[#6B6B6B]">
-                    Demo QR pattern — fictional ticket, no live venue scan.
+                    Demo QR pattern: fictional ticket, no live venue scan.
                   </p>
                   <button
                     type="button"
@@ -630,7 +630,7 @@ export function NoirDemo() {
             Floor plan
           </h2>
           <p className="mt-3 max-w-xl text-sm text-[#C8C8C8]/80">
-            Select table A07 — 6 people, TZS 750,000 minimum, AVAILABLE — then
+            Select table A07: 6 people, TZS 750,000 minimum, AVAILABLE: then
             reserve. On mobile, use the list below the map.
           </p>
 

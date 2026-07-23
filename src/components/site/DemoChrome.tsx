@@ -66,9 +66,9 @@ export function DemoChrome({ slug, className }: Props) {
               What it demonstrates: {project.tags.join(" · ")}
             </p>
             <div className="mt-8 space-y-3 text-sm">
-              <p className="text-kasi-ivory/90">Customer View — browse as an end user.</p>
+              <p className="text-kasi-ivory/90">Customer View: browse as an end user.</p>
               <p className="text-kasi-ivory/90">
-                Business View — look for the ops / admin toggle inside the demo.
+                Business View: look for the ops / admin toggle inside the demo.
               </p>
               <Link
                 href={project.caseStudyPath}

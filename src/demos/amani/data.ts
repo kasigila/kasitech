@@ -132,8 +132,8 @@ export const people: Person[] = [
       "Led 40+ board offsites on growth and capital",
     ],
     education: [
-      "MBA — London Business School",
-      "BCom — University of Nairobi",
+      "MBA: London Business School",
+      "BCom: University of Nairobi",
     ],
     expertise: ["Corporate strategy", "M&A readiness", "Board facilitation"],
     bio: "Amina builds decision systems that survive political cycles and market shocks.",
@@ -151,7 +151,7 @@ export const people: Person[] = [
     ],
     education: [
       "CFA Charterholder",
-      "MSc Finance — Cass Business School",
+      "MSc Finance: Cass Business School",
     ],
     expertise: ["Capital structure", "Investor narratives", "Valuation"],
     bio: "Daniel translates expansion ambition into fundable, disciplined capital plans.",
@@ -168,11 +168,11 @@ export const people: Person[] = [
       "Published on East African operating excellence",
     ],
     education: [
-      "MSc Systems Engineering — MIT",
-      "BEng — University of Dar es Salaam",
+      "MSc Systems Engineering: MIT",
+      "BEng: University of Dar es Salaam",
     ],
     expertise: ["Operating models", "Change programs", "Digital foundations"],
-    bio: "Zawadi makes transformation measurable—milestones, owners, and consequences.",
+    bio: "Zawadi makes transformation measurable, milestones, owners, and consequences.",
   },
   {
     id: "p-ibrahim",
@@ -186,8 +186,8 @@ export const people: Person[] = [
       "Former policy analyst, regional trade body",
     ],
     education: [
-      "MPP — Harvard Kennedy School",
-      "BA Economics — Makerere University",
+      "MPP: Harvard Kennedy School",
+      "BA Economics: Makerere University",
     ],
     expertise: ["Infrastructure", "Trade corridors", "Public-private"],
     bio: "Ibrahim connects policy reality with commercial discipline on the ground.",
@@ -246,7 +246,7 @@ export const insights: Insight[] = [
     topic: "Infrastructure",
     date: "Feb 2026",
     excerpt:
-      "What lenders actually stress-test in regional power projects—and what sponsors overlook.",
+      "What lenders actually stress-test in regional power projects, and what sponsors overlook.",
     readMin: 18,
   },
   {
@@ -324,19 +324,19 @@ export const mapCountries = [
 export const careers = [
   {
     id: "c1",
-    title: "Engagement Manager — Strategy",
+    title: "Engagement Manager: Strategy",
     location: "Dar es Salaam",
     type: "Full-time",
   },
   {
     id: "c2",
-    title: "Analyst — Capital Markets",
+    title: "Analyst: Capital Markets",
     location: "Nairobi / Dar",
     type: "Full-time",
   },
   {
     id: "c3",
-    title: "Research Associate — Insights",
+    title: "Research Associate: Insights",
     location: "Remote · EAT",
     type: "Contract",
   },

@@ -103,12 +103,12 @@ export const customers: Customer[] = [
     value: 12400000,
     notes: [
       "Prefers WhatsApp for reminders.",
-      "Q3 expansion into Mwanza — watch inventory needs.",
+      "Q3 expansion into Mwanza: watch inventory needs.",
     ],
     history: [
       { date: "20 Jul", event: "Paid INV-1042" },
       { date: "12 Jul", event: "Placed order #8841" },
-      { date: "2 Jul", event: "Call — contract renewal" },
+      { date: "2 Jul", event: "Call: contract renewal" },
     ],
   },
   {
@@ -122,7 +122,7 @@ export const customers: Customer[] = [
     notes: ["Late on last two invoices.", "Requested payment plan."],
     history: [
       { date: "18 Jul", event: "Invoice INV-1055 overdue 34 days" },
-      { date: "1 Jul", event: "Support ticket — delivery delay" },
+      { date: "1 Jul", event: "Support ticket: delivery delay" },
     ],
   },
   {
@@ -161,7 +161,7 @@ export const customers: Customer[] = [
     phone: "+255 712 445 667",
     status: "Churned",
     value: 2100000,
-    notes: ["Left for competitor pricing — re-engage in Sep."],
+    notes: ["Left for competitor pricing: re-engage in Sep."],
     history: [{ date: "30 May", event: "Cancelled subscription" }],
   },
 ];

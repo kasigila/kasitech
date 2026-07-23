@@ -29,7 +29,7 @@ export default function WorkPage() {
             DIFFERENT SOLUTIONS.
           </h1>
           <p className="mt-8 max-w-xl text-lg text-kasi-grey">
-            Twelve live product demos. Pick your industry — or browse everything.
+            Twelve live product demos. Pick your industry: or browse everything.
           </p>
           <Link
             href="/work/all"

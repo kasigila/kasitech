@@ -18,7 +18,7 @@ export function AllDemosStrip() {
               A WORKING PRODUCT.
             </h2>
             <p className="mt-4 max-w-xl text-kasi-grey">
-              Homepage features four. All twelve are interactive — click any to
+              Homepage features four. All twelve are interactive: click any to
               open the live demo.
             </p>
           </div>

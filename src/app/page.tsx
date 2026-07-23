@@ -26,8 +26,8 @@ export default function HomePage() {
               THAT WORK.
             </h1>
             <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-grey md:text-lg">
-              Websites, booking systems, ecommerce, software and AI — designed
-              so customers can act, and businesses can operate.
+              Websites, booking systems, ecommerce, software and AI, designed
+              so customers can act and businesses can operate.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-5">
               <Link
@@ -44,7 +44,7 @@ export default function HomePage() {
               </a>
             </div>
             <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-kasi-border pt-6 text-[12px] text-kasi-grey">
-              <p>Dar es Salaam, Tanzania — Working worldwide</p>
+              <p>Dar es Salaam, Tanzania · Working worldwide</p>
               <p className="flex items-center gap-2">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-kasi-green" />
                 Available for select projects
@@ -71,17 +71,6 @@ export default function HomePage() {
       <KasiMeansSpeed />
       <WhyKasiTech />
       <BeyondClientWork />
-      <section className="bg-kasi-black px-5 py-20 md:px-8">
-        <div className="mx-auto max-w-[1400px]">
-          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            TRUSTED TO BUILD
-          </p>
-          <p className="mt-6 max-w-xl text-lg text-kasi-grey">
-            Client logos and testimonials will appear here when genuine
-            relationships exist. Until then, the live demos are the proof.
-          </p>
-        </div>
-      </section>
       <FounderTeaser />
       <FinalCTA />
     </>

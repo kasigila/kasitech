@@ -1,30 +1,35 @@
 export function WhyKasiTech() {
   const items = [
     {
-      t: "WE THINK BEYOND THE SCREEN.",
-      d: "Business strategy informs what gets built.",
+      t: "Beyond the screen",
+      d: "Strategy first.",
     },
     {
-      t: "WE DESIGN FOR REAL PEOPLE.",
-      d: "Clear journeys before visual tricks.",
+      t: "For real people",
+      d: "Clarity over tricks.",
     },
     {
-      t: "WE BUILD FOR WHAT'S NEXT.",
-      d: "Technology capable of evolving with the business.",
+      t: "Built for what's next",
+      d: "Systems that can grow.",
     },
   ];
 
   return (
-    <section className="bg-kasi-black px-5 py-28 md:px-8 md:py-36">
-      <div className="mx-auto max-w-[1400px] space-y-20">
-        {items.map((item) => (
-          <div key={item.t} className="max-w-3xl border-t border-kasi-border pt-10">
-            <h3 className="font-display text-3xl tracking-[-0.03em] md:text-5xl">
-              {item.t}
-            </h3>
-            <p className="mt-6 text-lg text-kasi-grey">{item.d}</p>
-          </div>
-        ))}
+    <section className="bg-kasi-black px-5 py-16 md:px-8 md:py-24">
+      <div className="mx-auto max-w-[1400px]">
+        <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
+          WHY KASITECH
+        </p>
+        <div className="mt-8 grid gap-8 border-t border-kasi-border pt-8 md:grid-cols-3 md:gap-10">
+          {items.map((item) => (
+            <div key={item.t}>
+              <h3 className="font-display text-2xl tracking-[-0.03em] md:text-3xl">
+                {item.t}
+              </h3>
+              <p className="mt-3 text-sm text-kasi-grey">{item.d}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

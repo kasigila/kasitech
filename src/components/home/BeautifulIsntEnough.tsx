@@ -22,15 +22,15 @@ export function BeautifulIsntEnough() {
     <section ref={ref} className="bg-kasi-black px-5 py-28 md:px-8 md:py-36">
       <div className="mx-auto max-w-[1400px]">
         <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-          WE DON&apos;T BUILD DIGITAL DECORATION.
+          EVERY SCREEN SHOULD EARN ITS PLACE.
         </p>
         <h2 className="mt-6 max-w-4xl font-display text-5xl leading-[0.95] tracking-[-0.04em] md:text-7xl lg:text-8xl">
-          BEAUTIFUL
+          LOOKING GOOD
           <br />
-          ISN&apos;T ENOUGH.
+          ISN&apos;T THE JOB.
         </h2>
         <p className="mt-8 max-w-md text-lg text-kasi-grey">
-          Every experience we build has a job to do.
+          Every experience we build has work to do.
         </p>
         <div className="mt-16 space-y-4">
           {words.map((w, i) => (

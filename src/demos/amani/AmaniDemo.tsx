@@ -388,7 +388,7 @@ export function AmaniDemo() {
             Insights
           </h1>
           <p className="mt-3 max-w-2xl text-[#8A939C]">
-            Articles, reports, and briefs — searchable by topic.
+            Articles, reports, and briefs: searchable by topic.
           </p>
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end">
@@ -463,7 +463,7 @@ export function AmaniDemo() {
                   {openInsight === i.id && (
                     <p className="mt-4 border-l border-[#C4A574] pl-4 text-sm leading-relaxed text-[#F7F4EF]/85">
                       Full demo abstract: {i.excerpt} AMANI publishes for
-                      executives evaluating regional moves—this piece is
+                      executives evaluating regional moves, this piece is
                       fictional concept content for the KasiTech demo.
                     </p>
                   )}
@@ -481,7 +481,7 @@ export function AmaniDemo() {
             East African Market Expansion
           </h1>
           <p className="mt-4 max-w-2xl text-[#8A939C]">
-            Interactive case — map, timeline, challenge, strategy, and outcome.
+            Interactive case: map, timeline, challenge, strategy, and outcome.
             Signature of the AMANI demo.
           </p>
 
@@ -602,7 +602,7 @@ export function AmaniDemo() {
                     </h2>
                     <p className="mt-3 text-sm leading-relaxed text-[#F7F4EF]/85">
                       Sequence markets by regulatory clarity and corridor
-                      access. Ring-fence SPVs, share services centrally, and
+                      access. Ring-fence SPVs, share services centrally and
                       install a capital committee that can stop funding when
                       milestones miss. Kenya and Rwanda first; Ethiopia deferred.
                     </p>
@@ -615,7 +615,7 @@ export function AmaniDemo() {
                     </h2>
                     <p className="mt-3 text-sm leading-relaxed text-[#F7F4EF]/85">
                       Two markets live, one in build. Revenue ahead of plan,
-                      working capital days down, and a decision cycle boards can
+                      working capital days down and a decision cycle boards can
                       trust. Demo metrics below.
                     </p>
                     <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -666,14 +666,14 @@ export function AmaniDemo() {
             About AMANI
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-[#F7F4EF]/85">
-            AMANI is a fictional strategy firm crafted for KasiTech—built to
+            AMANI is a fictional strategy firm crafted for KasiTech, built to
             show how institutional brands earn trust through editorial clarity,
-            people depth, and evidence of thinking.
+            people depth and evidence of thinking.
           </p>
           <p className="mt-4 leading-relaxed text-[#8A939C]">
-            We advise boards and executive teams on strategy, capital, and
+            We advise boards and executive teams on strategy, capital and
             transformation across East Africa. Our work is measured in decisions
-            made cleanly—not decks delivered loudly.
+            made cleanly, not decks delivered loudly.
           </p>
           <button
             type="button"
@@ -692,7 +692,7 @@ export function AmaniDemo() {
             Careers
           </h1>
           <p className="mt-3 text-[#8A939C]">
-            Open roles — demo listings only.
+            Open roles: demo listings only.
           </p>
           <ul className="mt-10 divide-y divide-[#1F3347] border-y border-[#1F3347]">
             {careers.map((job) => (
@@ -728,7 +728,7 @@ export function AmaniDemo() {
             Contact
           </h1>
           <p className="mt-3 text-[#8A939C]">
-            Tell us about the decision ahead. Demo form — no data leaves this
+            Tell us about the decision ahead. Demo form: no data leaves this
             browser.
           </p>
 

@@ -114,7 +114,7 @@ export function CaseStudyView({ slug }: { slug: string }) {
             Try these in the demo
           </h2>
           <p className="mt-3 max-w-xl text-sm text-kasi-grey">
-            Skip the essay — open the product and click through these moments.
+            Skip the essay: open the product and click through these moments.
           </p>
           <ul className="mt-8 space-y-4">
             {content.interactions.map((item, i) => (

@@ -97,7 +97,7 @@ export const agents: Agent[] = [
     phone: "+255 754 880 221",
     email: "diana@nest.demo",
     photo:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
     listings: 18,
   },
   {
@@ -164,7 +164,7 @@ export const listings: Listing[] = [
     ],
     amenities: ["Private garden", "Staff quarters", "Borehole", "Solar", "Garage"],
     neighborhood:
-      "Tree-lined Oyster Bay — minutes to the beach club and Indian Ocean breeze.",
+      "Tree-lined Oyster Bay: minutes to the beach club and Indian Ocean breeze.",
     agentId: "a2",
     description:
       "Colonial-inspired villa on a walled plot with mature mango trees. High ceilings, teak floors, and a covered outdoor dining terrace.",
@@ -189,7 +189,7 @@ export const listings: Listing[] = [
     ],
     amenities: ["Elevator", "Backup power", "Fiber ready", "Concierge"],
     neighborhood:
-      "Central Upanga — easy reach to CBD, hospitals and evening cafés.",
+      "Central Upanga: easy reach to CBD, hospitals, and evening cafés.",
     agentId: "a3",
     description:
       "Modern loft with double-height windows and a flexible mezzanine office. Ideal for professionals who want city energy without the commute.",
@@ -262,7 +262,7 @@ export const listings: Listing[] = [
     ],
     amenities: ["Garden", "Water tank", "Quiet road", "Near ferry"],
     neighborhood:
-      "Kigamboni calm — morning ferry to CBD, evenings by the shoreline.",
+      "Kigamboni calm: morning ferry to CBD, evenings by the shoreline.",
     agentId: "a3",
     description:
       "Charming cottage on a leafy plot. Perfect weekend escape or full-time home for those who prefer space over skyline.",
@@ -310,7 +310,7 @@ export const listings: Listing[] = [
     ],
     amenities: ["Furnished", "AC", "Pool access", "Secure parking"],
     neighborhood:
-      "Steps from Oyster Bay beach road — coffee, ocean air, short Uber rides.",
+      "Steps from Oyster Bay beach road: coffee, ocean air, short Uber rides.",
     agentId: "a1",
     description:
       "Furnished studio with sea-breeze balcony. Ideal for diplomats on short assignment or remote workers.",
@@ -358,7 +358,7 @@ export const listings: Listing[] = [
     ],
     amenities: ["Balcony", "Generator", "CCTV", "Visitor parking"],
     neighborhood:
-      "Leafy Mikocheni B — weekend markets and school runs made simple.",
+      "Leafy Mikocheni B: weekend markets and school runs made simple.",
     agentId: "a1",
     description:
       "Bright two-bed with cross-ventilation and a deep balcony for evening chai.",

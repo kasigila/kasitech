@@ -590,7 +590,7 @@ export function KasiFlowDemo() {
                 <ul className={cn("mt-3 space-y-2 text-sm", muted)}>
                   {activityLog.map((a) => (
                     <li key={a.time + a.text}>
-                      <span className="font-mono text-xs">{a.time}</span> —{" "}
+                      <span className="font-mono text-xs">{a.time}</span> : {" "}
                       {a.text}
                     </li>
                   ))}
@@ -636,7 +636,7 @@ export function KasiFlowDemo() {
                       type="button"
                       onClick={() =>
                         setExportMsg(
-                          "Export queued — CSV will download in a real deployment (demo).",
+                          "Export queued: CSV will download in a real deployment (demo).",
                         )
                       }
                       className="rounded-full bg-[#C7FF00] px-3 py-1.5 text-xs font-medium text-black"
@@ -895,7 +895,7 @@ export function KasiFlowDemo() {
                   .
                 </p>
                 <div className="mt-4 rounded-lg border border-black/10 bg-black/[0.03] p-3 text-sm dark:border-white/10 dark:bg-white/5">
-                  <p className="font-medium">Subject: Payment reminder — overdue invoice</p>
+                  <p className="font-medium">Subject: Payment reminder: overdue invoice</p>
                   <p className="mt-2 opacity-70">
                     Hi {"{{name}}"}, invoice {"{{id}}"} for {"{{amount}}"} is{" "}
                     {"{{days}}"} days overdue. Please arrange payment or reply
@@ -925,7 +925,7 @@ export function KasiFlowDemo() {
               <div className="p-6 text-center">
                 <p className="text-sm font-medium">Reminders queued</p>
                 <p className="mt-2 text-sm opacity-60">
-                  Demo only — no emails were sent. In production this would
+                  Demo only: no emails were sent. In production this would
                   require the same preview step.
                 </p>
                 <button
@@ -1096,7 +1096,7 @@ function CrmView({
           <ul className={cn("mt-2 space-y-1 text-sm", muted)}>
             {customer.history.map((h) => (
               <li key={h.date + h.event}>
-                {h.date} — {h.event}
+                {h.date}: {h.event}
               </li>
             ))}
           </ul>

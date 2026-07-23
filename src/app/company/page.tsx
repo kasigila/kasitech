@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { whatsappUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = { title: "Company" };
 
@@ -8,17 +9,17 @@ export default function CompanyPage() {
     {
       id: "who",
       t: "WHO WE ARE",
-      d: "KasiTech is a digital technology studio in Dar es Salaam. We design and build products that reduce friction—from first click to daily operations.",
+      d: "KasiTech is a digital technology studio in Dar es Salaam. We design and build products that reduce friction, from first click to daily operations.",
     },
     {
       id: "build",
       t: "WHAT WE BUILD",
-      d: "Experiences, commerce, systems and intelligence. Client work and proprietary products grow side by side.",
+      d: "Experiences, commerce, systems, and intelligence. Client work and proprietary products grow side by side.",
     },
     {
       id: "why",
       t: "WHY KASITECH EXISTS",
-      d: "Because beautiful isn’t enough. Digital should make businesses find, buy, book, operate and decide faster—without rushed work.",
+      d: "Because beautiful isn’t enough. Digital should make businesses find, buy, book, operate, and decide faster, without rushed work.",
     },
     {
       id: "work",
@@ -28,7 +29,7 @@ export default function CompanyPage() {
     {
       id: "going",
       t: "WHERE WE’RE GOING",
-      d: "From trusted digital technology services toward reusable systems and proprietary products—ambition without fake scale claims.",
+      d: "From trusted digital technology services toward reusable systems and proprietary products, ambition without fake scale claims.",
     },
   ];
 
@@ -61,7 +62,7 @@ export default function CompanyPage() {
               FOUNDER
             </h2>
             <p className="mt-4 text-lg">
-              Karen Marie Kasigila —{" "}
+              Karen Marie Kasigila : {" "}
               <Link href="/founder" className="text-kasi-green hover:underline">
                 Meet the Founder →
               </Link>
@@ -102,8 +103,8 @@ export default function CompanyPage() {
               PARTNERSHIPS
             </h2>
             <p className="mt-4 max-w-2xl text-lg text-kasi-ivory/90">
-              We partner with ambitious operators, agencies and investors who
-              care about craft and systems—not templates.
+              We partner with ambitious operators, agencies, and investors who
+              care about craft and systems, not templates.
             </p>
           </section>
 
@@ -116,8 +117,8 @@ export default function CompanyPage() {
                 Start a Project ↗
               </Link>
               {" · "}
-              <a href="mailto:hello@kasitech.co" className="hover:underline">
-                hello@kasitech.co
+              <a href={whatsappUrl()} className="hover:underline">
+                WhatsApp
               </a>
             </p>
           </section>

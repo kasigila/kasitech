@@ -87,7 +87,7 @@ export function HeroProductWindow() {
   return (
     <div className="relative mx-auto w-full max-w-md md:mx-0">
       <p className="mb-3 max-w-sm text-sm leading-relaxed text-kasi-grey">
-        A preview of the products we build — booking, selling, reserving,
+        A preview of the products we build: booking, selling, reserving,
         operating, analysing. Tap through, then open a live demo.
       </p>
       <div className="overflow-hidden border border-kasi-border bg-[#0f0f0f] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.45)]">

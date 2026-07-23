@@ -82,7 +82,7 @@ export const events: EventItem[] = [
     artist: "DJ KAIRO + Special Guest",
     dateLabel: "SAT / 25 JUL",
     dateISO: "2026-07-25T22:00:00+03:00",
-    time: "22:00 — late",
+    time: "22:00: late",
     venue: "NOIR Warehouse",
     city: "Dar es Salaam",
     poster:
@@ -118,11 +118,11 @@ export const events: EventItem[] = [
   {
     id: "noir-024",
     code: "NOIR/024",
-    title: "NOIR/024 — ARCHIVE",
+    title: "NOIR/024: ARCHIVE",
     artist: "NIGHT SHIFT CREW",
     dateLabel: "SAT / 11 JUL",
     dateISO: "2026-07-11T22:00:00+03:00",
-    time: "22:00 — 04:00",
+    time: "22:00: 04:00",
     venue: "NOIR Warehouse",
     city: "Dar es Salaam",
     poster:
@@ -161,7 +161,7 @@ export const events: EventItem[] = [
     artist: "AMINA LIVE + Resident DJs",
     dateLabel: "SAT / 08 AUG",
     dateISO: "2026-08-08T22:00:00+03:00",
-    time: "22:00 — late",
+    time: "22:00: late",
     venue: "NOIR Warehouse",
     city: "Dar es Salaam",
     poster:
@@ -195,7 +195,7 @@ export const events: EventItem[] = [
   },
 ];
 
-/** Interactive floor plan tables — A07 is the signature demo target */
+/** Interactive floor plan tables: A07 is the signature demo target */
 export const vipTables: VipTable[] = [
   { id: "A01", zone: "A", capacity: 4, minSpend: 500000, status: "RESERVED", x: 8, y: 12, w: 10, h: 10 },
   { id: "A02", zone: "A", capacity: 4, minSpend: 500000, status: "HELD", x: 22, y: 12, w: 10, h: 10 },

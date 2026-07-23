@@ -4,7 +4,7 @@ import { KasiIntelligenceDemo } from "@/demos/kasi-intelligence/KasiIntelligence
 export const metadata: Metadata = {
   title: "KASI INTELLIGENCE Demo",
   description:
-    "AI infrastructure demo — Ask Your Business, evidence panels, automation with approval.",
+    "AI infrastructure demo: Ask Your Business, evidence panels, automation with approval.",
 };
 
 export default function KasiIntelligenceDemoPage() {

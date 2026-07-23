@@ -56,7 +56,7 @@ export const projects: Project[] = [
     tags: ["Reservations", "Ordering"],
     summary: "Restaurant · Reservations · Ordering",
     description:
-      "Open-fire dining with menu, reservations, ordering and kitchen-ready operations.",
+      "Open-fire dining with menu, reservations, ordering, and kitchen-ready operations.",
     routes: ["sell"],
     keywords: [
       "restaurant",
@@ -82,7 +82,7 @@ export const projects: Project[] = [
     tags: ["Events", "Ticketing"],
     summary: "Events · Ticketing · VIP reservations",
     description:
-      "Nightlife energy with event discovery, ticketing and interactive VIP floor plans.",
+      "Nightlife energy with event discovery, ticketing, and interactive VIP floor plans.",
     featured: true,
     routes: ["sell"],
     keywords: [
@@ -109,7 +109,7 @@ export const projects: Project[] = [
     tags: ["Ecommerce", "Payments"],
     summary: "Ecommerce · Payments · Inventory",
     description:
-      "Premium fashion ecommerce with size tools, local payments and operational inventory.",
+      "Premium fashion ecommerce with size tools, local payments, and operational inventory.",
     featured: true,
     routes: ["sell"],
     keywords: [
@@ -137,7 +137,7 @@ export const projects: Project[] = [
     tags: ["Search", "Listings"],
     summary: "Real Estate · Search · Listings",
     description:
-      "Property discovery with maps, filters, viewings and neighborhood intelligence.",
+      "Property discovery with maps, filters, viewings, and neighborhood intelligence.",
     routes: ["sell", "platform"],
     keywords: [
       "real estate",
@@ -190,7 +190,7 @@ export const projects: Project[] = [
     tags: ["Corporate", "Content"],
     summary: "Corporate · Content · Credibility",
     description:
-      "Institutional presence for strategy firms, law practices and professional services.",
+      "Institutional presence for strategy firms, law practices, and professional services.",
     routes: ["website"],
     keywords: [
       "law",
@@ -217,7 +217,7 @@ export const projects: Project[] = [
     tags: ["Tracking", "Operations"],
     summary: "Logistics · Tracking · Operations",
     description:
-      "Shipment tracking, quoting, fleet visibility and B2B logistics portals.",
+      "Shipment tracking, quoting, fleet visibility, and B2B logistics portals.",
     routes: ["platform", "automation"],
     keywords: [
       "logistics",
@@ -243,7 +243,7 @@ export const projects: Project[] = [
     tags: ["Admissions", "Portal"],
     summary: "Education · Admissions · Portal",
     description:
-      "Program discovery, applications and student portals that reduce admissions friction.",
+      "Program discovery, applications, and student portals that reduce admissions friction.",
     routes: ["website", "platform"],
     keywords: [
       "school",
@@ -269,7 +269,7 @@ export const projects: Project[] = [
     tags: ["Storytelling", "Donations"],
     summary: "Nonprofit · Storytelling · Donations",
     description:
-      "Human stories, transparent impact reporting and donation journeys that build trust.",
+      "Human stories, transparent impact reporting, and donation journeys that build trust.",
     routes: ["website"],
     keywords: [
       "ngo",
@@ -294,7 +294,7 @@ export const projects: Project[] = [
     tags: ["Operations", "Analytics"],
     summary: "Operations · CRM · Analytics",
     description:
-      "Custom business software for CRM, finance, inventory, team and command-driven ops.",
+      "Custom business software for CRM, finance, inventory, team, and command-driven ops.",
     featured: true,
     routes: ["platform", "automation"],
     keywords: [
@@ -359,25 +359,25 @@ export const portfolioRoutes: PortfolioRoute[] = [
   {
     id: "website",
     title: "I NEED A WEBSITE",
-    description: "Brand, corporate, healthcare, education and local business.",
+    description: "Brand, corporate, healthcare, education, and local business.",
     projectSlugs: ["amani", "afya", "nuru", "impact"],
   },
   {
     id: "sell",
     title: "I NEED TO SELL OR TAKE BOOKINGS",
-    description: "Ecommerce, hospitality, restaurants and events.",
+    description: "Ecommerce, hospitality, restaurants, and events.",
     projectSlugs: ["zuri", "moto", "noir", "soko", "nest"],
   },
   {
     id: "platform",
     title: "I NEED A PLATFORM OR SYSTEM",
-    description: "Portals, marketplaces, dashboards and operational software.",
+    description: "Portals, marketplaces, dashboards, and operational software.",
     projectSlugs: ["kasi-flow", "nest", "atlas", "afya", "nuru"],
   },
   {
     id: "automation",
     title: "I WANT TO AUTOMATE MY BUSINESS",
-    description: "AI, data, workflows and integrations.",
+    description: "AI, data, workflows, and integrations.",
     projectSlugs: ["kasi-intelligence", "kasi-flow", "atlas"],
   },
 ];
