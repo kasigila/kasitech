@@ -171,7 +171,7 @@ export function StartProjectForm() {
       // ignore
     }
 
-    // Best-effort server delivery (Formspree / Resend when configured)
+    // Email Karen first (await so navigation doesn't cancel the request), then WhatsApp
     try {
       await fetch("/api/enquiry", {
         method: "POST",
@@ -179,7 +179,7 @@ export function StartProjectForm() {
         body: JSON.stringify(payload),
       });
     } catch {
-      // WhatsApp is the guaranteed path
+      // WhatsApp is still the customer-facing next step
     }
 
     const message = buildEnquiryMessage(payload);
@@ -199,7 +199,7 @@ export function StartProjectForm() {
     setDone(true);
     setSending(false);
 
-    // Guaranteed human delivery: open WhatsApp with the full brief
+    // Customer still lands in WhatsApp with the full brief
     if (wa) {
       window.location.href = wa;
     } else if (mail) {
@@ -217,8 +217,9 @@ export function StartProjectForm() {
           OPENING WHATSAPP…
         </h1>
         <p className="mt-6 max-w-lg text-lg text-kasi-grey">
-          Your brief is ready to send. If WhatsApp didn&apos;t open, tap below.
-          We reply within 24 hours on business days.
+          Your brief was emailed to KasiTech and is ready to send on WhatsApp.
+          If WhatsApp didn&apos;t open, tap below. We reply within 24 hours on
+          business days.
         </p>
         <div className="mt-10 space-y-4 text-sm">
           {waHref && (

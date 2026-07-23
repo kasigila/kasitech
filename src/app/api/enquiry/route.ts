@@ -1,3 +1,4 @@
+import { social } from "@/lib/social";
 import { buildEnquiryMessage, type EnquiryPayload } from "@/lib/enquiry";
 
 export async function POST(request: Request) {
@@ -14,6 +15,46 @@ export async function POST(request: Request) {
 
   const message = buildEnquiryMessage(body);
   const delivered: string[] = [];
+  const enquiryTo =
+    process.env.ENQUIRY_TO_EMAIL?.trim() || social.email;
+
+  // Always email Karen (FormSubmit → iCloud until business inbox exists).
+  // First-ever submit sends an activation link to this inbox — confirm once.
+  if (enquiryTo) {
+    try {
+      const res = await fetch(
+        `https://formsubmit.co/ajax/${encodeURIComponent(enquiryTo)}`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: body.name,
+            email: body.email,
+            phone: body.phone,
+            company: body.company,
+            need: body.need ?? "",
+            goals: body.goals.join(", "),
+            budget: body.budget,
+            timeline: body.timeline,
+            website: body.website || "—",
+            brief: body.brief,
+            reference: body.id,
+            message,
+            _subject: `KasiTech enquiry ${body.id}: ${body.company}`,
+            _template: "table",
+            _captcha: "false",
+            _replyto: body.email,
+          }),
+        },
+      );
+      if (res.ok) delivered.push("email");
+    } catch {
+      // WhatsApp redirect still proceeds on the client
+    }
+  }
 
   const formspreeId = process.env.FORMSPREE_FORM_ID;
   if (formspreeId) {
@@ -32,13 +73,11 @@ export async function POST(request: Request) {
       });
       if (res.ok) delivered.push("formspree");
     } catch {
-      // continue — WhatsApp is the guaranteed path
+      // continue
     }
   }
 
   const resendKey = process.env.RESEND_API_KEY;
-  const enquiryTo =
-    process.env.ENQUIRY_TO_EMAIL || "karen_marie1@icloud.com";
   if (resendKey) {
     try {
       const res = await fetch("https://api.resend.com/emails", {
@@ -65,7 +104,7 @@ export async function POST(request: Request) {
 
   return Response.json({
     ok: true,
+    emailed: delivered.includes("email") || delivered.includes("resend") || delivered.includes("formspree"),
     delivered,
-    // Client always opens WhatsApp; server delivery is best-effort bonus
   });
 }
