@@ -3,8 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const KEY = "kasi-intro-seen";
-
 export function BrandIntro() {
   const [show, setShow] = useState(false);
   const [phase, setPhase] = useState<"kasi" | "tech">("kasi");
@@ -12,21 +10,34 @@ export function BrandIntro() {
 
   useEffect(() => {
     setReady(true);
-    try {
-      if (sessionStorage.getItem(KEY)) return;
-      sessionStorage.setItem(KEY, "1");
-      // Defer show to after hydration
+
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduced) {
+      // Brief presence only for reduced-motion users
       const start = window.setTimeout(() => setShow(true), 40);
-      const t1 = window.setTimeout(() => setPhase("tech"), 740);
-      const t2 = window.setTimeout(() => setShow(false), 1440);
+      const end = window.setTimeout(() => setShow(false), 600);
       return () => {
         window.clearTimeout(start);
-        window.clearTimeout(t1);
-        window.clearTimeout(t2);
+        window.clearTimeout(end);
       };
-    } catch {
-      // ignore
     }
+
+    // Every refresh / visit:
+    // 1) "Kasi" + meaning (~2s so it's readable)
+    // 2) "KasiTech" hold (~1.2s)
+    // 3) fade out
+    const start = window.setTimeout(() => setShow(true), 40);
+    const toTech = window.setTimeout(() => setPhase("tech"), 2000);
+    const hide = window.setTimeout(() => setShow(false), 3400);
+
+    return () => {
+      window.clearTimeout(start);
+      window.clearTimeout(toTech);
+      window.clearTimeout(hide);
+    };
   }, []);
 
   if (!ready) return null;
@@ -38,7 +49,7 @@ export function BrandIntro() {
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-kasi-black"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.45 }}
           aria-hidden
         >
           <motion.p
@@ -46,14 +57,19 @@ export function BrandIntro() {
             key={phase}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration: 0.45 }}
           >
             {phase === "kasi" ? "Kasi" : "KasiTech"}
           </motion.p>
           {phase === "kasi" && (
-            <p className="mt-4 font-mono text-[10px] tracking-[0.22em] text-kasi-grey md:text-[11px]">
+            <motion.p
+              className="mt-4 font-mono text-[10px] tracking-[0.22em] text-kasi-grey md:text-[11px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+            >
               Swahili · speed · pace · momentum
-            </p>
+            </motion.p>
           )}
         </motion.div>
       )}
