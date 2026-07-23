@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { capabilityVisuals } from "@/data/images";
@@ -30,7 +30,12 @@ const pillars = [
     id: "operate",
     num: "03",
     title: "OPERATE",
-    items: ["Custom software", "Internal tools", "Dashboards", "Business systems"],
+    items: [
+      "Custom software",
+      "Internal tools",
+      "Dashboards",
+      "Business systems",
+    ],
     examples: "KASI FLOW · ATLAS · NEST",
     href: "/capabilities#systems",
     image: capabilityVisuals.systems,
@@ -46,12 +51,55 @@ const pillars = [
   },
 ] as const;
 
+type PillarId = (typeof pillars)[number]["id"];
+
 export function CapabilitySystem() {
-  const [active, setActive] = useState<(typeof pillars)[number]["id"]>("attract");
+  const sectionRef = useRef<HTMLElement>(null);
+  const [active, setActive] = useState<PillarId>("attract");
+  const [paused, setPaused] = useState(false);
   const pillar = pillars.find((p) => p.id === active)!;
 
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      setActive((current) => {
+        const i = pillars.findIndex((p) => p.id === current);
+        return pillars[(i + 1) % pillars.length].id;
+      });
+    }, 2400);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Scrolled past / away from the section: resume auto rotation
+        if (!entry.isIntersecting) {
+          setPaused(false);
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  function preview(id: PillarId) {
+    setActive(id);
+  }
+
+  function tap(id: PillarId) {
+    setActive(id);
+    setPaused(true);
+  }
+
   return (
-    <section className="bg-kasi-ivory px-5 py-24 text-kasi-black md:px-8 md:py-32">
+    <section
+      ref={sectionRef}
+      className="bg-kasi-ivory px-5 py-24 text-kasi-black md:px-8 md:py-32"
+    >
       <div className="mx-auto max-w-[1400px]">
         <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
           CAPABILITY SYSTEM
@@ -67,7 +115,10 @@ export function CapabilitySystem() {
 
         <div className="mt-16 grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
           <div className="relative">
-            <div className="absolute bottom-0 left-[11px] top-0 w-px bg-kasi-black/15" aria-hidden />
+            <div
+              className="absolute bottom-0 left-[11px] top-0 w-px bg-kasi-black/15"
+              aria-hidden
+            />
             <div className="space-y-0">
               {pillars.map((p) => {
                 const isActive = active === p.id;
@@ -75,9 +126,9 @@ export function CapabilitySystem() {
                   <button
                     key={p.id}
                     type="button"
-                    onMouseEnter={() => setActive(p.id)}
-                    onFocus={() => setActive(p.id)}
-                    onClick={() => setActive(p.id)}
+                    onMouseEnter={() => preview(p.id)}
+                    onFocus={() => preview(p.id)}
+                    onClick={() => tap(p.id)}
                     className={cn(
                       "relative flex w-full gap-5 py-5 text-left transition",
                       isActive ? "opacity-100" : "opacity-40 hover:opacity-70",
@@ -121,10 +172,10 @@ export function CapabilitySystem() {
               <motion.div
                 key={pillar.id}
                 className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35 }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.28 }}
               >
                 <SafeImage
                   src={pillar.image}
