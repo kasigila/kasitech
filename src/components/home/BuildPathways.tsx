@@ -140,7 +140,7 @@ export function BuildPathways() {
                               src={projectCovers[slug] ?? projectCovers.zuri}
                               alt=""
                               fill
-                              className="object-cover"
+                              className="object-cover object-top"
                               sizes="56px"
                               fallbackLabel={p.number}
                             />

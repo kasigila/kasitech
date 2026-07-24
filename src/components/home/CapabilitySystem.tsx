@@ -181,7 +181,7 @@ export function CapabilitySystem() {
                   src={pillar.image}
                   alt=""
                   fill
-                  className="object-cover opacity-80"
+                  className="object-cover object-top opacity-90"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   fallbackLabel={pillar.title}
                 />

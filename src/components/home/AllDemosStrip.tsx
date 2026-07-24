@@ -47,7 +47,7 @@ export function AllDemosStrip() {
                   src={projectCovers[p.slug] ?? projectCovers.zuri}
                   alt=""
                   fill
-                  className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                  className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
                   sizes="(max-width: 768px) 100vw, 25vw"
                   fallbackLabel={p.name}
                 />

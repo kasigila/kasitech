@@ -1,4 +1,4 @@
-/** Verified Unsplash covers used across marketing + demos. */
+/** Unsplash assets still used inside demo product UIs (menus, galleries, etc.). */
 export const cover = {
   resort:
     "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
@@ -65,33 +65,35 @@ export const cover = {
   ai: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&q=80",
 } as const;
 
+/** Live demo homepage screenshots used on marketing cards. */
 export const projectCovers: Record<string, string> = {
-  zuri: cover.resort,
-  moto: cover.food,
-  noir: cover.nightlife,
-  soko: cover.fashion,
-  nest: cover.property,
-  afya: cover.healthcare,
-  amani: cover.corporate,
-  atlas: cover.logistics,
-  nuru: cover.education,
-  impact: cover.community,
-  "kasi-flow": cover.dashboard,
-  "kasi-intelligence": cover.ai,
-  "000": cover.website,
+  zuri: "/demos/screenshots/zuri.png",
+  moto: "/demos/screenshots/moto.png",
+  noir: "/demos/screenshots/noir.png",
+  soko: "/demos/screenshots/soko.png",
+  nest: "/demos/screenshots/nest.png",
+  afya: "/demos/screenshots/afya.png",
+  amani: "/demos/screenshots/amani.png",
+  atlas: "/demos/screenshots/atlas.png",
+  nuru: "/demos/screenshots/nuru.png",
+  impact: "/demos/screenshots/impact.png",
+  "kasi-flow": "/demos/screenshots/kasi-flow.png",
+  "kasi-intelligence": "/demos/screenshots/kasi-intelligence.png",
+  "000": "/demos/screenshots/amani.png",
 };
 
+/** Capability pillars preview the paired concept demos. */
 export const capabilityVisuals = {
-  experiences: cover.website,
-  commerce: cover.checkout,
-  systems: cover.dashboard,
-  intelligence: cover.code,
+  experiences: projectCovers.amani,
+  commerce: projectCovers.soko,
+  systems: projectCovers["kasi-flow"],
+  intelligence: projectCovers["kasi-intelligence"],
 } as const;
 
-/** Live demo screenshots for capabilities page. */
+/** Alias used by the capabilities page. */
 export const capabilityDemoScreens = {
-  amani: "/social/capabilities/amani.png",
-  soko: "/social/capabilities/soko.png",
-  "kasi-flow": "/social/capabilities/kasi-flow.png",
-  "kasi-intelligence": "/social/capabilities/kasi-intelligence.png",
+  amani: projectCovers.amani,
+  soko: projectCovers.soko,
+  "kasi-flow": projectCovers["kasi-flow"],
+  "kasi-intelligence": projectCovers["kasi-intelligence"],
 } as const;

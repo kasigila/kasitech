@@ -38,7 +38,7 @@ export default function AllWorkPage() {
                   src={projectCovers[p.slug] ?? projectCovers.zuri}
                   alt=""
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                   sizes="(max-width: 1024px) 50vw, 33vw"
                   fallbackLabel={p.name}
                 />

@@ -109,7 +109,7 @@ export function CaseStudyView({ slug }: { slug: string }) {
                 src={cover}
                 alt={`${content.name} interface`}
                 fill
-                className="object-cover"
+                className="object-cover object-top"
                 sizes="100vw"
                 priority
                 fallbackLabel={content.name}

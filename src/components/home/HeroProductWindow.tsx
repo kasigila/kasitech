@@ -51,7 +51,7 @@ export function HeroProductWindow() {
                   src={projectCovers[project.slug] ?? projectCovers.zuri}
                   alt=""
                   fill
-                  className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                  className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
                   sizes="(max-width: 1024px) 100vw, 28vw"
                   fallbackLabel={project.name}
                   priority={index === 0}

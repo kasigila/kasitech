@@ -39,7 +39,7 @@ export function SelectedWork() {
                   src={projectCovers[slug]}
                   alt={`${p.name} concept preview`}
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   fallbackLabel={p.name}
                   priority={i === 0}
