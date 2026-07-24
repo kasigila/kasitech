@@ -87,3 +87,11 @@ export const capabilityVisuals = {
   systems: cover.dashboard,
   intelligence: cover.code,
 } as const;
+
+/** Live demo screenshots for capabilities page. */
+export const capabilityDemoScreens = {
+  amani: "/social/capabilities/amani.png",
+  soko: "/social/capabilities/soko.png",
+  "kasi-flow": "/social/capabilities/kasi-flow.png",
+  "kasi-intelligence": "/social/capabilities/kasi-intelligence.png",
+} as const;

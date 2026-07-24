@@ -202,8 +202,8 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     stock: { S: 6, M: 9, L: 7, XL: 4 },
     images: [
-      "https://images.unsplash.com/photo-1629337464494-7418ec7d35f8?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1627662235844-6f5d8f54816b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1671438118097-479e63198629?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1714317438040-0e8584215699?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Fine-gauge polo with mother-of-pearl buttons. Weekend polish without the heat.",
@@ -223,8 +223,8 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L"],
     stock: { XS: 4, S: 8, M: 5, L: 3 },
     images: [
-      "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1591948083708-6edc852d7275?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1728916976678-2a2576cab7a1?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Asymmetric wrap midi with a soft drape. Ties at the waist for adjustable fit.",
@@ -323,8 +323,8 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L", "XL"],
     stock: { XS: 8, S: 14, M: 16, L: 10, XL: 5 },
     images: [
+      "https://images.unsplash.com/photo-1618515488915-83f021210f1e?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1628869503963-6ce8de674c58?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1627662235844-6f5d8f54816b?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
       "Everyday ribbed tank with a clean neckline. The foundation piece under everything.",
