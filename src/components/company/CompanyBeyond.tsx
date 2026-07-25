@@ -55,26 +55,26 @@ export function CompanyBeyond() {
               >
                 <Link
                   href={product.href}
-                  className="group grid items-center gap-5 border border-kasi-border transition hover:border-kasi-green md:grid-cols-[9rem_1fr]"
+                  className="group grid overflow-hidden border border-kasi-border transition hover:border-kasi-green md:grid-cols-[14rem_1fr]"
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-kasi-border md:aspect-auto md:h-full md:min-h-[6.5rem]">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-kasi-border md:aspect-auto md:min-h-[8.5rem]">
                     <SafeImage
                       src={projectCovers[product.slug] ?? projectCovers.amani}
                       alt=""
                       fill
                       className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
-                      sizes="180px"
+                      sizes="224px"
                       fallbackLabel={product.name}
                     />
                   </div>
-                  <div className="px-5 py-5 md:pr-6">
-                    <p className="font-display text-2xl tracking-[-0.03em] transition group-hover:text-kasi-green">
+                  <div className="flex flex-col justify-center px-5 py-5 md:px-7 md:py-6">
+                    <p className="font-display text-2xl tracking-[-0.03em] transition group-hover:text-kasi-green md:text-3xl">
                       {product.name}
                     </p>
-                    <p className="mt-2 text-sm leading-relaxed text-kasi-grey">
+                    <p className="mt-2 max-w-sm text-sm leading-relaxed text-kasi-grey md:text-base">
                       {product.blurb}
                     </p>
-                    <p className="mt-3 text-xs text-kasi-ivory/70 group-hover:text-kasi-green">
+                    <p className="mt-4 text-xs tracking-wide text-kasi-ivory/70 group-hover:text-kasi-green">
                       Explore →
                     </p>
                   </div>

@@ -49,16 +49,18 @@ export function CompanyHero() {
               src={projectCovers[scene.slug] ?? projectCovers.amani}
               alt=""
               fill
-              className="object-cover object-top"
+              className="object-cover object-top brightness-[0.85] contrast-[1.05]"
               sizes="100vw"
               priority
               fallbackLabel={scene.label}
             />
           </motion.div>
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-r from-kasi-black via-kasi-black/90 to-kasi-black/55" />
-        <div className="absolute inset-0 bg-gradient-to-t from-kasi-black via-kasi-black/40 to-kasi-black/70" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_20%,rgba(199,255,0,0.14),transparent_42%)]" />
+        {/* Readability veil: product stays visible, especially on desktop right */}
+        <div className="absolute inset-0 bg-kasi-black/55 md:bg-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-kasi-black via-kasi-black/75 to-kasi-black/35 md:from-kasi-black md:via-kasi-black/65 md:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-kasi-black via-transparent to-kasi-black/45" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_12%_18%,rgba(199,255,0,0.16),transparent_40%)]" />
       </div>
 
       <div className="relative z-10 flex min-h-[100svh] flex-col justify-end px-5 pb-16 pt-32 md:px-8 md:pb-24 md:pt-36">

@@ -4,13 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-const beats = [
-  {
-    id: "who",
-    label: "WHO WE ARE",
-    body: "A studio that builds websites, commerce, software, and intelligent systems - with the ambition to grow into reusable products.",
-    emphasis: true,
-  },
+const darkBeats = [
   {
     id: "why",
     label: "WHY KASITECH EXISTS",
@@ -38,11 +32,11 @@ const beats = [
   },
 ] as const;
 
-function StoryBeat({
+function DarkBeat({
   beat,
   index,
 }: {
-  beat: (typeof beats)[number];
+  beat: (typeof darkBeats)[number];
   index: number;
 }) {
   const ref = useRef(null);
@@ -69,9 +63,7 @@ function StoryBeat({
           ) : null}
           <p
             className={
-              ("emphasis" in beat && beat.emphasis
-                ? "max-w-2xl text-2xl leading-snug tracking-[-0.02em] text-kasi-ivory md:text-3xl"
-                : "max-w-2xl text-lg leading-relaxed text-kasi-ivory/85") +
+              "max-w-2xl text-lg leading-relaxed text-kasi-ivory/85" +
               ("title" in beat && beat.title ? " mt-6" : "")
             }
           >
@@ -101,13 +93,39 @@ function StoryBeat({
 }
 
 export function CompanyStory() {
+  const whoRef = useRef(null);
+  const whoInView = useInView(whoRef, { once: true, margin: "-15%" });
+
   return (
-    <section className="bg-kasi-black px-5 py-8 md:px-8 md:py-12">
-      <div className="mx-auto max-w-[1400px]">
-        {beats.map((beat, index) => (
-          <StoryBeat key={beat.id} beat={beat} index={index} />
-        ))}
-      </div>
-    </section>
+    <>
+      <section
+        id="who"
+        ref={whoRef}
+        className="bg-kasi-ivory px-5 py-24 text-kasi-black md:px-8 md:py-32"
+      >
+        <motion.div
+          className="mx-auto max-w-[1400px]"
+          initial={{ opacity: 0, y: 18 }}
+          animate={whoInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
+            WHO WE ARE
+          </p>
+          <p className="mt-8 max-w-4xl font-display text-4xl leading-[1.05] tracking-[-0.04em] md:text-6xl">
+            A studio that builds websites, commerce, software, and intelligent
+            systems - with the ambition to grow into reusable products.
+          </p>
+        </motion.div>
+      </section>
+
+      <section className="bg-kasi-black px-5 py-8 md:px-8 md:py-12">
+        <div className="mx-auto max-w-[1400px]">
+          {darkBeats.map((beat, index) => (
+            <DarkBeat key={beat.id} beat={beat} index={index} />
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
