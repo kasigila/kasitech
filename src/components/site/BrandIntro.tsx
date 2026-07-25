@@ -3,17 +3,23 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+const STORAGE_KEY = "kasi-brand-intro-seen";
+
 export function BrandIntro() {
   const [show, setShow] = useState(false);
   const [phase, setPhase] = useState<"kasi" | "tech">("kasi");
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setReady(true);
+    try {
+      if (sessionStorage.getItem(STORAGE_KEY) === "1") {
+        return;
+      }
+      sessionStorage.setItem(STORAGE_KEY, "1");
+    } catch {
+      // Private mode / blocked storage: still show once this mount.
+    }
 
-    const reduced =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduced) {
       const start = window.setTimeout(() => setShow(true), 40);
@@ -24,7 +30,7 @@ export function BrandIntro() {
       };
     }
 
-    // Every homepage load / refresh:
+    // First visit in this browser tab only:
     // 1) "Kasi" + meaning (~2s so it's readable)
     // 2) "KasiTech" hold (~1.2s)
     // 3) fade out
@@ -38,8 +44,6 @@ export function BrandIntro() {
       window.clearTimeout(hide);
     };
   }, []);
-
-  if (!ready) return null;
 
   return (
     <AnimatePresence>
