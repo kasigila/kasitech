@@ -1,3 +1,11 @@
+/** Founder portrait (baked black-and-white). */
+export const founderPhoto = {
+  src: "/founder/karen-marie.jpg",
+  alt: "Karen Marie Kasigila, Founder of KasiTech",
+  width: 900,
+  height: 900,
+} as const;
+
 /** Unsplash assets still used inside demo product UIs (menus, galleries, etc.). */
 export const cover = {
   resort:

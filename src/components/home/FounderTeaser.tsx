@@ -1,12 +1,22 @@
+import Image from "next/image";
 import Link from "next/link";
+import { founderPhoto } from "@/data/images";
 
 export function FounderTeaser() {
   return (
     <section className="bg-kasi-ivory px-5 py-24 text-kasi-black md:px-8 md:py-32">
       <div className="mx-auto grid max-w-[1400px] items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-        <div className="relative flex aspect-[4/5] items-end overflow-hidden bg-kasi-black p-8 md:p-12">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,#242424,transparent_55%)]" />
-          <div className="relative">
+        <div className="relative aspect-[4/5] overflow-hidden bg-kasi-black">
+          <Image
+            src={founderPhoto.src}
+            alt={founderPhoto.alt}
+            width={founderPhoto.width}
+            height={founderPhoto.height}
+            className="absolute inset-0 h-full w-full object-cover object-[center_18%]"
+            sizes="(max-width: 1024px) 100vw, 40vw"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(9,9,9,0.78)_0%,rgba(9,9,9,0.2)_40%,transparent_62%)]" />
+          <div className="absolute inset-x-0 bottom-0 p-8 md:p-12">
             <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-green">
               EST. 2026 · DAR
             </p>

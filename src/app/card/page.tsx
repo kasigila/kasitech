@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { CardMotion, CardMotionLate } from "@/components/card/CardMotion";
 import { CardQr } from "@/components/card/CardQr";
@@ -8,6 +9,7 @@ import {
   IconLinkedIn,
   IconWhatsApp,
 } from "@/components/site/SocialIcons";
+import { founderPhoto } from "@/data/images";
 import { businessCard as c, cardWhatsAppUrl } from "@/lib/card";
 import { hasInstagram, hasLinkedIn } from "@/lib/social";
 
@@ -69,6 +71,17 @@ export default function CardPage() {
 
         <CardMotion>
           <div className="mt-12">
+            <div className="relative mb-8 h-28 w-28 overflow-hidden border border-kasi-border">
+              <Image
+                src={founderPhoto.src}
+                alt={founderPhoto.alt}
+                width={224}
+                height={224}
+                className="h-full w-full object-cover object-[center_18%]"
+                sizes="112px"
+                priority
+              />
+            </div>
             <p className="font-mono text-[11px] tracking-[0.2em] text-kasi-green">
               {c.org.toUpperCase()}
             </p>
