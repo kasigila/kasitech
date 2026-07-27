@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { shippedWork } from "@/data/shipped-work";
+import { shippedWork, shippedWorkExternalLabel } from "@/data/shipped-work";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { cn } from "@/lib/cn";
@@ -117,7 +117,7 @@ export function ShippedCaseStudy() {
                   rel="noreferrer"
                   className="border border-kasi-border px-5 py-3 text-sm text-kasi-ivory transition hover:border-kasi-green hover:text-kasi-green"
                 >
-                  Visit live site ↗
+                  {shippedWorkExternalLabel(work)}
                 </a>
                 <Link
                   href="/start"

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
-import { social } from "@/lib/social";
+import {
+  CONTACT_EMAIL,
+  MOBILE_DISPLAY,
+  WHATSAPP_DISPLAY,
+} from "@/lib/contact";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
@@ -27,11 +31,11 @@ const faqs = [
   },
   {
     q: "How do pricing and quotes work?",
-    a: "Every project is scoped after a short discovery. We then send a clear price breakdown for your goals and timeline. Use Start my project or WhatsApp to begin. We reply within 24 hours on business days.",
+    a: `Every project is scoped after a short discovery. We then send a clear price breakdown for your goals and timeline. Use Start my project or Project WhatsApp ${WHATSAPP_DISPLAY} to begin. We reply within 24 hours on business days.`,
   },
   {
     q: "WhatsApp is a US number. Can I still message from Tanzania?",
-    a: "Yes. +1 269 861 3487 is the project WhatsApp (reachable worldwide). +255 626 000 005 is the Tanzania mobile for calls/SMS. Prefer WhatsApp for project chat.",
+    a: `Yes. Project WhatsApp ${WHATSAPP_DISPLAY} is reachable worldwide and is the primary channel for project chat. Tanzania mobile ${MOBILE_DISPLAY} is for calls/SMS.`,
   },
   {
     q: "What do you need from me?",
@@ -47,7 +51,7 @@ const faqs = [
   },
   {
     q: "How do I reach a human quickly?",
-    a: `WhatsApp +1 269 861 3487 (primary for projects), email ${social.email}, or save the digital card at /card. Mobile in Tanzania: +255 626 000 005.`,
+    a: `Use Project WhatsApp ${WHATSAPP_DISPLAY} first for project chat, email ${CONTACT_EMAIL}, or save the digital card at /card. Tanzania mobile ${MOBILE_DISPLAY} is for calls/SMS.`,
   },
 ];
 
@@ -111,7 +115,7 @@ export default function FaqPage() {
               href={whatsappUrl()}
               className="text-sm text-kasi-grey hover:text-kasi-ivory"
             >
-              WhatsApp →
+              Project WhatsApp →
             </a>
           )}
         </div>

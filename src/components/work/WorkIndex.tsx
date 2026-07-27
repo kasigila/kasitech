@@ -8,7 +8,7 @@ import {
   type WorkFilterId,
   type Project,
 } from "@/data/projects";
-import { shippedWork } from "@/data/shipped-work";
+import { shippedWork, shippedWorkExternalLabel } from "@/data/shipped-work";
 import { projectCovers } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
@@ -19,6 +19,7 @@ function ConceptCard({ project }: { project: Project }) {
     <article className="flex flex-col border border-kasi-border">
       <Link
         href={project.demoPath}
+        aria-label={`Try ${project.name} demo`}
         className="relative block aspect-[16/10] overflow-hidden bg-kasi-border"
       >
         <SafeImage
@@ -77,7 +78,7 @@ export default function WorkPage() {
 
   return (
     <div className="pt-28">
-      <section className="px-5 pb-16 md:px-8">
+      <section className="px-5 pb-12 md:px-8 md:pb-16">
         <div className="mx-auto max-w-[1400px]">
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
             WORK
@@ -94,17 +95,97 @@ export default function WorkPage() {
             shipped.
           </p>
           <div className="mt-8 flex flex-wrap gap-6 text-sm">
-            <a href="#concepts" className="text-kasi-green hover:underline">
-              Browse concepts ↓
+            <a href="#client-work" className="text-kasi-green hover:underline">
+              Shipped work ↓
             </a>
-            <a href="#client-work" className="text-kasi-grey hover:text-kasi-ivory">
-              Client work ↓
+            <a href="#concepts" className="text-kasi-grey hover:text-kasi-ivory">
+              Browse concepts ↓
             </a>
           </div>
         </div>
       </section>
 
-      {/* CONCEPTS first - matches homepage interest */}
+      {/* CLIENT WORK - shipped engagements first */}
+      <section
+        id="client-work"
+        className="scroll-mt-28 border-y border-kasi-border bg-kasi-ivory px-5 py-20 text-kasi-black md:px-8 md:py-24"
+      >
+        <div className="mx-auto max-w-[1400px]">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/70">
+            SHIPPED / CLIENT WORK
+          </p>
+          <h2 className="mt-4 max-w-3xl font-display text-4xl leading-[1.05] tracking-[-0.04em] md:text-6xl">
+            REAL ORGANISATIONS.
+            <br />
+            REAL LAUNCHES.
+          </h2>
+          <p className="mt-5 max-w-lg text-sm text-kasi-black/70">
+            Paid engagements and founder-led launches, separated from the concept
+            demos below.
+          </p>
+
+          <div className="mt-12 space-y-16">
+            {shippedWork.map((w) => (
+              <article
+                key={w.id}
+                className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-center"
+              >
+                <div>
+                  <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-black/70">
+                    {w.role.toUpperCase()} · {w.location.toUpperCase()} ·{" "}
+                    {w.year}
+                  </p>
+                  <h3 className="mt-4 font-display text-4xl tracking-[-0.04em] md:text-5xl">
+                    {w.name}
+                  </h3>
+                  <p className="mt-5 max-w-md text-base leading-relaxed text-kasi-black/75">
+                    {w.outcome}
+                  </p>
+                  <div className="mt-8 flex flex-wrap gap-4">
+                    <Link
+                      href={w.caseStudyPath}
+                      className="border border-kasi-black bg-kasi-black px-5 py-3 text-sm text-kasi-ivory transition hover:bg-transparent hover:text-kasi-black"
+                    >
+                      Read case study →
+                    </Link>
+                    <a
+                      href={w.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border border-kasi-black/20 px-5 py-3 text-sm text-kasi-black transition hover:border-kasi-black"
+                    >
+                      {shippedWorkExternalLabel(w)}
+                    </a>
+                  </div>
+                </div>
+                <BrowserFrame
+                  url={w.url
+                    .replace(/^https?:\/\//, "")
+                    .replace(/\/index\.html$/, "")}
+                >
+                  <Link
+                    href={w.caseStudyPath}
+                    aria-label={`Read ${w.name} case study`}
+                    className="relative block aspect-[16/10] overflow-hidden"
+                  >
+                    {w.cover && (
+                      <SafeImage
+                        src={w.cover}
+                        alt={`${w.name} project screenshot`}
+                        fill
+                        className="object-cover object-top"
+                        sizes="(max-width: 1024px) 100vw, 55vw"
+                        fallbackLabel={w.name}
+                      />
+                    )}
+                  </Link>
+                </BrowserFrame>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section
         id="concepts"
         className="scroll-mt-28 px-5 py-20 md:px-8 md:py-28"
@@ -121,15 +202,14 @@ export default function WorkPage() {
 
           <div
             className="mt-10 flex gap-2 overflow-x-auto pb-2"
-            role="tablist"
+            role="group"
             aria-label="Filter concepts"
           >
             {workFilters.map((f) => (
               <button
                 key={f.id}
                 type="button"
-                role="tab"
-                aria-selected={filter === f.id}
+                aria-pressed={filter === f.id}
                 onClick={() => setFilter(f.id)}
                 className={cn(
                   "shrink-0 border px-4 py-2 font-mono text-[11px] tracking-[0.12em] transition",
@@ -152,73 +232,6 @@ export default function WorkPage() {
           {concepts.length === 0 && (
             <p className="mt-12 text-kasi-grey">No concepts in this filter.</p>
           )}
-        </div>
-      </section>
-
-      {/* CLIENT WORK - clearly separate */}
-      <section
-        id="client-work"
-        className="scroll-mt-28 border-y border-kasi-border bg-kasi-ivory px-5 py-20 text-kasi-black md:px-8 md:py-24"
-      >
-        <div className="mx-auto max-w-[1400px]">
-          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
-            CLIENT WORK
-          </p>
-          <p className="mt-3 max-w-lg text-sm text-kasi-black/55">
-            Paid engagements for real organisations. Separate from the concepts
-            above.
-          </p>
-
-          <div className="mt-12 space-y-16">
-            {shippedWork.map((w) => (
-              <article
-                key={w.id}
-                className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-center"
-              >
-                <div>
-                  <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-black/45">
-                    {w.role.toUpperCase()} · {w.location.toUpperCase()} ·{" "}
-                    {w.year}
-                  </p>
-                  <h2 className="mt-4 font-display text-4xl tracking-[-0.04em] md:text-5xl">
-                    {w.name}
-                  </h2>
-                  <p className="mt-5 max-w-md text-base leading-relaxed text-kasi-black/70">
-                    {w.outcome}
-                  </p>
-                  <div className="mt-8 flex flex-wrap gap-4">
-                    <a
-                      href={w.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="border border-kasi-black bg-kasi-black px-5 py-3 text-sm text-kasi-ivory"
-                    >
-                      Visit live site ↗
-                    </a>
-                  </div>
-                </div>
-                <BrowserFrame url={w.url.replace(/^https?:\/\//, "").replace(/\/index\.html$/, "")}>
-                  <a
-                    href={w.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="relative block aspect-[16/10] overflow-hidden"
-                  >
-                    {w.cover && (
-                      <SafeImage
-                        src={w.cover}
-                        alt={w.name}
-                        fill
-                        className="object-cover object-top"
-                        sizes="(max-width: 1024px) 100vw, 55vw"
-                        fallbackLabel={w.name}
-                      />
-                    )}
-                  </a>
-                </BrowserFrame>
-              </article>
-            ))}
-          </div>
         </div>
       </section>
 

@@ -78,7 +78,7 @@ export function CompanyIdentity() {
                       "min-h-11 flex-1 border px-4 py-4 text-left transition",
                       isActive
                         ? "border-kasi-black bg-kasi-black text-kasi-ivory"
-                        : "border-kasi-black/15 bg-transparent text-kasi-black/55 hover:border-kasi-black/40 hover:text-kasi-black",
+                        : "border-kasi-black/15 bg-transparent text-kasi-black/70 hover:border-kasi-black/40 hover:text-kasi-black",
                     )}
                   >
                     <span className="font-mono text-[10px] tracking-[0.16em] opacity-70">
@@ -135,7 +135,7 @@ export function CompanyIdentity() {
         <div className="mt-14 grid grid-cols-2 gap-px border border-kasi-black/10 bg-kasi-black/10 md:grid-cols-4">
           {strip.map((item) => (
             <div key={item.label} className="bg-kasi-ivory px-4 py-5 md:px-5">
-              <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-black/40">
+              <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-black/70">
                 {item.label}
               </p>
               <p className="mt-2 text-sm leading-snug text-kasi-black/80">

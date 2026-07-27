@@ -105,22 +105,16 @@ export default function CapabilitiesPage() {
           </p>
           <nav
             aria-label="Capability pillars"
-            className="mt-10 flex flex-wrap gap-x-6 gap-y-3 font-mono text-[11px] tracking-[0.16em] text-kasi-grey"
+            className="mt-10 grid grid-cols-2 gap-3 font-mono text-[11px] tracking-[0.16em] text-kasi-grey sm:flex sm:flex-wrap sm:gap-x-3 sm:gap-y-3"
           >
-            {caps.map((c, i) => (
-              <span key={c.id} className="inline-flex items-center gap-6">
-                <Link
-                  href={`#${c.id}`}
-                  className="transition hover:text-kasi-green"
-                >
-                  {c.pillar}
-                </Link>
-                {i < caps.length - 1 && (
-                  <span className="hidden text-kasi-border sm:inline" aria-hidden>
-                    ·
-                  </span>
-                )}
-              </span>
+            {caps.map((c) => (
+              <Link
+                key={c.id}
+                href={`#${c.id}`}
+                className="flex min-h-11 items-center justify-center border border-kasi-border px-3 text-center transition hover:border-kasi-green hover:text-kasi-green sm:px-4"
+              >
+                {c.pillar}
+              </Link>
             ))}
           </nav>
         </div>

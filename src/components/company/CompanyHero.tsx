@@ -72,19 +72,19 @@ export function CompanyHero() {
         </p>
         <div className="mt-10 flex flex-wrap items-center gap-5">
           <Link
-            href="/work"
+            href="/start"
             className="group border border-kasi-green bg-kasi-green px-6 py-3.5 text-sm tracking-wide text-kasi-black transition hover:bg-transparent hover:text-kasi-green"
           >
-            Explore our work{" "}
+            Start a project{" "}
             <span className="inline-block transition group-hover:translate-x-0.5">
               →
             </span>
           </Link>
           <Link
-            href="/start"
+            href="/work"
             className="text-sm tracking-wide text-kasi-grey transition hover:text-kasi-ivory"
           >
-            Start a project →
+            Explore our work →
           </Link>
         </div>
         <p className="mt-10 border-t border-kasi-border pt-5 font-mono text-[11px] tracking-[0.16em] text-kasi-grey">

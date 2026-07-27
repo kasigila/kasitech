@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getShippedWork, shippedWork } from "@/data/shipped-work";
+import {
+  getShippedWork,
+  shippedWork,
+  shippedWorkExternalLabel,
+} from "@/data/shipped-work";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { BuyCtas } from "@/components/site/BuyCtas";
@@ -35,7 +39,7 @@ export function ClientCaseStudyView({ slug }: { slug: string }) {
             rel="noreferrer"
             className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
           >
-            Visit live site ↗
+            {shippedWorkExternalLabel(work)}
           </a>
           <Link
             href="/start"

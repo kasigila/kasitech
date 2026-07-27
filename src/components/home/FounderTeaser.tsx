@@ -18,7 +18,7 @@ export function FounderTeaser() {
           <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(9,9,9,0.78)_0%,rgba(9,9,9,0.2)_40%,transparent_62%)]" />
           <div className="absolute inset-x-0 bottom-0 p-8 md:p-12">
             <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-green">
-              EST. 2026 · DAR
+              DAR ES SALAAM · 2026
             </p>
             <p className="mt-6 max-w-[12ch] font-display text-3xl leading-[1.1] tracking-[-0.03em] text-kasi-ivory md:text-4xl">
               Founder,
@@ -28,7 +28,7 @@ export function FounderTeaser() {
           </div>
         </div>
         <div>
-          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/70">
             FOUNDER
           </p>
           <h2 className="mt-5 font-display text-5xl leading-[0.95] tracking-[-0.04em] md:text-6xl">
@@ -37,7 +37,7 @@ export function FounderTeaser() {
             KASIGILA
           </h2>
           <p className="mt-4 text-sm text-kasi-black/65">Founder, KasiTech</p>
-          <p className="mt-2 font-mono text-[11px] tracking-[0.12em] text-kasi-black/45">
+          <p className="mt-2 font-mono text-[11px] tracking-[0.12em] text-kasi-black/70">
             Data Science × Technology × Entrepreneurship
           </p>
           <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-black/70">

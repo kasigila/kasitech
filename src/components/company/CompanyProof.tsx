@@ -46,7 +46,7 @@ export function CompanyProof() {
       <div className="mx-auto max-w-[1400px]">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
+            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/70">
               SELECTED WORK
             </p>
             <h2 className="mt-4 font-display text-[clamp(2.25rem,5vw,4rem)] leading-[0.98] tracking-[-0.04em]">

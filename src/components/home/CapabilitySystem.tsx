@@ -106,7 +106,7 @@ export function CapabilitySystem() {
       <div className="mx-auto max-w-[1400px]">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
+            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/70">
               CAPABILITY SYSTEM
             </p>
             <h2 className="mt-4 max-w-3xl font-display text-4xl leading-[1.05] tracking-[-0.04em] md:text-6xl">
@@ -114,14 +114,14 @@ export function CapabilitySystem() {
               <br />
               THE DIGITAL BUSINESS.
             </h2>
-            <p className="mt-6 font-mono text-[12px] tracking-[0.14em] text-kasi-black/50">
+            <p className="mt-6 font-mono text-[12px] tracking-[0.14em] text-kasi-black/70">
               FIND · BUY · BOOK · OPERATE · DECIDE
             </p>
           </div>
           <button
             type="button"
             onClick={() => setPaused((value) => !value)}
-            className="min-h-11 border border-kasi-black/15 px-4 font-mono text-[10px] tracking-[0.14em] text-kasi-black/55 transition hover:border-kasi-black hover:text-kasi-black"
+            className="min-h-11 border border-kasi-black/15 px-4 font-mono text-[10px] tracking-[0.14em] text-kasi-black/70 transition hover:border-kasi-black hover:text-kasi-black"
             aria-pressed={paused}
           >
             {prefersReducedMotion
@@ -162,7 +162,7 @@ export function CapabilitySystem() {
                       )}
                     />
                     <span className="flex min-w-0 flex-1 items-baseline gap-3">
-                      <span className="font-mono text-[11px] tracking-[0.14em] text-kasi-black/40">
+                      <span className="font-mono text-[11px] tracking-[0.14em] text-kasi-black/70">
                         {p.num}
                       </span>
                       <span className="font-display text-2xl tracking-[-0.03em] md:text-3xl">
@@ -185,7 +185,7 @@ export function CapabilitySystem() {
                   exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
                   transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
                 >
-                  <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-black/40">
+                  <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-black/70">
                     {pillar.num} · {pillar.title}
                   </p>
                   <ul className="mt-2 space-y-0.5 text-sm leading-snug text-kasi-black/70">
@@ -236,7 +236,7 @@ export function CapabilitySystem() {
           </div>
         </div>
 
-        <p className="mt-14 max-w-xl text-sm text-kasi-black/55">
+        <p className="mt-14 max-w-xl text-sm text-kasi-black/70">
           KasiTech can grow with a business beyond its first website - from
           presence to transactions, operations, and decisions.
         </p>

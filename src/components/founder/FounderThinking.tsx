@@ -51,7 +51,7 @@ export function FounderThinking() {
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-14">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
+            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/70">
               APPROACH
             </p>
             <h2 className="mt-4 font-display text-[clamp(2.1rem,5vw,3.75rem)] leading-[0.98] tracking-[-0.04em]">
@@ -93,7 +93,7 @@ export function FounderThinking() {
                     "flex min-h-12 w-full items-baseline gap-4 border px-4 py-4 text-left transition-colors duration-300",
                     isActive
                       ? "border-kasi-black bg-kasi-black text-kasi-ivory"
-                      : "border-kasi-black/15 bg-transparent text-kasi-black/55 hover:border-kasi-black/40 hover:text-kasi-black",
+                      : "border-kasi-black/15 bg-transparent text-kasi-black/70 hover:border-kasi-black/40 hover:text-kasi-black",
                   )}
                 >
                   <span className="font-mono text-[10px] tracking-[0.16em] opacity-70">

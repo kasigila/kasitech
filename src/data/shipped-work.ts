@@ -5,6 +5,7 @@ export type ShippedWork = {
   slug: string;
   name: string;
   url: string;
+  liveStatus?: "live" | "preview";
   role: string;
   summary: string;
   outcome: string;
@@ -22,7 +23,7 @@ export const shippedWork: ShippedWork[] = [
     id: "climate-finance",
     slug: "africa-climate-finance",
     name: "Africa Climate Finance",
-    url: "https://climatefinance.co.tz/index.html",
+    url: "https://climatefinance.co.tz/",
     role: "Website / Digital Platform",
     summary:
       "A live institutional site for climate finance in Tanzania: services, impact, partners, and a clear call to collaborate.",
@@ -47,9 +48,10 @@ export const shippedWork: ShippedWork[] = [
     slug: "byz",
     name: "BYZ",
     url: "https://kasigila.github.io/byzmock/index.html",
+    liveStatus: "preview",
     role: "Website / Events Platform",
     summary:
-      "A nightlife and events site for Dar es Salaam: event series, table reservations, lineups, gallery, and artist bookings.",
+      "A live preview deployment for a Dar es Salaam nightlife and events site: event series, table reservations, lineups, gallery, and artist bookings.",
     outcome:
       "Gave BYZ a live digital home for Groove Series, Tempo, and APT. Session - so guests can discover nights, reserve tables, and connect with the brand.",
     challenge:
@@ -71,4 +73,10 @@ export const shippedWork: ShippedWork[] = [
 
 export function getShippedWork(slug: string) {
   return shippedWork.find((w) => w.slug === slug);
+}
+
+export function shippedWorkExternalLabel(work: Pick<ShippedWork, "liveStatus">) {
+  return work.liveStatus === "preview"
+    ? "View preview site ↗"
+    : "Visit live site ↗";
 }
