@@ -47,11 +47,11 @@ export const shippedWork: ShippedWork[] = [
     id: "byz",
     slug: "byz",
     name: "BYZ",
-    url: "https://kasigila.github.io/byzmock/index.html",
-    liveStatus: "preview",
+    url: "https://byzentertainment.com",
+    liveStatus: "live",
     role: "Website / Events Platform",
     summary:
-      "A live preview deployment for a Dar es Salaam nightlife and events site: event series, table reservations, lineups, gallery, and artist bookings.",
+      "A nightlife and events site for Dar es Salaam: event series, table reservations, lineups, gallery, and artist bookings.",
     outcome:
       "Gave BYZ a live digital home for Groove Series, Tempo, and APT. Session - so guests can discover nights, reserve tables, and connect with the brand.",
     challenge:
