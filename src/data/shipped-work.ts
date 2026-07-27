@@ -4,7 +4,13 @@ export type ShippedWork = {
   id: string;
   slug: string;
   name: string;
+  /** Actual click destination (may be a temporary host). */
   url: string;
+  /**
+   * Domain shown on the site (browser chrome + CTA label).
+   * Use when the real domain is announced but not live yet.
+   */
+  displayUrl?: string;
   liveStatus?: "live" | "preview";
   role: string;
   summary: string;
@@ -47,7 +53,9 @@ export const shippedWork: ShippedWork[] = [
     id: "byz",
     slug: "byz",
     name: "BYZ",
-    url: "https://byzentertainment.com",
+    // Temporary host until byzentertainment.com is purchased + pointed
+    url: "https://kasigila.github.io/byzmock/index.html",
+    displayUrl: "byzentertainment.com",
     liveStatus: "live",
     role: "Website / Events Platform",
     summary:
@@ -75,7 +83,23 @@ export function getShippedWork(slug: string) {
   return shippedWork.find((w) => w.slug === slug);
 }
 
-export function shippedWorkExternalLabel(work: Pick<ShippedWork, "liveStatus">) {
+/** Host text shown in UI (browser chrome, labels). */
+export function shippedWorkDisplayHost(
+  work: Pick<ShippedWork, "url" | "displayUrl">,
+) {
+  if (work.displayUrl) return work.displayUrl.replace(/^https?:\/\//, "");
+  return work.url
+    .replace(/^https?:\/\//, "")
+    .replace(/\/index\.html$/, "")
+    .replace(/\/$/, "");
+}
+
+export function shippedWorkExternalLabel(
+  work: Pick<ShippedWork, "liveStatus" | "displayUrl" | "url">,
+) {
+  if (work.displayUrl) {
+    return `Visit ${shippedWorkDisplayHost(work)} ↗`;
+  }
   return work.liveStatus === "preview"
     ? "View preview site ↗"
     : "Visit live site ↗";

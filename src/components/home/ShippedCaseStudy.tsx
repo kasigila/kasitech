@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { shippedWork, shippedWorkExternalLabel } from "@/data/shipped-work";
+import { shippedWork, shippedWorkDisplayHost, shippedWorkExternalLabel } from "@/data/shipped-work";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { cn } from "@/lib/cn";
@@ -137,11 +137,7 @@ export function ShippedCaseStudy() {
               exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.4 }}
             >
-              <BrowserFrame
-                url={work.url
-                  .replace(/^https?:\/\//, "")
-                  .replace(/\/index\.html$/, "")}
-              >
+              <BrowserFrame url={shippedWorkDisplayHost(work)}>
                 <Link
                   href={work.caseStudyPath}
                   className="group relative block aspect-[16/10] overflow-hidden bg-[#0d0d0d]"

@@ -8,7 +8,7 @@ import {
   type WorkFilterId,
   type Project,
 } from "@/data/projects";
-import { shippedWork, shippedWorkExternalLabel } from "@/data/shipped-work";
+import { shippedWork, shippedWorkDisplayHost, shippedWorkExternalLabel } from "@/data/shipped-work";
 import { projectCovers } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
@@ -158,11 +158,7 @@ export default function WorkPage() {
                     </a>
                   </div>
                 </div>
-                <BrowserFrame
-                  url={w.url
-                    .replace(/^https?:\/\//, "")
-                    .replace(/\/index\.html$/, "")}
-                >
+                <BrowserFrame url={shippedWorkDisplayHost(w)}>
                   <Link
                     href={w.caseStudyPath}
                     aria-label={`Read ${w.name} case study`}

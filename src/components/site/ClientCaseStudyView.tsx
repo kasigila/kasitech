@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   getShippedWork,
   shippedWork,
+  shippedWorkDisplayHost,
   shippedWorkExternalLabel,
 } from "@/data/shipped-work";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
@@ -50,11 +51,7 @@ export function ClientCaseStudyView({ slug }: { slug: string }) {
         </div>
 
         <div className="mt-14">
-          <BrowserFrame
-            url={work.url
-              .replace(/^https?:\/\//, "")
-              .replace(/\/index\.html$/, "")}
-          >
+          <BrowserFrame url={shippedWorkDisplayHost(work)}>
             <div className="relative aspect-[21/10] overflow-hidden">
               {work.cover ? (
                 <SafeImage
