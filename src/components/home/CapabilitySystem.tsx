@@ -113,10 +113,10 @@ export function CapabilitySystem() {
           FIND · BUY · BOOK · OPERATE · DECIDE
         </p>
 
-        <div className="mt-16 grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
+        <div className="mt-16 grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start lg:gap-14">
           <div className="relative">
             <div
-              className="absolute bottom-0 left-[11px] top-0 w-px bg-kasi-black/15"
+              className="absolute bottom-[9.25rem] left-[11px] top-0 w-px bg-kasi-black/15 md:bottom-40"
               aria-hidden
             />
             <div className="space-y-0">
@@ -130,7 +130,7 @@ export function CapabilitySystem() {
                     onFocus={() => preview(p.id)}
                     onClick={() => tap(p.id)}
                     className={cn(
-                      "relative flex w-full gap-5 py-5 text-left transition",
+                      "relative flex min-h-[3.75rem] w-full items-baseline gap-5 py-4 text-left transition md:min-h-16 md:py-5",
                       isActive ? "opacity-100" : "opacity-40 hover:opacity-70",
                     )}
                   >
@@ -142,32 +142,44 @@ export function CapabilitySystem() {
                           : "border-kasi-black/40 bg-kasi-ivory",
                       )}
                     />
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-baseline gap-3">
-                        <span className="font-mono text-[11px] tracking-[0.14em] text-kasi-black/40">
-                          {p.num}
-                        </span>
-                        <span className="font-display text-2xl tracking-[-0.03em] md:text-3xl">
-                          {p.title}
-                        </span>
+                    <span className="flex min-w-0 flex-1 items-baseline gap-3">
+                      <span className="font-mono text-[11px] tracking-[0.14em] text-kasi-black/40">
+                        {p.num}
                       </span>
-                      {isActive && (
-                        <span className="mt-3 block space-y-1 text-sm text-kasi-black/65">
-                          {p.items.map((item) => (
-                            <span key={item} className="block">
-                              {item}
-                            </span>
-                          ))}
-                        </span>
-                      )}
+                      <span className="font-display text-2xl tracking-[-0.03em] md:text-3xl">
+                        {p.title}
+                      </span>
                     </span>
                   </button>
                 );
               })}
             </div>
+
+            {/* Fixed-height detail box — rotation never changes page height */}
+            <div className="relative mt-5 h-36 overflow-hidden border border-kasi-black/10 bg-kasi-black/[0.03] md:h-40">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={pillar.id}
+                  className="absolute inset-0 flex flex-col justify-center px-5 py-4 md:px-6 md:py-5"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-black/40">
+                    {pillar.num} · {pillar.title}
+                  </p>
+                  <ul className="mt-2 space-y-0.5 text-sm leading-snug text-kasi-black/70">
+                    {pillar.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
 
-          <div className="relative min-h-[320px] overflow-hidden border border-kasi-black/10 bg-kasi-black">
+          <div className="relative min-h-[320px] overflow-hidden border border-kasi-black/10 bg-kasi-black lg:min-h-[420px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={pillar.id}
