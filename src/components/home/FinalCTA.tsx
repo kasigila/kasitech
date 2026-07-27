@@ -31,8 +31,9 @@ export function FinalCTA() {
             </a>
           )}
         </div>
-        <p className="mt-6 text-[12px] text-kasi-grey">
-          Reply within 24 hours on business days.
+        <p className="mt-6 max-w-md text-[12px] leading-relaxed text-kasi-grey">
+          Reply within 24 hours on business days. Typical path: discovery →
+          scope → build → launch → support.
         </p>
       </div>
     </section>

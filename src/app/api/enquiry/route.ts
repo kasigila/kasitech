@@ -1,24 +1,31 @@
-import { social } from "@/lib/social";
-import { buildEnquiryMessage, type EnquiryPayload } from "@/lib/enquiry";
+import { CONTACT_EMAIL } from "@/lib/contact";
+import {
+  buildEnquiryMessage,
+  isEnquiryPayload,
+  type EnquiryPayload,
+} from "@/lib/enquiry";
 
 export async function POST(request: Request) {
-  let body: EnquiryPayload;
+  let raw: unknown;
   try {
-    body = (await request.json()) as EnquiryPayload;
+    raw = await request.json();
   } catch {
     return Response.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
 
-  if (!body?.id || !body?.email || !body?.name || !body?.phone) {
-    return Response.json({ ok: false, error: "Missing fields" }, { status: 400 });
+  if (!isEnquiryPayload(raw)) {
+    return Response.json(
+      { ok: false, error: "Invalid or missing fields" },
+      { status: 400 },
+    );
   }
 
+  const body: EnquiryPayload = raw;
   const message = buildEnquiryMessage(body);
   const delivered: string[] = [];
-  const enquiryTo =
-    process.env.ENQUIRY_TO_EMAIL?.trim() || social.email;
+  const errors: string[] = [];
+  const enquiryTo = process.env.ENQUIRY_TO_EMAIL?.trim() || CONTACT_EMAIL;
 
-  // Optional backends (FormSubmit is sent from the browser - see formsubmit.ts)
   const formspreeId = process.env.FORMSPREE_FORM_ID;
   if (formspreeId) {
     try {
@@ -35,8 +42,9 @@ export async function POST(request: Request) {
         }),
       });
       if (res.ok) delivered.push("formspree");
+      else errors.push(`formspree:${res.status}`);
     } catch {
-      // continue
+      errors.push("formspree:network");
     }
   }
 
@@ -60,14 +68,19 @@ export async function POST(request: Request) {
         }),
       });
       if (res.ok) delivered.push("resend");
+      else errors.push(`resend:${res.status}`);
     } catch {
-      // continue
+      errors.push("resend:network");
     }
   }
 
+  const emailed = delivered.length > 0;
+
   return Response.json({
+    // ok means the request was accepted and processed — not that email sent
     ok: true,
-    emailed: delivered.length > 0,
+    emailed,
     delivered,
+    errors,
   });
 }

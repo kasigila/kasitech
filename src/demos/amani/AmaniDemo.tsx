@@ -12,7 +12,6 @@ import {
   caseMetrics,
   caseMilestones,
   cmsPages,
-  defaultExpansionSequence,
   expertiseAreas,
   getPerson,
   heroImage,
@@ -65,10 +64,6 @@ export function AmaniDemo() {
   const [openInsight, setOpenInsight] = useState<string | null>(null);
   const [caseStep, setCaseStep] = useState(0);
   const [selectedCountry, setSelectedCountry] = useState<MapCountryId>("ke");
-  const [expansionSequence, setExpansionSequence] = useState<MapCountryId[]>(
-    () => [...defaultExpansionSequence],
-  );
-  const [enquiryBrief, setEnquiryBrief] = useState<string | null>(null);
   const [bizTab, setBizTab] = useState<BizTab>("cms");
 
   const [leadName, setLeadName] = useState("");

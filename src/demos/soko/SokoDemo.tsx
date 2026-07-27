@@ -217,12 +217,11 @@ export function SokoDemo() {
   }
 
   function swapLookPiece(index: number, newProductId: string) {
-    setLookSlots((prev) => {
-      const oldId = prev[index]?.productId;
-      return prev.map((slot, i) =>
+    setLookSlots((prev) =>
+      prev.map((slot, i) =>
         i === index ? { ...slot, productId: newProductId } : slot,
-      );
-    });
+      ),
+    );
     setLookSelected((prev) => {
       const oldId = lookSlots[index]?.productId;
       if (!oldId || !prev.includes(oldId)) return prev;

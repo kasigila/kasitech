@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
 import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
@@ -19,7 +19,6 @@ const nav = [
   { href: "/work", label: "Work", panel: "work" as const },
   { href: "/capabilities", label: "Capabilities", panel: "capabilities" as const },
   { href: "/company", label: "Company", panel: "company" as const },
-  { href: "/founder", label: "Founder", panel: null },
 ];
 
 type Panel = "work" | "capabilities" | "company";
@@ -27,12 +26,13 @@ type Panel = "work" | "capabilities" | "company";
 export function Header() {
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<Panel | null>(null);
-  const lastY = useRef(0);
+  const menuTitleId = useId();
 
   function clearCloseTimer() {
     if (closeTimer.current) {
@@ -51,20 +51,22 @@ export function Header() {
     closeTimer.current = setTimeout(() => setPanel(null), 180);
   }
 
+  function closeMobileMenu() {
+    setOpen(false);
+    queueMicrotask(() => menuButtonRef.current?.focus());
+  }
+
   useEffect(() => {
     return () => clearCloseTimer();
   }, []);
 
   useEffect(() => {
     const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 24);
-      setHidden(y > lastY.current && y > 140 && !open && !panel);
-      lastY.current = y;
+      setScrolled(window.scrollY > 24);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [open, panel]);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -74,9 +76,35 @@ export function Header() {
   }, [open]);
 
   useEffect(() => {
-    setPanel(null);
-    setOpen(false);
-  }, [pathname]);
+    if (!open) return;
+    const root = mobileMenuRef.current;
+    const focusables = () =>
+      root?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+
+    const first = focusables()?.[0];
+    first?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMobileMenu();
+        return;
+      }
+      const list = Array.from(focusables() ?? []);
+      if (e.key !== "Tab" || !list.length) return;
+      const start = list[0];
+      const end = list[list.length - 1];
+      if (e.shiftKey && document.activeElement === start) {
+        e.preventDefault();
+        end.focus();
+      } else if (!e.shiftKey && document.activeElement === end) {
+        e.preventDefault();
+        start.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   useEffect(() => {
     if (!panel) return;
@@ -102,10 +130,7 @@ export function Header() {
     <>
       <header
         ref={headerRef}
-        className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-transform duration-300",
-          hidden && !open && !panel ? "-translate-y-full" : "translate-y-0",
-        )}
+        className="fixed inset-x-0 top-0 z-50"
         onMouseLeave={scheduleClosePanel}
         onMouseEnter={clearCloseTimer}
       >
@@ -133,13 +158,7 @@ export function Header() {
               <div
                 key={item.href}
                 className="relative"
-                onMouseEnter={() => {
-                  if (item.panel) openPanel(item.panel);
-                  else {
-                    clearCloseTimer();
-                    setPanel(null);
-                  }
-                }}
+                onMouseEnter={() => openPanel(item.panel)}
               >
                 <Link
                   href={item.href}
@@ -150,12 +169,9 @@ export function Header() {
                       : "text-kasi-ivory/75 hover:text-kasi-ivory",
                   )}
                   onClick={() => setPanel(null)}
-                  onFocus={() => {
-                    if (item.panel) openPanel(item.panel);
-                    else setPanel(null);
-                  }}
-                  aria-expanded={item.panel ? panel === item.panel : undefined}
-                  aria-haspopup={item.panel ? "true" : undefined}
+                  onFocus={() => openPanel(item.panel)}
+                  aria-expanded={panel === item.panel}
+                  aria-haspopup="true"
                   aria-current={isActive(item.href) ? "page" : undefined}
                 >
                   {item.label}
@@ -178,8 +194,9 @@ export function Header() {
           </nav>
 
           <button
+            ref={menuButtonRef}
             type="button"
-            className="text-[13px] tracking-[0.06em] text-kasi-ivory lg:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-[13px] tracking-[0.06em] text-kasi-ivory lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -188,7 +205,6 @@ export function Header() {
           </button>
         </div>
 
-        {/* Desktop panels - must accept pointer events when open */}
         <div
           className={cn(
             "absolute inset-x-0 top-[76px] hidden justify-center lg:flex",
@@ -212,16 +228,14 @@ export function Header() {
                       CLIENT WORK
                     </p>
                     {shippedWork.map((w) => (
-                      <a
+                      <Link
                         key={w.id}
-                        href={w.url}
-                        target="_blank"
-                        rel="noreferrer"
+                        href={w.caseStudyPath}
                         className="block font-display text-2xl tracking-[-0.03em] text-kasi-ivory hover:text-kasi-green"
                         onClick={() => setPanel(null)}
                       >
                         {w.name}
-                      </a>
+                      </Link>
                     ))}
                     <Link
                       href="/work#client-work"
@@ -306,8 +320,9 @@ export function Header() {
                     { href: "/company", label: "About KasiTech" },
                     { href: "/company#why", label: "Why we exist" },
                     { href: "/company#work", label: "How we work" },
-                    { href: "/lab", label: "Kasi Lab" },
+                    { href: "/founder", label: "Founder" },
                     { href: "/faq", label: "FAQ" },
+                    { href: "/lab", label: "Kasi Lab" },
                   ].map((l) => (
                     <Link
                       key={l.href}
@@ -325,27 +340,39 @@ export function Header() {
         </div>
       </header>
 
-      {/* Mobile full-screen nav */}
       <div
+        ref={mobileMenuRef}
         id="mobile-menu"
         className={cn(
           "fixed inset-0 z-40 flex flex-col bg-kasi-black px-5 pb-10 pt-28 transition lg:hidden",
-          open ? "visible opacity-100" : "invisible opacity-0",
+          open ? "visible opacity-100" : "invisible opacity-0 pointer-events-none",
         )}
+        role="dialog"
+        aria-modal={open}
+        aria-labelledby={menuTitleId}
         aria-hidden={!open}
       >
+        <p id={menuTitleId} className="sr-only">
+          Site menu
+        </p>
         <nav className="flex flex-1 flex-col justify-center gap-2" aria-label="Mobile">
-          {nav.map((item, i) => (
+          {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className="font-display text-[clamp(2.5rem,12vw,4rem)] leading-[1.05] tracking-[-0.03em]"
-              style={{ transitionDelay: open ? `${i * 40}ms` : "0ms" }}
               onClick={() => setOpen(false)}
             >
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/founder"
+            className="font-display text-[clamp(2.5rem,12vw,4rem)] leading-[1.05] tracking-[-0.03em]"
+            onClick={() => setOpen(false)}
+          >
+            Founder
+          </Link>
           <Link
             href="/start"
             className="mt-6 font-display text-[clamp(2.5rem,12vw,4rem)] leading-[1.05] tracking-[-0.03em] text-kasi-green"
@@ -357,14 +384,14 @@ export function Header() {
             Start a Project →
           </Link>
         </nav>
-        <div className="mt-auto flex flex-wrap items-center gap-5 border-t border-kasi-border pt-8">
+        <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-kasi-border pt-8">
           {hasLinkedIn() && (
             <a
               href={social.linkedin}
               target="_blank"
               rel="noreferrer"
               aria-label="LinkedIn"
-              className="text-kasi-grey hover:text-kasi-green"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-kasi-grey hover:text-kasi-green"
             >
               <IconLinkedIn />
             </a>
@@ -375,7 +402,7 @@ export function Header() {
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram"
-              className="text-kasi-grey hover:text-kasi-green"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-kasi-grey hover:text-kasi-green"
             >
               <IconInstagram />
             </a>
@@ -385,13 +412,13 @@ export function Header() {
               href={whatsappUrl()}
               onClick={() => track("whatsapp_click", { source: "mobile_menu" })}
               aria-label="WhatsApp"
-              className="text-kasi-grey hover:text-kasi-green"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-kasi-grey hover:text-kasi-green"
             >
               <IconWhatsApp />
             </a>
           )}
           <p className="w-full pt-2 font-mono text-[11px] tracking-[0.12em] text-kasi-grey">
-            Dar es Salaam, Tanzania
+            Dar es Salaam, Tanzania · Project chat on WhatsApp
           </p>
         </div>
       </div>

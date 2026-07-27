@@ -77,11 +77,8 @@ export function MotoDemo() {
   const lunch = timeMode === "auto" ? isLunchHour() : timeMode === "lunch";
 
   useEffect(() => {
-    if (!orderConfirm) {
-      setGuestOrderPhase(null);
-      return;
-    }
-    setGuestOrderPhase("grill");
+    if (!orderConfirm) return;
+    const t0 = setTimeout(() => setGuestOrderPhase("grill"), 0);
     const t1 = setTimeout(() => {
       setGuestOrderPhase("preparing");
       setOrders((prev) =>
@@ -99,10 +96,13 @@ export function MotoDemo() {
       );
     }, 5800);
     return () => {
+      clearTimeout(t0);
       clearTimeout(t1);
       clearTimeout(t2);
     };
   }, [orderConfirm]);
+
+  const activeGuestOrderPhase = orderConfirm ? guestOrderPhase : null;
 
   const bookedTableIds = useMemo(() => {
     const set = new Set<string>();
@@ -503,13 +503,13 @@ export function MotoDemo() {
               <p className="mt-3 text-3xl uppercase" style={condensedStyle}>
                 {orderConfirm}
               </p>
-              {guestOrderPhase && (
+              {activeGuestOrderPhase && (
                 <div className="mt-5 border border-white/10 bg-[#1A1614]/80 p-4">
                   <p className="font-mono text-[10px] tracking-[0.14em] text-[#8A7E74]">
                     LIVE STATUS
                   </p>
                   <p className="mt-2 text-lg uppercase text-[#F3EDE4]" style={condensedStyle}>
-                    {guestStatusCopy(guestOrderPhase)}
+                    {guestStatusCopy(activeGuestOrderPhase)}
                   </p>
                   <div className="mt-4 flex gap-2">
                     {(
@@ -520,7 +520,7 @@ export function MotoDemo() {
                       ] as const
                     ).map(([key, label]) => {
                       const order = ["grill", "preparing", "ready"].indexOf(
-                        guestOrderPhase,
+                        activeGuestOrderPhase,
                       );
                       const step = ["grill", "preparing", "ready"].indexOf(key);
                       const active = step <= order;

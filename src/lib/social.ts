@@ -1,9 +1,16 @@
+import {
+  CONTACT_EMAIL,
+  CONTACT_INSTAGRAM,
+  CONTACT_LINKEDIN,
+  emailHref as toMailto,
+} from "@/lib/contact";
+
 /** Social profile URLs. Leave empty to hide until live. */
 export const social = {
-  linkedin: "https://www.linkedin.com/in/karen-marie-kasigila-443b73242",
-  instagram: "https://www.instagram.com/kasitechinnovations",
-  /** Business contact, e.g. hello@kasitechinnovations.com when ready */
-  email: "karen_marie1@icloud.com",
+  linkedin: CONTACT_LINKEDIN,
+  instagram: CONTACT_INSTAGRAM,
+  /** Override with NEXT_PUBLIC_CONTACT_EMAIL for a domain mailbox. */
+  email: CONTACT_EMAIL,
 } as const;
 
 export function hasLinkedIn() {
@@ -19,7 +26,5 @@ export function hasEmail() {
 }
 
 export function emailHref() {
-  return social.email.startsWith("mailto:")
-    ? social.email
-    : `mailto:${social.email}`;
+  return toMailto(social.email);
 }

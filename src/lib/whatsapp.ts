@@ -1,8 +1,7 @@
-/** Set your real WhatsApp number (digits only, country code, no +). */
-const WHATSAPP_NUMBER = "12698613487";
+import { WHATSAPP_E164 } from "@/lib/contact";
 
 export function hasWhatsApp() {
-  return WHATSAPP_NUMBER.length >= 9;
+  return WHATSAPP_E164.length >= 9;
 }
 
 export function whatsappUrl(message?: string) {
@@ -10,5 +9,5 @@ export function whatsappUrl(message?: string) {
   const text = encodeURIComponent(
     message ?? "Hi KasiTech: I'd like to start my project.",
   );
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+  return `https://wa.me/${WHATSAPP_E164}?text=${text}`;
 }

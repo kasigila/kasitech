@@ -70,14 +70,23 @@ export function KasiFlowDemo() {
   const [customerId, setCustomerId] = useState(customers[0].id);
   const [crmList, setCrmList] = useState(customers);
   const [noteDraft, setNoteDraft] = useState("");
-  const [invoiceList, setInvoiceList] = useState<Invoice[]>(initialInvoices);
+  const [invoiceList] = useState<Invoice[]>(initialInvoices);
   const [notificationList, setNotificationList] =
     useState<DemoNotification[]>(initialNotifications);
   const [productList, setProductList] = useState<Product[]>(initialProducts);
   const [poList, setPoList] = useState<PurchaseOrder[]>(initialPurchaseOrders);
   const [approvalList, setApprovalList] = useState<Approval[]>(approvals);
   const [tasksList, setTasksList] = useState<Task[]>(initialTasks);
-  const [flowBanner, setFlowBanner] = useState<string | null>(null);
+  const [flowBanner, setFlowBanner] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      return sessionStorage.getItem(AUTOMATION_BANNER_KEY)
+        ? "Rule from Kasi Intelligence: when new inquiry + no reply in 30 min → create CRM lead, ack, WhatsApp salesperson, follow-up +2h."
+        : null;
+    } catch {
+      return null;
+    }
+  });
   const [financeTab, setFinanceTab] = useState<
     "invoices" | "payments" | "expenses" | "balances"
   >("invoices");
@@ -97,19 +106,6 @@ export function KasiFlowDemo() {
     () => unpaidOver30(invoiceList),
     [invoiceList],
   );
-
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(AUTOMATION_BANNER_KEY);
-      if (raw) {
-        setFlowBanner(
-          "Rule from Kasi Intelligence: when new inquiry + no reply in 30 min → create CRM lead, ack, WhatsApp salesperson, follow-up +2h.",
-        );
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -157,49 +153,6 @@ export function KasiFlowDemo() {
     );
   }
 
-  function confirmReminders() {
-    const ids = new Set(cmdResults.map((i) => i.id));
-    const justNow = "JUST NOW";
-    setInvoiceList((list) =>
-      list.map((i) =>
-        ids.has(i.id) ? { ...i, remindedAt: justNow } : i,
-      ),
-    );
-    const customerNames = new Set(cmdResults.map((i) => i.customer));
-    setCrmList((list) =>
-      list.map((c) => {
-        if (!customerNames.has(c.company)) return c;
-        return {
-          ...c,
-          history: [
-            { date: justNow, event: "Payment reminder sent (⌘K)" },
-            ...c.history,
-          ],
-          notes: [
-            `Reminder queued for overdue invoice · ${justNow}`,
-            ...c.notes,
-          ],
-        };
-      }),
-    );
-    setNotificationList((list) => [
-      {
-        id: `n-${Date.now()}`,
-        text: `Payment reminders queued for ${cmdResults.length} overdue invoices`,
-        urgent: false,
-        at: justNow,
-      },
-      ...list,
-    ]);
-    setTasksList((list) =>
-      list.map((t) =>
-        t.id === "t1" ? { ...t, status: "Done" as const } : t,
-      ),
-    );
-    setCmdPhase("closed");
-    go("finance");
-    setFinanceTab("invoices");
-  }
 
   function submitSpcPoForApproval() {
     setPoList((list) =>

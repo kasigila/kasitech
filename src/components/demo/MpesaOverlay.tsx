@@ -19,20 +19,30 @@ export function MpesaOverlay({
   onSuccess,
   onCancel,
 }: MpesaOverlayProps) {
+  if (!open) return null;
+  return (
+    <MpesaOverlayOpen
+      amountLabel={amountLabel}
+      phoneHint={phoneHint}
+      onSuccess={onSuccess}
+      onCancel={onCancel}
+    />
+  );
+}
+
+function MpesaOverlayOpen({
+  amountLabel,
+  phoneHint,
+  onSuccess,
+  onCancel,
+}: Omit<MpesaOverlayProps, "open">) {
   const [phase, setPhase] = useState<"push" | "pin" | "ok">("push");
   const [pin, setPin] = useState("");
 
   useEffect(() => {
-    if (!open) {
-      setPhase("push");
-      setPin("");
-      return;
-    }
     const t = setTimeout(() => setPhase("pin"), 900);
     return () => clearTimeout(t);
-  }, [open]);
-
-  if (!open) return null;
+  }, []);
 
   return (
     <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 p-4 sm:items-center">

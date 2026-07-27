@@ -1,4 +1,13 @@
-import { social } from "@/lib/social";
+import {
+  CONTACT_EMAIL,
+  CONTACT_INSTAGRAM,
+  CONTACT_LINKEDIN,
+  MOBILE_DISPLAY,
+  MOBILE_E164,
+  SITE_URL,
+  WHATSAPP_DISPLAY,
+  WHATSAPP_E164,
+} from "@/lib/contact";
 
 /** KasiTech digital business card: source of truth for /card + vCard. */
 export const businessCard = {
@@ -9,17 +18,17 @@ export const businessCard = {
   title: "Founder",
   tagline: "Digital products that work",
   location: "Dar es Salaam, Tanzania",
-  website: "https://kasitechinnovations.com",
-  cardUrl: "https://kasitechinnovations.com/card",
-  email: "karen_marie1@icloud.com",
-  mobile: "+255 626 000 005",
-  mobileE164: "+255626000005",
-  mobileDigits: "255626000005",
-  whatsapp: "+1 269 861 3487",
-  whatsappE164: "+12698613487",
-  whatsappDigits: "12698613487",
-  linkedin: social.linkedin,
-  instagram: social.instagram,
+  website: SITE_URL,
+  cardUrl: `${SITE_URL}/card`,
+  email: CONTACT_EMAIL,
+  mobile: MOBILE_DISPLAY,
+  mobileE164: `+${MOBILE_E164}`,
+  mobileDigits: MOBILE_E164,
+  whatsapp: WHATSAPP_DISPLAY,
+  whatsappE164: `+${WHATSAPP_E164}`,
+  whatsappDigits: WHATSAPP_E164,
+  linkedin: CONTACT_LINKEDIN,
+  instagram: CONTACT_INSTAGRAM,
 } as const;
 
 export function cardWhatsAppUrl(message?: string) {
