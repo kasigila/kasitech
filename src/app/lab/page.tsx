@@ -1,8 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { BuyCtas } from "@/components/site/BuyCtas";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Kasi Lab" };
+export const metadata = pageMetadata({
+  title: "Kasi Lab",
+  description:
+    "KasiTech experiments with interactive research, data prototypes, and future product surfaces from Dar es Salaam.",
+  path: "/lab",
+});
 
 export default function LabPage() {
   return (

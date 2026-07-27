@@ -3,11 +3,14 @@ import { projects } from "@/data/projects";
 import { projectCovers } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { BuyCtas } from "@/components/site/BuyCtas";
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "All Work",
-};
+  description:
+    "Explore KasiTech interactive concept demos across hospitality, commerce, logistics, healthcare, AI, operations, and more.",
+  path: "/work/all",
+});
 
 export default function AllWorkPage() {
   return (

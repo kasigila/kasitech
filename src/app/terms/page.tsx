@@ -1,6 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Terms" };
+export const metadata = pageMetadata({
+  title: "Terms",
+  description:
+    "Terms for KasiTech demos, shipped work references, and project engagement boundaries.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (

@@ -1,16 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { BuyCtas } from "@/components/site/BuyCtas";
 import { capabilityDemoScreens } from "@/data/images";
 import { getProject } from "@/data/projects";
 import { cn } from "@/lib/cn";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Capabilities",
   description:
     "What KasiTech builds across the digital business: attract, transact, operate, decide. Each paired with a concept you can try.",
-};
+  path: "/capabilities",
+});
 
 const caps = [
   {

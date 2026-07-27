@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import { StartProjectForm } from "@/components/start/StartProjectForm";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Start a Project",
   description:
     "Tell KasiTech what you want to build - website, commerce, platform, or AI. Conversational project intake.",
-};
+  path: "/start",
+});
 
 export default function StartPage() {
   return (

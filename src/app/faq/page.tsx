@@ -2,8 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { hasWhatsApp, whatsappUrl } from "@/lib/whatsapp";
 import { social } from "@/lib/social";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "FAQ" };
+export const metadata: Metadata = pageMetadata({
+  title: "FAQ",
+  description:
+    "Answers about KasiTech websites, demos, project timelines, pricing, payments, hosting, and how to start a project.",
+  path: "/faq",
+  openGraphTitle: "KasiTech FAQ",
+});
 
 const faqs = [
   {
@@ -44,50 +51,71 @@ const faqs = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
+};
+
 export default function FaqPage() {
   return (
-    <div className="mx-auto max-w-3xl px-5 pb-28 pt-32 md:px-8">
-      <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-        FAQ
-      </p>
-      <h1 className="mt-6 font-display text-5xl tracking-[-0.04em] md:text-6xl">
-        BEFORE YOU
-        <br />
-        ENQUIRE.
-      </h1>
-      <p className="mt-6 text-lg text-kasi-grey">
-        Straight answers for website and product buyers.
-      </p>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <div className="mx-auto max-w-3xl px-5 pb-28 pt-32 md:px-8">
+        <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
+          FAQ
+        </p>
+        <h1 className="mt-6 font-display text-5xl tracking-[-0.04em] md:text-6xl">
+          BEFORE YOU
+          <br />
+          ENQUIRE.
+        </h1>
+        <p className="mt-6 text-lg text-kasi-grey">
+          Straight answers for website and product buyers.
+        </p>
 
-      <div className="mt-16 space-y-10">
-        {faqs.map((f) => (
-          <div key={f.q} className="border-t border-kasi-border pt-8">
-            <h2 className="font-display text-xl tracking-[-0.02em] md:text-2xl">
-              {f.q}
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-kasi-grey">
-              {f.a}
-            </p>
-          </div>
-        ))}
-      </div>
+        <div className="mt-16 space-y-10">
+          {faqs.map((f) => (
+            <div key={f.q} className="border-t border-kasi-border pt-8">
+              <h2 className="font-display text-xl tracking-[-0.02em] md:text-2xl">
+                {f.q}
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-kasi-grey">
+                {f.a}
+              </p>
+            </div>
+          ))}
+        </div>
 
-      <div className="mt-16 flex flex-wrap gap-6">
-        <Link
-          href="/start"
-          className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
-        >
-          START MY PROJECT ↗
-        </Link>
-        {hasWhatsApp() && (
-          <a
-            href={whatsappUrl()}
-            className="text-sm text-kasi-grey hover:text-kasi-ivory"
+        <div className="mt-16 flex flex-wrap gap-6">
+          <Link
+            href="/start"
+            className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
           >
-            WhatsApp →
-          </a>
-        )}
+            START MY PROJECT ↗
+          </Link>
+          {hasWhatsApp() && (
+            <a
+              href={whatsappUrl()}
+              className="text-sm text-kasi-grey hover:text-kasi-ivory"
+            >
+              WhatsApp →
+            </a>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

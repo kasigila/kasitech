@@ -1,6 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Privacy" };
+export const metadata = pageMetadata({
+  title: "Privacy",
+  description:
+    "How KasiTech handles project enquiry details, demo interactions, and contact data.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (
