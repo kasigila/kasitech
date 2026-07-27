@@ -11,8 +11,8 @@ export default function HomePage() {
   return (
     <>
       <section className="relative min-h-[100svh] overflow-hidden px-5 pb-16 pt-28 md:px-8 md:pt-32">
-        <div className="mx-auto grid max-w-[1400px] items-center gap-16 lg:grid-cols-[1.15fr_0.85fr]">
-          <div>
+        <div className="mx-auto grid max-w-[1400px] items-center gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+          <div className="order-1">
             <h1 className="font-display text-[clamp(2.75rem,8vw,5.5rem)] leading-[0.92] tracking-[-0.045em]">
               WE BUILD
               <br />
@@ -21,8 +21,23 @@ export default function HomePage() {
               THAT WORK.
             </h1>
             <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-grey md:text-lg">
-              Websites, booking systems, ecommerce, software and AI - designed
-              so customers can act and businesses can operate.
+              A Dar es Salaam studio building websites, commerce, and systems
+              for businesses that need customers to act.
+            </p>
+            <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
+              <Link
+                href="/work#client-work"
+                className="text-kasi-green transition hover:text-kasi-ivory"
+              >
+                2 LIVE LAUNCHES
+              </Link>
+              <span aria-hidden>·</span>
+              <Link
+                href="/work#concepts"
+                className="text-kasi-green transition hover:text-kasi-ivory"
+              >
+                12 INTERACTIVE CONCEPTS
+              </Link>
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-5">
               <Link
@@ -47,12 +62,9 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <div className="hidden lg:block">
+          <div className="order-2 lg:justify-self-end">
             <HeroProductWindow />
           </div>
-        </div>
-        <div className="mx-auto mt-14 max-w-[1400px] lg:hidden">
-          <HeroProductWindow />
         </div>
       </section>
 

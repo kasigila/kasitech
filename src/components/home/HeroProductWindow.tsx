@@ -7,17 +7,22 @@ import { projects } from "@/data/projects";
 import { getProjectBlurb } from "@/data/project-blurbs";
 import { projectCovers } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 /** Hero preview - cycles all concept demos. */
 export function HeroProductWindow() {
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (paused || prefersReducedMotion || projects.length < 2) return;
+
     const id = setInterval(() => {
       setIndex((i) => (i + 1) % projects.length);
     }, 2400);
     return () => clearInterval(id);
-  }, []);
+  }, [paused, prefersReducedMotion]);
 
   const project = projects[index];
   const blurb = getProjectBlurb(project.slug, project.description);
@@ -28,19 +33,31 @@ export function HeroProductWindow() {
         <p className="max-w-[14rem] text-sm leading-relaxed text-kasi-grey">
           Examples of what yours could feel like. Tap one to try it.
         </p>
-        <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
-          {project.number} / {String(projects.length).padStart(2, "0")}
-        </p>
+        <div className="flex items-center gap-3">
+          {projects.length > 1 && (
+            <button
+              type="button"
+              onClick={() => setPaused((value) => !value)}
+              className="min-h-11 border border-kasi-border px-3 font-mono text-[10px] tracking-[0.14em] text-kasi-grey transition hover:border-kasi-green hover:text-kasi-green"
+              aria-pressed={paused}
+            >
+              {prefersReducedMotion ? "MOTION OFF" : paused ? "PLAY" : "PAUSE"}
+            </button>
+          )}
+          <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
+            {project.number} / {String(projects.length).padStart(2, "0")}
+          </p>
+        </div>
       </div>
 
       <div className="relative">
         <AnimatePresence mode="wait">
           <motion.div
             key={project.id}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.28 }}
+            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.28 }}
           >
             <Link
               href={project.demoPath}
@@ -49,9 +66,13 @@ export function HeroProductWindow() {
               <div className="relative aspect-[16/10] overflow-hidden bg-kasi-border">
                 <SafeImage
                   src={projectCovers[project.slug] ?? projectCovers.zuri}
-                  alt=""
+                  alt={project.name}
                   fill
-                  className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
+                  className={
+                    prefersReducedMotion
+                      ? "object-cover object-top"
+                      : "object-cover object-top transition duration-500 group-hover:scale-[1.03]"
+                  }
                   sizes="(max-width: 1024px) 100vw, 28vw"
                   fallbackLabel={project.name}
                   priority={index === 0}
@@ -82,12 +103,16 @@ export function HeroProductWindow() {
               type="button"
               aria-label={`Show ${p.name}`}
               onClick={() => setIndex(i)}
-              className={`h-1.5 rounded-full transition-all ${
-                i === index
-                  ? "w-4 bg-kasi-green"
-                  : "w-1.5 bg-kasi-border hover:bg-kasi-grey"
-              }`}
-            />
+              className="group flex h-11 w-11 items-center justify-center"
+            >
+              <span
+                className={`h-1.5 rounded-full transition-all ${
+                  i === index
+                    ? "w-5 bg-kasi-green"
+                    : "w-1.5 bg-kasi-border group-hover:bg-kasi-grey"
+                }`}
+              />
+            </button>
           ))}
         </div>
 

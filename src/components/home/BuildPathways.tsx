@@ -83,7 +83,9 @@ export function BuildPathways() {
                   }}
                   className={cn(
                     "flex w-full items-center justify-between gap-4 py-6 text-left transition",
-                    isActive ? "opacity-100" : "opacity-40 hover:opacity-70",
+                    isActive
+                      ? "text-kasi-ivory"
+                      : "text-kasi-grey hover:text-kasi-ivory",
                   )}
                   aria-pressed={isActive}
                 >
@@ -167,18 +169,18 @@ export function BuildPathways() {
                   })}
                 </ul>
 
-                <div className="mt-8 flex flex-wrap items-center gap-5">
-                  <Link
-                    href={hint.href}
-                    className="text-sm tracking-wide text-kasi-green hover:underline"
-                  >
-                    {hint.cta}
-                  </Link>
+                <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
                     href={`/start?need=${startNeed[active]}`}
-                    className="text-sm text-kasi-grey transition hover:text-kasi-ivory"
+                    className="border border-kasi-green bg-kasi-green px-5 py-3 text-sm tracking-wide text-kasi-black transition hover:bg-transparent hover:text-kasi-green"
                   >
-                    Start a project →
+                    START A PROJECT →
+                  </Link>
+                  <Link
+                    href={hint.href}
+                    className="border border-kasi-border px-5 py-3 text-sm tracking-wide text-kasi-green transition hover:border-kasi-green"
+                  >
+                    {hint.cta}
                   </Link>
                 </div>
               </motion.div>

@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { capabilityVisuals } from "@/data/images";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 const pillars = [
   {
@@ -57,10 +58,12 @@ export function CapabilitySystem() {
   const sectionRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState<PillarId>("attract");
   const [paused, setPaused] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const pillar = pillars.find((p) => p.id === active)!;
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || prefersReducedMotion) return;
+
     const id = setInterval(() => {
       setActive((current) => {
         const i = pillars.findIndex((p) => p.id === current);
@@ -68,7 +71,7 @@ export function CapabilitySystem() {
       });
     }, 2400);
     return () => clearInterval(id);
-  }, [paused]);
+  }, [paused, prefersReducedMotion]);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -101,17 +104,33 @@ export function CapabilitySystem() {
       className="bg-kasi-ivory px-5 py-24 text-kasi-black md:px-8 md:py-32"
     >
       <div className="mx-auto max-w-[1400px]">
-        <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
-          CAPABILITY SYSTEM
-        </p>
-        <h2 className="mt-4 max-w-3xl font-display text-4xl leading-[1.05] tracking-[-0.04em] md:text-6xl">
-          WE BUILD ACROSS
-          <br />
-          THE DIGITAL BUSINESS.
-        </h2>
-        <p className="mt-6 font-mono text-[12px] tracking-[0.14em] text-kasi-black/50">
-          FIND · BUY · BOOK · OPERATE · DECIDE
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-black/45">
+              CAPABILITY SYSTEM
+            </p>
+            <h2 className="mt-4 max-w-3xl font-display text-4xl leading-[1.05] tracking-[-0.04em] md:text-6xl">
+              WE BUILD ACROSS
+              <br />
+              THE DIGITAL BUSINESS.
+            </h2>
+            <p className="mt-6 font-mono text-[12px] tracking-[0.14em] text-kasi-black/50">
+              FIND · BUY · BOOK · OPERATE · DECIDE
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setPaused((value) => !value)}
+            className="min-h-11 border border-kasi-black/15 px-4 font-mono text-[10px] tracking-[0.14em] text-kasi-black/55 transition hover:border-kasi-black hover:text-kasi-black"
+            aria-pressed={paused}
+          >
+            {prefersReducedMotion
+              ? "MOTION OFF"
+              : paused
+                ? "PLAY ROTATION"
+                : "PAUSE ROTATION"}
+          </button>
+        </div>
 
         <div className="mt-16 grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start lg:gap-14">
           <div className="relative">
@@ -161,10 +180,10 @@ export function CapabilitySystem() {
                 <motion.div
                   key={pillar.id}
                   className="absolute inset-0 flex flex-col justify-center px-5 py-4 md:px-6 md:py-5"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.25 }}
+                  initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                  animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                  exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
                 >
                   <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-black/40">
                     {pillar.num} · {pillar.title}
@@ -184,14 +203,14 @@ export function CapabilitySystem() {
               <motion.div
                 key={pillar.id}
                 className="absolute inset-0"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.28 }}
+                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
+                animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.28 }}
               >
                 <SafeImage
                   src={pillar.image}
-                  alt=""
+                  alt={`${pillar.title} capability preview`}
                   fill
                   className="object-cover object-top opacity-90"
                   sizes="(max-width: 1024px) 100vw, 50vw"

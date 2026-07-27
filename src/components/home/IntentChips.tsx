@@ -16,21 +16,15 @@ export function IntentChips() {
       <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-grey">
         WHAT DO YOU NEED?
       </p>
-      <div className="mt-3 flex flex-wrap gap-x-1 gap-y-2">
-        {intents.map((i, idx) => (
-          <span key={i.label} className="inline-flex items-center">
-            <Link
-              href={i.href}
-              className="px-1 py-1 text-[13px] tracking-wide text-kasi-ivory/75 underline decoration-kasi-border underline-offset-4 transition hover:text-kasi-green hover:decoration-kasi-green"
-            >
-              {i.label}
-            </Link>
-            {idx < intents.length - 1 && (
-              <span className="px-1 text-kasi-border" aria-hidden>
-                /
-              </span>
-            )}
-          </span>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {intents.map((i) => (
+          <Link
+            key={i.label}
+            href={i.href}
+            className="inline-flex min-h-11 items-center border border-kasi-border px-4 py-2 text-[13px] tracking-wide text-kasi-ivory transition hover:border-kasi-green hover:bg-kasi-green hover:text-kasi-black"
+          >
+            {i.label}
+          </Link>
         ))}
       </div>
     </div>
