@@ -1,47 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
+import { founderPhoto } from "@/data/images";
 import { useIsClient } from "@/lib/useIsClient";
-
-const nodes = [
-  { id: "data", x: 70, y: 90, label: "DATA" },
-  { id: "tech", x: 330, y: 90, label: "TECHNOLOGY" },
-  { id: "biz", x: 200, y: 410, label: "BUSINESS" },
-] as const;
-
-const center = { x: 200, y: 250 };
-
-function FlowDot({
-  from,
-  to,
-  delay,
-  duration,
-}: {
-  from: { x: number; y: number };
-  to: { x: number; y: number };
-  delay: number;
-  duration: number;
-}) {
-  return (
-    <motion.circle
-      r="2.5"
-      fill="#C7FF00"
-      initial={false}
-      animate={{
-        cx: [from.x, to.x],
-        cy: [from.y, to.y],
-        opacity: [0, 1, 1, 0],
-      }}
-      transition={{
-        duration,
-        delay,
-        repeat: Infinity,
-        ease: "linear",
-      }}
-    />
-  );
-}
 
 export function FounderHero() {
   const isClient = useIsClient();
@@ -110,110 +73,28 @@ export function FounderHero() {
 
         <div
           ref={panelRef}
-          className="relative order-2 min-h-[340px] overflow-hidden border border-kasi-border bg-[#0d0d0d] md:min-h-[480px]"
+          className="relative order-2 aspect-square overflow-hidden border border-kasi-border bg-[#0d0d0d] md:aspect-auto md:min-h-[480px]"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_15%,rgba(199,255,0,0.1),transparent_50%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(36,36,36,0.45)_1px,transparent_1px),linear-gradient(to_bottom,rgba(36,36,36,0.45)_1px,transparent_1px)] bg-[size:48px_48px] opacity-50" />
-
-          <div
-            className="absolute inset-0"
-            style={{
-              transform: `translate(${offset.x}px, ${offset.y}px)`,
-              transition: "transform 180ms ease-out",
-            }}
+          <motion.div
+            className="absolute inset-[-4%]"
+            animate={{ x: offset.x, y: offset.y }}
+            transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.4 }}
           >
-            <svg
-              className="absolute inset-0 h-full w-full"
-              viewBox="0 0 400 500"
-              fill="none"
-              aria-hidden
-            >
-              {nodes.map((n) => (
-                <path
-                  key={`line-${n.id}`}
-                  d={`M${n.x} ${n.y} L${center.x} ${center.y}`}
-                  stroke="#242424"
-                  strokeWidth="1"
-                />
-              ))}
+            <Image
+              src={founderPhoto.src}
+              alt={founderPhoto.alt}
+              width={founderPhoto.width}
+              height={founderPhoto.height}
+              priority
+              className="h-full w-full object-cover object-[center_18%]"
+              sizes="(max-width: 1024px) 100vw, 42vw"
+            />
+          </motion.div>
 
-              {isClient &&
-                nodes.map((n, i) => (
-                  <motion.path
-                    key={`glow-${n.id}`}
-                    d={`M${n.x} ${n.y} L${center.x} ${center.y}`}
-                    stroke="#C7FF00"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    initial={false}
-                    animate={{ pathLength: [0, 1], opacity: [0.15, 0.55, 0.15] }}
-                    transition={{
-                      duration: 3.2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: i * 0.45,
-                    }}
-                  />
-                ))}
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(9,9,9,0.72)_0%,rgba(9,9,9,0.18)_35%,transparent_55%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_80%_0%,rgba(199,255,0,0.08),transparent_45%)]" />
 
-              {nodes.map((n, i) => (
-                <g key={n.id}>
-                  <circle cx={n.x} cy={n.y} r="4" fill="#C7FF00" />
-                  <text
-                    x={n.x}
-                    y={n.y - 14}
-                    textAnchor="middle"
-                    fill="#929292"
-                    style={{ fontSize: 9, letterSpacing: "0.16em" }}
-                  >
-                    {n.label}
-                  </text>
-                  {isClient && (
-                    <>
-                      <FlowDot
-                        from={n}
-                        to={center}
-                        delay={i * 0.35}
-                        duration={2.8}
-                      />
-                      <FlowDot
-                        from={n}
-                        to={center}
-                        delay={i * 0.35 + 0.9}
-                        duration={2.8}
-                      />
-                      <FlowDot
-                        from={n}
-                        to={center}
-                        delay={i * 0.35 + 1.8}
-                        duration={2.8}
-                      />
-                    </>
-                  )}
-                </g>
-              ))}
-
-              <circle
-                cx={center.x}
-                cy={center.y}
-                r="7"
-                fill="#090909"
-                stroke="#C7FF00"
-                strokeWidth="1.5"
-              />
-              <text
-                x={center.x}
-                y={center.y + 28}
-                textAnchor="middle"
-                fill="#C7FF00"
-                style={{ fontSize: 11, letterSpacing: "0.18em" }}
-              >
-                KASITECH
-              </text>
-            </svg>
-          </div>
-
-          <div className="absolute left-5 top-5 space-y-2 font-mono text-[10px] tracking-[0.16em] text-kasi-grey md:left-6 md:top-6">
+          <div className="absolute left-5 top-5 space-y-2 font-mono text-[10px] tracking-[0.16em] text-kasi-ivory/70 md:left-6 md:top-6">
             <p>DAR ES SALAAM, TZ</p>
             <p>EST. 2026</p>
           </div>
