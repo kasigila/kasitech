@@ -18,6 +18,7 @@ export function SafeImage({
   ...props
 }: Props) {
   const [failed, setFailed] = useState(false);
+  const isDecorative = alt === "";
 
   if (failed) {
     return (
@@ -27,8 +28,9 @@ export function SafeImage({
           fallbackClassName,
           className,
         )}
-        role="img"
-        aria-label={alt}
+        {...(isDecorative
+          ? { "aria-hidden": true }
+          : { role: "img", "aria-label": alt })}
       >
         {fallbackLabel ? (
           <span className="font-mono text-[10px] tracking-[0.16em] text-kasi-grey">

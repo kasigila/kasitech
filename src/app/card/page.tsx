@@ -13,6 +13,9 @@ import { founderPhoto } from "@/data/images";
 import { businessCard as c, cardWhatsAppUrl } from "@/lib/card";
 import { hasInstagram, hasLinkedIn } from "@/lib/social";
 
+const contactPrimaryNote =
+  "Project chat: WhatsApp. Tanzania mobile is for calls/SMS.";
+
 export const metadata: Metadata = {
   title: "Digital Business Card",
   description:
@@ -100,12 +103,12 @@ export default function CardPage() {
         <CardMotionLate delay={0.12}>
           <div className="mt-10">
             <ContactRow
-              label="MOBILE"
+              label="MOBILE (CALL/SMS)"
               href={`tel:${c.mobileE164}`}
               value={c.mobile}
             />
             <ContactRow
-              label="WHATSAPP"
+              label="WHATSAPP (PROJECT CHAT)"
               href={cardWhatsAppUrl()}
               value={c.whatsapp}
             />
@@ -114,7 +117,14 @@ export default function CardPage() {
               href={`mailto:${c.email}`}
               value={c.email}
             />
-            <ContactRow label="WEB" href={c.website} value="kasitechinnovations.com" />
+            <ContactRow
+              label="WEB"
+              href="https://www.kasitechinnovations.com"
+              value="www.kasitechinnovations.com"
+            />
+            <p className="mt-4 text-[12px] leading-relaxed text-kasi-grey">
+              {contactPrimaryNote}
+            </p>
           </div>
 
           <div className="mt-8 flex items-center gap-5">
@@ -124,7 +134,7 @@ export default function CardPage() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
-                className="text-kasi-grey transition hover:text-kasi-green"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center text-kasi-grey transition hover:text-kasi-green"
               >
                 <IconLinkedIn />
               </a>
@@ -135,15 +145,15 @@ export default function CardPage() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
-                className="text-kasi-grey transition hover:text-kasi-green"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center text-kasi-grey transition hover:text-kasi-green"
               >
                 <IconInstagram />
               </a>
             )}
             <a
               href={cardWhatsAppUrl()}
-              aria-label="WhatsApp"
-              className="text-kasi-grey transition hover:text-kasi-green"
+              aria-label="WhatsApp project chat"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-kasi-grey transition hover:text-kasi-green"
             >
               <IconWhatsApp />
             </a>
@@ -168,9 +178,19 @@ export default function CardPage() {
           </div>
         </CardMotionLate>
 
-        <p className="relative mt-12 text-center font-mono text-[10px] tracking-[0.14em] text-kasi-grey">
-          EST. 2026 · DAR ES SALAAM
-        </p>
+        <div className="relative mt-12 space-y-3 text-center">
+          <p className="font-mono text-[10px] tracking-[0.14em] text-kasi-grey">
+            EST. 2026 · DAR ES SALAAM
+          </p>
+          <div className="flex justify-center gap-5 text-[12px] text-kasi-grey">
+            <Link href="/privacy" className="hover:text-kasi-green">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-kasi-green">
+              Terms
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

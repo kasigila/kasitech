@@ -15,9 +15,9 @@ export function BrowserFrame({ children, className, url }: BrowserFrameProps) {
       )}
     >
       <div className="flex items-center gap-2 border-b border-kasi-border px-3 py-2.5">
-        <span className="h-2 w-2 rounded-full bg-kasi-border" />
-        <span className="h-2 w-2 rounded-full bg-kasi-border" />
-        <span className="h-2 w-2 rounded-full bg-kasi-border" />
+        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-kasi-border" />
+        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-kasi-border" />
+        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-kasi-border" />
         {url && (
           <span className="ml-2 truncate font-mono text-[10px] tracking-[0.08em] text-kasi-grey">
             {url}

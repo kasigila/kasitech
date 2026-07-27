@@ -17,6 +17,9 @@ import {
   IconWhatsApp,
 } from "@/components/site/SocialIcons";
 
+const contactPrimaryNote =
+  "Project chat: WhatsApp. Tanzania mobile is for calls/SMS.";
+
 export function Footer() {
   const [time, setTime] = useState("--:--");
 
@@ -107,9 +110,14 @@ export function Footer() {
             )}
           </div>
           {hasEmail() ? (
-            <a href={emailHref()} className="text-sm hover:text-kasi-green">
-              {social.email}
-            </a>
+            <>
+              <a href={emailHref()} className="text-sm hover:text-kasi-green">
+                {social.email}
+              </a>
+              <p className="max-w-xs text-xs leading-relaxed text-kasi-grey">
+                {contactPrimaryNote}
+              </p>
+            </>
           ) : (
             <Link href="/start" className="text-sm text-kasi-grey hover:text-kasi-green">
               Start a project →
@@ -123,8 +131,8 @@ export function Footer() {
         <div className="flex gap-6">
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
-          <Link href="/work/000" className="hover:text-kasi-green">
-            Built by KasiTech.
+          <Link href="/work/africa-climate-finance" className="hover:text-kasi-green">
+            Client case study.
           </Link>
         </div>
       </div>

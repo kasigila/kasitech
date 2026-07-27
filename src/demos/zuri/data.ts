@@ -586,6 +586,6 @@ export const contentBlocks = [
 ];
 
 export const heroImage =
-  "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=2000&q=80";
+  "/demos/zuri/hero.jpg";
 
 export const coordinates = "6°09′S · 39°11′E · ZANZIBAR";
