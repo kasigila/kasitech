@@ -42,7 +42,7 @@ export function Header() {
     }
   }
 
-  function openPanel(next: Panel) {
+  function openPanel(next: Panel | null) {
     clearCloseTimer();
     setPanel(next);
   }
@@ -159,7 +159,10 @@ export function Header() {
               <div
                 key={item.href}
                 className="relative"
-                onMouseEnter={() => openPanel(item.panel)}
+                onMouseEnter={() => {
+                  if (item.panel) openPanel(item.panel);
+                  else setPanel(null);
+                }}
               >
                 <Link
                   href={item.href}
@@ -170,9 +173,12 @@ export function Header() {
                       : "text-kasi-ivory/75 hover:text-kasi-ivory",
                   )}
                   onClick={() => setPanel(null)}
-                  onFocus={() => openPanel(item.panel)}
-                  aria-expanded={panel === item.panel}
-                  aria-haspopup="true"
+                  onFocus={() => {
+                    if (item.panel) openPanel(item.panel);
+                    else setPanel(null);
+                  }}
+                  aria-expanded={item.panel ? panel === item.panel : undefined}
+                  aria-haspopup={item.panel ? "true" : undefined}
                   aria-current={isActive(item.href) ? "page" : undefined}
                 >
                   {item.label}
