@@ -242,7 +242,12 @@ export default function CapabilitiesPage() {
           </h2>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-kasi-grey">
             Tell us what you need to attract, transact, operate, or decide. We
-            reply within 24 hours on business days.
+            reply within 24 hours on business days. For package scope and TSh
+            pricing, see the{" "}
+            <Link href="/pricing" className="text-kasi-green hover:underline">
+              2026 catalog
+            </Link>
+            .
           </p>
           <div className="mt-10">
             <BuyCtas source="capabilities" />

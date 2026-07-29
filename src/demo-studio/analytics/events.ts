@@ -1,0 +1,15 @@
+export type DemoStudioEvent =
+  | "demo_started"
+  | "industry_selected"
+  | "package_selected"
+  | "bundle_selected"
+  | "feature_added"
+  | "feature_removed"
+  | "kb_plan_selected"
+  | "care_selected"
+  | "configuration_saved"
+  | "configuration_shared"
+  | "estimate_downloaded"
+  | "configuration_submitted"
+  | "delivery_selected"
+  | "start_mode_selected";

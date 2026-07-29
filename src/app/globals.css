@@ -75,6 +75,23 @@ body {
   text-wrap: balance;
 }
 
+@media print {
+  header,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  a {
+    text-decoration: none !important;
+  }
+}
+
 /* Fluid display scale for hero-level type */
 .kasi-display {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;

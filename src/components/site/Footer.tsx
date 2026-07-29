@@ -57,6 +57,7 @@ export function Footer() {
           {[
             ["/work", "Work"],
             ["/capabilities", "Capabilities"],
+            ["/pricing", "Pricing"],
             ["/company", "Company"],
             ["/founder", "Founder"],
             ["/start", "Start a Project"],

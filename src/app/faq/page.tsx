@@ -31,7 +31,7 @@ const faqs = [
   },
   {
     q: "How do pricing and quotes work?",
-    a: `Every project is scoped after a short discovery. We then send a clear price breakdown for your goals and timeline. Use Start my project or Project WhatsApp ${WHATSAPP_DISPLAY} to begin. We reply within 24 hours on business days.`,
+    a: `Browse the Services & Pricing catalog for package scope in Tanzanian Shillings. Every project is then confirmed with a formal quotation after a short discovery. Use Start my project or Project WhatsApp ${WHATSAPP_DISPLAY} to begin. We reply within 24 hours on business days.`,
   },
   {
     q: "WhatsApp is a US number. Can I still message from Tanzania?",
@@ -104,6 +104,12 @@ export default function FaqPage() {
         </div>
 
         <div className="mt-16 flex flex-wrap gap-6">
+          <Link
+            href="/pricing"
+            className="text-sm text-kasi-green hover:underline"
+          >
+            Services &amp; Pricing catalog →
+          </Link>
           <Link
             href="/start"
             className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"

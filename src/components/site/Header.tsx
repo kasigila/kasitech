@@ -18,6 +18,7 @@ import {
 const nav = [
   { href: "/work", label: "Work", panel: "work" as const },
   { href: "/capabilities", label: "Capabilities", panel: "capabilities" as const },
+  { href: "/pricing", label: "Pricing", panel: null },
   { href: "/company", label: "Company", panel: "company" as const },
 ];
 
@@ -272,7 +273,7 @@ export function Header() {
                 </div>
               )}
               {panel === "capabilities" && (
-                <div className="grid gap-6 md:grid-cols-4">
+                <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5">
                   {[
                     {
                       t: "WEBSITES & EXPERIENCES",
@@ -293,6 +294,11 @@ export function Header() {
                       t: "DATA, AI & AUTOMATION",
                       d: "Intelligence that reduces friction.",
                       href: "/capabilities#intelligence",
+                    },
+                    {
+                      t: "SERVICES & PRICING",
+                      d: "2026 client catalog — clear TSh scope.",
+                      href: "/pricing",
                     },
                   ].map((c) => (
                     <Link
