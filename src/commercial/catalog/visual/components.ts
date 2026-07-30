@@ -270,6 +270,9 @@ export function drawWorkflowDiagram(
 /**
  * Chips that never clip text. Long labels wrap inside a taller pill;
  * pills wrap to the next row when the row is full.
+ *
+ * PDF text `y` is the glyph baseline (not the top of the box) — the
+ * rectangle must be placed around that baseline or labels float above the pills.
  */
 export function drawChips(
   page: PDFPage,
@@ -283,11 +286,12 @@ export function drawChips(
   let cy = y;
   let rowH = 0;
   const gapX = 6;
-  const gapY = 5;
+  const gapY = 6;
   const padX = 8;
   const padY = 4;
   const fontSize = 6.5;
   const lineH = 9;
+  const ascent = fontSize * 0.78;
 
   for (const raw of chips) {
     const label = sanitize(raw);
@@ -304,19 +308,25 @@ export function drawChips(
       0,
     );
     const w = Math.min(maxW, Math.ceil(textW + padX * 2));
-    const h = lines.length * lineH + padY * 2;
+    const heightFor = (baselineY: number) => {
+      const top = baselineY + ascent + padY;
+      const bottom = baselineY - (lines.length - 1) * lineH - padY;
+      return { top, bottom, height: top - bottom };
+    };
 
+    let box = heightFor(cy);
     if (cx > x && cx + w > x + maxW) {
       cx = x;
       cy -= rowH + gapY;
       rowH = 0;
+      box = heightFor(cy);
     }
 
     page.drawRectangle({
       x: cx,
-      y: cy - h + 4,
+      y: box.bottom,
       width: w,
-      height: h,
+      height: box.height,
       borderColor: C.rule,
       borderWidth: 0.6,
       color: C.white,
@@ -329,10 +339,10 @@ export function drawChips(
     }
 
     cx += w + gapX;
-    rowH = Math.max(rowH, h);
+    rowH = Math.max(rowH, box.height);
   }
 
-  return cy - rowH + 2;
+  return cy - rowH + ascent + padY;
 }
 
 /** Premium Demo Studio panel with QR. */
