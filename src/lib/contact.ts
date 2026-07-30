@@ -1,10 +1,6 @@
 /**
  * Single source of truth for public contact details.
  * Prefer env overrides when a domain mailbox / numbers change.
- *
- * Domain email: set NEXT_PUBLIC_CONTACT_EMAIL when ready
- * (e.g. hello@kasitechinnovations.com). Until then we keep the
- * current public address so nothing breaks.
  */
 
 export const SITE_URL = "https://www.kasitechinnovations.com";
@@ -19,7 +15,8 @@ export const MOBILE_E164 = "255626000005";
 export const MOBILE_DISPLAY = "+255 626 000 005";
 
 export const CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "karen_marie1@icloud.com";
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() ||
+  "karen@kasitechinnovations.com";
 
 export const CONTACT_LINKEDIN =
   "https://www.linkedin.com/in/karen-marie-kasigila-443b73242";

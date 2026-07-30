@@ -268,11 +268,8 @@ export function drawWorkflowDiagram(
 }
 
 /**
- * Chips that never clip text. Long labels wrap inside a taller pill;
- * pills wrap to the next row when the row is full.
- *
- * PDF text `y` is the glyph baseline (not the top of the box) — the
- * rectangle must be placed around that baseline or labels float above the pills.
+ * Chips that never clip text. `y` is the TOP of the chip row (CSS-like).
+ * Boxes and baselines are derived from that top so labels sit inside the pills.
  */
 export function drawChips(
   page: PDFPage,
@@ -283,15 +280,14 @@ export function drawChips(
   maxW: number,
 ): number {
   let cx = x;
-  let cy = y;
+  let rowTop = y;
   let rowH = 0;
   const gapX = 6;
-  const gapY = 6;
-  const padX = 8;
-  const padY = 4;
-  const fontSize = 6.5;
-  const lineH = 9;
-  const ascent = fontSize * 0.78;
+  const gapY = 8;
+  const padX = 10;
+  const padY = 6;
+  const fontSize = 7;
+  const lineH = 10;
 
   for (const raw of chips) {
     const label = sanitize(raw);
@@ -301,48 +297,45 @@ export function drawChips(
       label,
       fonts.regular,
       fontSize,
-      Math.max(40, maxW - padX * 2),
+      Math.max(48, maxW - padX * 2),
     );
     const textW = Math.max(
       ...lines.map((l) => fonts.regular.widthOfTextAtSize(l, fontSize)),
       0,
     );
     const w = Math.min(maxW, Math.ceil(textW + padX * 2));
-    const heightFor = (baselineY: number) => {
-      const top = baselineY + ascent + padY;
-      const bottom = baselineY - (lines.length - 1) * lineH - padY;
-      return { top, bottom, height: top - bottom };
-    };
+    const textBlockH = lines.length * lineH;
+    const h = textBlockH + padY * 2;
 
-    let box = heightFor(cy);
     if (cx > x && cx + w > x + maxW) {
       cx = x;
-      cy -= rowH + gapY;
+      rowTop -= rowH + gapY;
       rowH = 0;
-      box = heightFor(cy);
     }
 
+    const rectBottom = rowTop - h;
     page.drawRectangle({
       x: cx,
-      y: box.bottom,
+      y: rectBottom,
       width: w,
-      height: box.height,
+      height: h,
       borderColor: C.rule,
-      borderWidth: 0.6,
+      borderWidth: 0.7,
       color: C.white,
     });
 
-    let ty = cy;
+    // First baseline: pad from top of box, then font size (PDF baseline)
+    let ty = rowTop - padY - fontSize + 1;
     for (const line of lines) {
-      drawText(page, line, fonts.regular, fontSize, cx + padX, ty, C.grey);
+      drawText(page, line, fonts.regular, fontSize, cx + padX, ty, C.ink);
       ty -= lineH;
     }
 
     cx += w + gapX;
-    rowH = Math.max(rowH, box.height);
+    rowH = Math.max(rowH, h);
   }
 
-  return cy - rowH + ascent + padY;
+  return rowTop - rowH;
 }
 
 /** Premium Demo Studio panel with QR. */

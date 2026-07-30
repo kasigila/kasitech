@@ -73,7 +73,7 @@ export async function buildCatalogPdf(): Promise<Buffer> {
   const pdf = await PDFDocument.create();
   pdf.setTitle(`KasiTech Services & Pricing | ${PRICE_BOOK_VERSION}`);
   pdf.setAuthor("KasiTech");
-  pdf.setSubject("Commercial buying guide");
+  pdf.setSubject("Commercial buying guide · Phase 3.2 · chip-align-2");
   pdf.setCreator("KasiTech");
   pdf.setKeywords([PRICE_BOOK_VERSION, "catalog", "Tanzania", "Phase 3.2"]);
 
