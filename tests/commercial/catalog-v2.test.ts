@@ -55,15 +55,15 @@ describe("Commercial Catalog V2", () => {
     expect(beauty!.pricingNote).toMatch(/entitlement/i);
   });
 
-  it("catalog V2 PDF packs two detail cards per page where possible", async () => {
+  it("catalog Phase 3.2 PDF is a dense editorial buying guide", async () => {
     const pdf = await buildCatalogPdf();
     expect(pdf.byteLength).toBeGreaterThan(20000);
     const { PDFDocument } = await import("pdf-lib");
     const doc = await PDFDocument.load(pdf);
-    // Glance + paired details + Care/KB/FAQ/journey — well under one-page-per-SKU
     expect(doc.getPageCount()).toBeGreaterThanOrEqual(12);
     expect(doc.getPageCount()).toBeLessThan(36);
     expect(doc.getTitle()).toContain(PRICE_BOOK_VERSION);
     expect(doc.getSubject()).toMatch(/buying guide/i);
+    expect(doc.getKeywords()?.join(" ") ?? "").toMatch(/Phase 3\.2/i);
   });
 });

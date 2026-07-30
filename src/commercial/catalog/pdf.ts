@@ -1,10 +1,12 @@
+/**
+ * Commercial Catalog V2 — Phase 3.2 visual redesign.
+ * Presentation only: does not change Price Book, prices, wording, or Demo Studio URLs.
+ */
 import {
   PDFDocument,
   StandardFonts,
-  rgb,
-  type PDFFont,
-  type PDFPage,
   type PDFImage,
+  type PDFPage,
 } from "pdf-lib";
 import QRCode from "qrcode";
 import { PRICE_BOOK_VERSION } from "@/commercial/types";
@@ -23,529 +25,882 @@ import {
   type PackageGuide,
 } from "@/commercial/catalog/buying-guide-content";
 import { DEMO_STUDIO_ORIGIN } from "@/demo-studio/configuration/deep-link";
-
-const PAGE = { w: 595.28, h: 841.89 };
-const M = 48;
-/** Side QR — readable on phone while leaving room for two cards per page. */
-const QR_SIZE = 58;
-const TEXT_MAX = PAGE.w - M * 2 - QR_SIZE - 14;
-const FOOT_CLEAR = 52;
-/** Minimum free space below cursor before starting a second card on the same page. */
-const SECOND_CARD_MIN = 290;
-const BLACK = rgb(0.035, 0.035, 0.035);
-const IVORY = rgb(0.957, 0.949, 0.918);
-const LIME = rgb(0.78, 1, 0);
-const GREY = rgb(0.38, 0.38, 0.36);
-const MUTED = rgb(0.55, 0.55, 0.52);
-const RULE = rgb(0.88, 0.86, 0.82);
-
-type Ctx = {
-  pdf: PDFDocument;
-  font: PDFFont;
-  fontBold: PDFFont;
-  page: PDFPage;
-  y: number;
-  section: string;
-  /** Detail cards already drawn on the current page (max 2). */
-  cardsOnPage: number;
-};
-
-type TocEntry = { label: string; page: PDFPage };
+import {
+  C,
+  CARD_GAP,
+  CARD_SLOT_H,
+  CONTENT_BOTTOM,
+  CONTENT_TOP,
+  M,
+  PAGE,
+} from "@/commercial/catalog/visual/theme";
+import {
+  chipLabels,
+  drawCardShell,
+  drawChecklist,
+  drawChips,
+  drawDemoStudioPanel,
+  drawPrice,
+  drawProductTitle,
+  drawSavingsBadge,
+  drawSectionLabel,
+  drawText,
+  drawWorkflowDiagram,
+  iconForCode,
+  paintFooter,
+  paintHeader,
+  workflowSteps,
+  wrap,
+  type Fonts,
+} from "@/commercial/catalog/visual/components";
+import { drawIcon } from "@/commercial/catalog/visual/icons";
 
 type QrCache = Map<string, PDFImage>;
+type TocEntry = { label: string; page: PDFPage };
 
-/**
- * Commercial Catalog V2 — buying guide from KT-PB-2026.1.
- * Glance lists first, then detailed breakdowns with readable QR codes.
- */
+type Doc = {
+  pdf: PDFDocument;
+  fonts: Fonts;
+  qr: QrCache;
+  toc: TocEntry[];
+};
+
+function mark(doc: Doc, label: string, page: PDFPage) {
+  doc.toc.push({ label, page });
+}
+
 export async function buildCatalogPdf(): Promise<Buffer> {
   const pdf = await PDFDocument.create();
   pdf.setTitle(`KasiTech Services & Pricing | ${PRICE_BOOK_VERSION}`);
   pdf.setAuthor("KasiTech");
   pdf.setSubject("Commercial buying guide");
   pdf.setCreator("KasiTech");
-  pdf.setKeywords([PRICE_BOOK_VERSION, "catalog", "Tanzania"]);
+  pdf.setKeywords([PRICE_BOOK_VERSION, "catalog", "Tanzania", "Phase 3.2"]);
 
-  const font = await pdf.embedFont(StandardFonts.Helvetica);
-  const fontBold = await pdf.embedFont(StandardFonts.HelveticaBold);
-  const qrCache: QrCache = new Map();
-  const toc: TocEntry[] = [];
-
-  const mark = (label: string, pg: PDFPage) => {
-    toc.push({ label, page: pg });
+  const fonts: Fonts = {
+    regular: await pdf.embedFont(StandardFonts.Helvetica),
+    bold: await pdf.embedFont(StandardFonts.HelveticaBold),
   };
+  const doc: Doc = { pdf, fonts, qr: new Map(), toc: [] };
 
-  cover(pdf, font, fontBold);
-
-  // Placeholder TOC / how-to page (filled after we know destinations)
+  cover(doc);
   const tocPage = pdf.addPage([PAGE.w, PAGE.h]);
-  paintHeader(tocPage, font, fontBold, "How to read this guide");
+  paintHeader(tocPage, fonts, "How to read this guide");
 
-  // —— Packages: glance then detail ——
-  {
-    const packages = buildPackageGuides();
-    let ctx = page(pdf, font, fontBold, "Website packages");
-    mark("Website packages - at a glance", ctx.page);
-    h1(ctx, "Website packages");
-    p(
-      ctx,
-      "Every serious digital presence starts with a website package. Scan prices below, then flip for full inclusions and a live Demo Studio QR for each package.",
-    );
-    space(ctx, 10);
-    label(ctx, "AT A GLANCE");
-    for (const g of packages) {
-      glanceRow(ctx, g.item.name, displayItemPrice(g.item), g.idealFor);
-    }
-    space(ctx, 12);
-    label(ctx, "WEBSITE BASELINE (INCLUDED IN WEB-ONE THROUGH WEB-SIG)");
-    for (const b of WEB_BASELINE_INCLUDED) bullet(ctx, b);
-    space(ctx, 8);
-    p(
-      ctx,
-      "Custom Platform is quoted separately. Domain registration and hosting are usually third-party costs.",
-      8,
-    );
-    space(ctx, 6);
-    p(ctx, "Two packages per page follow - scan the QR beside each name to open Demo Studio.", 9);
-    foot(ctx);
+  await writePackages(doc);
+  await writeBundles(doc);
+  await writeCapabilities(doc);
+  writeCare(doc);
+  writeKb(doc);
+  writeFaq(doc);
+  writeJourney(doc);
 
-    ctx = page(pdf, font, fontBold, "Website packages");
-    for (let i = 0; i < packages.length; i++) {
-      const g = packages[i]!;
-      ctx = prepareCardSlot(ctx, i === 0);
-      mark(`${g.item.name} package detail`, ctx.page);
-      await writePackageDetail(ctx, g, qrCache);
-    }
-    foot(ctx);
-  }
-
-  // —— Bundles: glance then detail ——
-  {
-    const bundles = buildBundleGuides();
-    let ctx = page(pdf, font, fontBold, "Popular bundles");
-    mark("Popular bundles - at a glance", ctx.page);
-    h1(ctx, "Popular bundles");
-    p(
-      ctx,
-      "Bundles group the services customers usually need together. Scan prices below, then flip for component prices, totals, and savings when they apply.",
-    );
-    space(ctx, 10);
-    label(ctx, "AT A GLANCE");
-    for (const b of bundles) {
-      glanceRow(ctx, b.name, b.bundlePriceLabel, b.valueProp);
-    }
-    space(ctx, 8);
-    p(ctx, "Two bundles per page follow - each has a Demo Studio QR.", 9);
-    foot(ctx);
-
-    ctx = page(pdf, font, fontBold, "Popular bundles");
-    for (let i = 0; i < bundles.length; i++) {
-      const b = bundles[i]!;
-      ctx = prepareCardSlot(ctx, i === 0);
-      mark(`${b.name} detail`, ctx.page);
-      await writeBundleDetail(ctx, b, qrCache);
-    }
-    foot(ctx);
-  }
-
-  // —— Capabilities: glance then detail ——
-  {
-    const caps = buildCapabilityGuides();
-    let ctx = page(pdf, font, fontBold, "Popular capabilities");
-    mark("Popular capabilities - at a glance", ctx.page);
-    h1(ctx, "Popular capabilities");
-    p(
-      ctx,
-      "Add capabilities to a package or use them inside a bundle. If something is already included or absorbed, you are not charged again for that inclusion.",
-    );
-    space(ctx, 10);
-    label(ctx, "AT A GLANCE");
-    for (const g of caps) {
-      glanceRow(ctx, g.item.name, displayItemPrice(g.item), g.valueProp);
-    }
-    space(ctx, 8);
-    p(ctx, "Two capabilities per page follow - each has a Demo Studio QR.", 9);
-    foot(ctx);
-
-    ctx = page(pdf, font, fontBold, "Popular capabilities");
-    for (let i = 0; i < caps.length; i++) {
-      const g = caps[i]!;
-      ctx = prepareCardSlot(ctx, i === 0);
-      mark(`${g.item.name} detail`, ctx.page);
-      await writeCapabilityDetail(ctx, g, qrCache);
-    }
-    foot(ctx);
-  }
-
-  // —— Care: one section (glance + compact detail — no per-tier page) ——
-  {
-    const plans = buildCareGuides();
-    let ctx = page(pdf, font, fontBold, "Website Care");
-    mark("Website Care - at a glance", ctx.page);
-    h1(ctx, "What is Website Care?");
-    p(
-      ctx,
-      "A website is not finished at launch. Content changes, security needs attention, and small improvements appear. Website Care is the commercial relationship for ongoing maintenance after launch.",
-    );
-    space(ctx, 6);
-    p(
-      ctx,
-      "Exact hours, response times, and backup allowances are confirmed in your quotation. This catalog lists approved plan names and prices only - we do not invent entitlements.",
-    );
-    space(ctx, 10);
-    label(ctx, "PLANS");
-    for (const g of plans) {
-      ctx = ensure(ctx, 88);
-      glanceRow(ctx, g.item.name, displayItemPrice(g.item), g.whoFor);
-      p(ctx, g.valueProp, 8);
-      p(ctx, `When to upgrade: ${g.whenUpgrade}`, 8);
-      space(ctx, 4);
-    }
-    space(ctx, 6);
-    p(
-      ctx,
-      `See Care on a live site: ${DEMO_STUDIO_ORIGIN}/demo-studio?care=professional`,
-      8,
-    );
-    foot(ctx);
-  }
-
-  // —— KB: one section (no per-tier page) ——
-  {
-    const plans = buildKbGuides();
-    let ctx = page(pdf, font, fontBold, "KasiTech Business");
-    mark("KasiTech Business - at a glance", ctx.page);
-    h1(ctx, "What is KasiTech Business?");
-    p(
-      ctx,
-      "KasiTech Business transforms a website into a business management platform - so owners can manage website content, analytics, bookings, customers, catalog/services, feedback, QR experiences, locations, and day-to-day operations from one place.",
-    );
-    space(ctx, 6);
-    p(
-      ctx,
-      "Only approved modules are documented. Launch unlocks website and analytics basics. Growth unlocks the fuller operator set. Pro, Scale, and Enterprise are commercial tiers - additional modules beyond Growth are scoped with KasiTech, not invented here.",
-    );
-    space(ctx, 10);
-    label(ctx, "PLANS");
-    for (const g of plans) {
-      ctx = ensure(ctx, 100);
-      glanceRow(ctx, g.item.name, displayItemPrice(g.item), g.whoFor);
-      p(ctx, g.valueProp, 8);
-      for (const line of g.included) bullet(ctx, line);
-      p(ctx, `When to upgrade: ${g.whenUpgrade}`, 8);
-      space(ctx, 4);
-    }
-    space(ctx, 6);
-    p(
-      ctx,
-      `See KasiTech Business live: ${DEMO_STUDIO_ORIGIN}/demo-studio?kb=growth`,
-      8,
-    );
-    foot(ctx);
-  }
-
-  // FAQ
-  {
-    let ctx = page(pdf, font, fontBold, "FAQ");
-    mark("FAQ", ctx.page);
-    h1(ctx, "Frequently asked questions");
-    space(ctx, 8);
-    for (const f of FAQ_ENTRIES) {
-      ctx = ensure(ctx, 70);
-      draw(ctx.page, f.q, fontBold, 10, M, ctx.y, BLACK);
-      ctx.y -= 14;
-      p(ctx, f.a, 9);
-      space(ctx, 8);
-    }
-    foot(ctx);
-  }
-
-  // Journey
-  {
-    const pg = pdf.addPage([PAGE.w, PAGE.h]);
-    mark("Your journey", pg);
-    pg.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: BLACK });
-    pg.drawRectangle({ x: 0, y: PAGE.h - 8, width: PAGE.w, height: 8, color: LIME });
-    draw(pg, "Your journey with KasiTech", fontBold, 22, M, PAGE.h - 100, IVORY);
-    const steps = [
-      ["1. Choose", "Pick a package, bundle, or capability from this catalog."],
-      ["2. Configure", "Open Demo Studio - see the live fictional site and price."],
-      ["3. Approve", "Receive a formal quotation. Nothing starts without written approval."],
-      ["4. Build", "We design and build the agreed scope."],
-      ["5. Launch", "Go live with QA, domain connection, and launch support."],
-      ["6. Grow", "Add Care, KasiTech Business, and new capabilities over time."],
-    ];
-    let y = PAGE.h - 150;
-    for (const [t, d] of steps) {
-      draw(pg, t, fontBold, 12, M, y, LIME);
-      draw(pg, d, font, 10, M, y - 16, MUTED);
-      y -= 48;
-    }
-    draw(pg, "Demo Studio sits in step 2 - Configure.", font, 10, M, y - 10, IVORY);
-    draw(pg, DEMO_STUDIO_ORIGIN + "/demo-studio", fontBold, 11, M, y - 36, LIME);
-    draw(
-      pg,
-      `${PRICE_BOOK_VERSION}  |  All prices in TSh  |  kasitechinnovations.com`,
-      font,
-      8,
-      M,
-      48,
-      GREY,
-    );
-    draw(
-      pg,
-      "This catalog is a commercial reference - not a quotation or invoice.",
-      font,
-      8,
-      M,
-      34,
-      MUTED,
-    );
-  }
-
-  // Fill TOC / how-to with skip links now that pages exist
-  fillHowToAndToc(tocPage, pdf, font, fontBold, toc);
-
+  fillHowTo(tocPage, doc);
   return Buffer.from(await pdf.save());
 }
 
-async function writePackageDetail(
-  ctx: Ctx,
-  g: PackageGuide,
-  qr: QrCache,
-) {
-  const block = await openDetailCard(
-    ctx,
-    g.item.name,
-    displayItemPrice(g.item),
-    g.seeLiveUrl,
-    qr,
-  );
-  compactField(ctx, "VALUE", g.valueProp, block.textWidth);
-  label(ctx, "THIS PACKAGE ADDS");
-  for (const line of g.included) compactBullet(ctx, line, block.textWidth);
-  if (g.includesBaseline) {
-    compactBullet(
-      ctx,
-      "Plus the full website baseline listed on the packages at-a-glance page",
-      block.textWidth,
-    );
+/* ───────────── Cover ───────────── */
+
+function cover(doc: Doc) {
+  const pg = doc.pdf.addPage([PAGE.w, PAGE.h]);
+  pg.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: C.black });
+  pg.drawRectangle({ x: 0, y: PAGE.h - 8, width: PAGE.w, height: 8, color: C.lime });
+  pg.drawRectangle({ x: 0, y: 0, width: 6, height: PAGE.h, color: C.lime });
+
+  drawText(pg, "KasiTech", doc.fonts.bold, 42, M + 10, PAGE.h - 160, C.ivory);
+  drawText(pg, "SERVICES & PRICING", doc.fonts.regular, 12, M + 10, PAGE.h - 186, C.lime);
+  drawText(pg, "Commercial buying guide", doc.fonts.regular, 14, M + 10, PAGE.h - 230, C.ivory);
+
+  const lines = [
+    "Understand what we sell, what each service does,",
+    "what is included, who it is for, how pieces relate,",
+    "how much it costs, and how to see it live -",
+    "without guessing.",
+  ];
+  let y = PAGE.h - 280;
+  for (const line of lines) {
+    drawText(pg, line, doc.fonts.regular, 11, M + 10, y, C.muted);
+    y -= 16;
   }
-  compactField(ctx, "IDEAL FOR", g.idealFor, block.textWidth);
-  if (g.timeline) compactField(ctx, "TIMELINE", g.timeline, block.textWidth);
-  if (g.notes) compactField(ctx, "NOTES", g.notes, block.textWidth);
-  closeDetailCard(ctx, block);
+
+  drawIcon(pg, "monitor", M + 10, 120, 18, C.lime);
+  drawText(pg, "Demo Studio ready", doc.fonts.bold, 10, M + 34, 108, C.lime);
+
+  drawText(pg, PRICE_BOOK_VERSION, doc.fonts.bold, 11, M + 10, 72, C.lime);
+  drawText(pg, "All prices in Tanzanian Shillings (TSh)", doc.fonts.regular, 9, M + 10, 54, C.grey);
+  drawText(pg, "kasitechinnovations.com  |  Dar es Salaam", doc.fonts.regular, 9, M + 10, 38, C.grey);
 }
 
-async function writeBundleDetail(ctx: Ctx, b: BundleGuide, qr: QrCache) {
-  const block = await openDetailCard(
-    ctx,
-    b.name,
-    b.bundlePriceLabel,
-    b.seeLiveUrl,
-    qr,
+/* ───────────── Section pages ───────────── */
+
+async function writePackages(doc: Doc) {
+  const packages = buildPackageGuides();
+  const intro = sectionIntro(doc, "Website packages", "Website packages - at a glance", [
+    "Every serious digital presence starts with a website package. Scan prices below, then flip for full inclusions and a live Demo Studio QR for each package.",
+  ]);
+  let { page: pg, y } = drawGlanceTable(
+    doc,
+    intro.page,
+    packages.map((g) => ({
+      name: g.item.name,
+      price: displayItemPrice(g.item),
+      blurb: g.idealFor,
+      icon: iconForCode(g.item.code),
+    })),
+    intro.y,
+    "Website packages",
   );
-  compactField(ctx, "WHAT THIS BUNDLE IS", b.valueProp, block.textWidth);
-  compactField(ctx, "WHY TOGETHER", b.whyTogether, block.textWidth);
-  label(
-    ctx,
-    b.showSavings
-      ? "INCLUDED (STANDALONE PRICES)"
-      : "INCLUDED",
+  y -= 10;
+  if (y < CONTENT_BOTTOM + 140) {
+    foot(doc, pg);
+    pg = newPage(doc, "Website packages");
+    y = CONTENT_TOP;
+  }
+  drawSectionLabel(pg, doc.fonts, "Website baseline (included in WEB-ONE through WEB-SIG)", M, y);
+  y -= 12;
+  y = drawChecklist(pg, doc.fonts, WEB_BASELINE_INCLUDED, M, y, PAGE.w - M * 2, 16);
+  y -= 8;
+  for (const n of [
+    "Custom Platform is quoted separately. Domain registration and hosting are usually third-party costs.",
+    "Two packages per page follow - scan the QR on each Demo Studio panel.",
+  ]) {
+    for (const line of wrap(n, doc.fonts.regular, 8, PAGE.w - M * 2)) {
+      if (y < CONTENT_BOTTOM + 20) {
+        foot(doc, pg);
+        pg = newPage(doc, "Website packages");
+        y = CONTENT_TOP;
+      }
+      drawText(pg, line, doc.fonts.regular, 8, M, y, C.grey);
+      y -= 11;
+    }
+  }
+  foot(doc, pg);
+
+  await writePairedCards(doc, "Website packages", packages, (page, slot, g, variant) =>
+    paintPackageCard(doc, page, slot, g, variant),
   );
-  for (const c of b.components) {
-    compactBullet(
-      ctx,
+}
+
+async function writeBundles(doc: Doc) {
+  const bundles = buildBundleGuides();
+  const intro = sectionIntro(doc, "Popular bundles", "Popular bundles - at a glance", [
+    "Bundles group the services customers usually need together. Scan prices below, then flip for component prices, totals, and savings when they apply.",
+  ]);
+  const { page: pg } = drawGlanceTable(
+    doc,
+    intro.page,
+    bundles.map((b) => ({
+      name: b.name,
+      price: b.bundlePriceLabel,
+      blurb: b.valueProp,
+      icon: iconForCode(b.code),
+    })),
+    intro.y,
+    "Popular bundles",
+  );
+  foot(doc, pg);
+
+  await writePairedCards(doc, "Popular bundles", bundles, (page, slot, b, variant) =>
+    paintBundleCard(doc, page, slot, b, variant),
+  );
+}
+
+async function writeCapabilities(doc: Doc) {
+  const caps = buildCapabilityGuides();
+  const intro = sectionIntro(doc, "Popular capabilities", "Popular capabilities - at a glance", [
+    "Add capabilities to a package or use them inside a bundle. If something is already included or absorbed, you are not charged again for that inclusion.",
+  ]);
+  const { page: pg } = drawGlanceTable(
+    doc,
+    intro.page,
+    caps.map((g) => ({
+      name: g.item.name,
+      price: displayItemPrice(g.item),
+      blurb: g.valueProp,
+      icon: iconForCode(g.item.code),
+    })),
+    intro.y,
+    "Popular capabilities",
+  );
+  foot(doc, pg);
+
+  await writePairedCards(doc, "Popular capabilities", caps, (page, slot, g, variant) =>
+    paintCapabilityCard(doc, page, slot, g, variant),
+  );
+}
+
+function writeCare(doc: Doc) {
+  const plans = buildCareGuides();
+  let page = newPage(doc, "Website Care");
+  mark(doc, "Website Care - at a glance", page);
+  let y = CONTENT_TOP;
+  y = heading(page, doc.fonts, "What is Website Care?", y);
+  y = para(
+    page,
+    doc.fonts,
+    "A website is not finished at launch. Content changes, security needs attention, and small improvements appear. Website Care is the commercial relationship for ongoing maintenance after launch.",
+    y,
+  );
+  y = para(
+    page,
+    doc.fonts,
+    "Exact hours, response times, and backup allowances are confirmed in your quotation. This catalog lists approved plan names and prices only - we do not invent entitlements.",
+    y,
+  );
+  y -= 8;
+  drawSectionLabel(page, doc.fonts, "Plans", M, y);
+  y -= 14;
+
+  for (const g of plans) {
+    if (y < CONTENT_BOTTOM + 100) {
+      foot(doc, page);
+      page = newPage(doc, "Website Care");
+      y = CONTENT_TOP;
+    }
+    const blockH = 88;
+    drawCardShell(page, M, y - blockH, PAGE.w - M * 2, blockH);
+    drawIcon(page, "shield", M + 12, y - 10, 14, C.ink);
+    drawText(page, g.item.name, doc.fonts.bold, 11, M + 32, y - 20, C.black);
+    drawPrice(page, doc.fonts, displayItemPrice(g.item), PAGE.w - M - 12, y - 20, 12);
+    drawChips(page, doc.fonts, chipLabels(g.whoFor), M + 12, y - 38, PAGE.w - M * 2 - 24);
+    let ty = y - 56;
+    for (const line of wrap(g.valueProp, doc.fonts.regular, 7.5, PAGE.w - M * 2 - 24).slice(0, 2)) {
+      drawText(page, line, doc.fonts.regular, 7.5, M + 12, ty, C.grey);
+      ty -= 10;
+    }
+    drawSectionLabel(page, doc.fonts, "When to upgrade", M + 12, ty - 2);
+    const up = wrap(g.whenUpgrade, doc.fonts.regular, 6.5, PAGE.w - M * 2 - 24)[0] ?? "";
+    drawText(page, up, doc.fonts.regular, 6.5, M + 12, ty - 14, C.muted);
+    y -= blockH + 10;
+  }
+
+  y -= 4;
+  for (const line of wrap(
+    `See Care on a live site: ${DEMO_STUDIO_ORIGIN}/demo-studio?care=professional`,
+    doc.fonts.regular,
+    8,
+    PAGE.w - M * 2,
+  )) {
+    drawText(page, line, doc.fonts.regular, 8, M, y, C.grey);
+    y -= 11;
+  }
+  foot(doc, page);
+}
+
+function writeKb(doc: Doc) {
+  const plans = buildKbGuides();
+  let page = newPage(doc, "KasiTech Business");
+  mark(doc, "KasiTech Business - at a glance", page);
+  let y = CONTENT_TOP;
+  y = heading(page, doc.fonts, "What is KasiTech Business?", y);
+  y = para(
+    page,
+    doc.fonts,
+    "KasiTech Business transforms a website into a business management platform - so owners can manage website content, analytics, bookings, customers, catalog/services, feedback, QR experiences, locations, and day-to-day operations from one place.",
+    y,
+  );
+  y = para(
+    page,
+    doc.fonts,
+    "Only approved modules are documented. Launch unlocks website and analytics basics. Growth unlocks the fuller operator set. Pro, Scale, and Enterprise are commercial tiers - additional modules beyond Growth are scoped with KasiTech, not invented here.",
+    y,
+  );
+  y -= 6;
+  drawSectionLabel(page, doc.fonts, "Plans", M, y);
+  y -= 12;
+
+  for (const g of plans) {
+    const blockH = 96;
+    if (y - blockH < CONTENT_BOTTOM) {
+      foot(doc, page);
+      page = newPage(doc, "KasiTech Business");
+      y = CONTENT_TOP;
+    }
+    drawCardShell(page, M, y - blockH, PAGE.w - M * 2, blockH);
+    drawIcon(page, "spark", M + 12, y - 10, 14, C.ink);
+    drawText(page, g.item.name, doc.fonts.bold, 11, M + 32, y - 20, C.black);
+    drawPrice(page, doc.fonts, displayItemPrice(g.item), PAGE.w - M - 12, y - 20, 11);
+    for (const line of wrap(g.valueProp, doc.fonts.regular, 7.5, PAGE.w - M * 2 - 24).slice(0, 2)) {
+      drawText(page, line, doc.fonts.regular, 7.5, M + 12, y - 38, C.grey);
+    }
+    drawSectionLabel(page, doc.fonts, "Included", M + 12, y - 52);
+    drawChecklist(page, doc.fonts, g.included, M + 12, y - 64, PAGE.w - M * 2 - 24, 2);
+    y -= blockH + 10;
+  }
+
+  for (const line of wrap(
+    `See KasiTech Business live: ${DEMO_STUDIO_ORIGIN}/demo-studio?kb=growth`,
+    doc.fonts.regular,
+    8,
+    PAGE.w - M * 2,
+  )) {
+    drawText(page, line, doc.fonts.regular, 8, M, y, C.grey);
+    y -= 11;
+  }
+  foot(doc, page);
+}
+
+function writeFaq(doc: Doc) {
+  let page = newPage(doc, "FAQ");
+  mark(doc, "FAQ", page);
+  let y = heading(page, doc.fonts, "Frequently asked questions", CONTENT_TOP);
+  y -= 4;
+  for (const f of FAQ_ENTRIES) {
+    const qLines = wrap(f.q, doc.fonts.bold, 9, PAGE.w - M * 2);
+    const aLines = wrap(f.a, doc.fonts.regular, 8, PAGE.w - M * 2);
+    const need = qLines.length * 12 + aLines.length * 11 + 18;
+    if (y - need < CONTENT_BOTTOM) {
+      foot(doc, page);
+      page = newPage(doc, "FAQ");
+      y = CONTENT_TOP;
+    }
+    page.drawRectangle({ x: M, y: y - 2, width: 3, height: 12, color: C.lime });
+    for (const line of qLines) {
+      drawText(page, line, doc.fonts.bold, 9, M + 10, y, C.black);
+      y -= 12;
+    }
+    y -= 2;
+    for (const line of aLines) {
+      drawText(page, line, doc.fonts.regular, 8, M + 10, y, C.grey);
+      y -= 11;
+    }
+    y -= 10;
+  }
+  foot(doc, page);
+}
+
+function writeJourney(doc: Doc) {
+  const pg = doc.pdf.addPage([PAGE.w, PAGE.h]);
+  mark(doc, "Your journey", pg);
+  pg.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: C.black });
+  pg.drawRectangle({ x: 0, y: PAGE.h - 8, width: PAGE.w, height: 8, color: C.lime });
+  drawText(pg, "Your journey with KasiTech", doc.fonts.bold, 22, M, PAGE.h - 90, C.ivory);
+
+  const steps = [
+    ["1. Choose", "Pick a package, bundle, or capability from this catalog."],
+    ["2. Configure", "Open Demo Studio - see the live fictional site and price."],
+    ["3. Approve", "Receive a formal quotation. Nothing starts without written approval."],
+    ["4. Build", "We design and build the agreed scope."],
+    ["5. Launch", "Go live with QA, domain connection, and launch support."],
+    ["6. Grow", "Add Care, KasiTech Business, and new capabilities over time."],
+  ];
+  let y = PAGE.h - 140;
+  for (const [t, d] of steps) {
+    pg.drawRectangle({ x: M, y: y - 4, width: 4, height: 28, color: C.lime });
+    drawText(pg, t, doc.fonts.bold, 12, M + 16, y + 8, C.lime);
+    drawText(pg, d, doc.fonts.regular, 10, M + 16, y - 8, C.muted);
+    y -= 52;
+  }
+  drawIcon(pg, "monitor", M, y + 10, 16, C.lime);
+  drawText(pg, "Demo Studio sits in step 2 - Configure.", doc.fonts.regular, 10, M + 24, y, C.ivory);
+  drawText(pg, DEMO_STUDIO_ORIGIN + "/demo-studio", doc.fonts.bold, 11, M, y - 24, C.lime);
+  drawText(
+    pg,
+    `${PRICE_BOOK_VERSION}  |  All prices in TSh  |  kasitechinnovations.com`,
+    doc.fonts.regular,
+    8,
+    M,
+    48,
+    C.grey,
+  );
+  drawText(
+    pg,
+    "This catalog is a commercial reference - not a quotation or invoice.",
+    doc.fonts.regular,
+    8,
+    M,
+    34,
+    C.muted,
+  );
+}
+
+/* ───────────── Paired product cards ───────────── */
+
+type Slot = { x: number; yBottom: number; w: number; h: number };
+
+async function writePairedCards<T>(
+  doc: Doc,
+  section: string,
+  items: T[],
+  paint: (
+    page: PDFPage,
+    slot: Slot,
+    item: T,
+    variant: number,
+  ) => Promise<void>,
+) {
+  let page = newPage(doc, section);
+  let indexOnPage = 0;
+
+  for (let i = 0; i < items.length; i++) {
+    if (indexOnPage === 2) {
+      foot(doc, page);
+      page = newPage(doc, section);
+      indexOnPage = 0;
+    }
+    const slot: Slot = {
+      x: M,
+      w: PAGE.w - M * 2,
+      h: CARD_SLOT_H,
+      yBottom:
+        indexOnPage === 0
+          ? CONTENT_TOP - CARD_SLOT_H
+          : CONTENT_BOTTOM,
+    };
+    if (indexOnPage === 1) {
+      // bottom slot aligned under gap
+      const topOfBottom = CONTENT_TOP - CARD_SLOT_H - CARD_GAP;
+      slot.yBottom = topOfBottom - CARD_SLOT_H;
+    }
+    const name =
+      "item" in (items[i] as object)
+        ? String((items[i] as PackageGuide | CapabilityGuide).item.name)
+        : String((items[i] as BundleGuide).name);
+    mark(doc, `${name} detail`, page);
+    await paint(page, slot, items[i]!, i % 3);
+    indexOnPage += 1;
+  }
+  foot(doc, page);
+}
+
+async function paintPackageCard(
+  doc: Doc,
+  page: PDFPage,
+  slot: Slot,
+  g: PackageGuide,
+  variant: number,
+) {
+  const { x, yBottom, w, h } = slot;
+  drawCardShell(page, x, yBottom, w, h);
+  const pad = 12;
+  const innerX = x + pad;
+  const innerW = w - pad * 2;
+  let y = yBottom + h - pad;
+
+  y = drawProductTitle(page, doc.fonts, {
+    icon: iconForCode(g.item.code),
+    name: g.item.name,
+    price: displayItemPrice(g.item),
+    x: innerX,
+    yTop: y,
+    w: innerW,
+    priceSize: variant === 0 ? 15 : 13,
+  });
+
+  if (g.timeline) {
+    drawChips(page, doc.fonts, [g.timeline], innerX, y, innerW);
+    y -= 18;
+  }
+
+  drawSectionLabel(page, doc.fonts, "Value", innerX, y);
+  y -= 10;
+  for (const line of wrap(g.valueProp, doc.fonts.regular, 8, innerW).slice(0, 2)) {
+    drawText(page, line, doc.fonts.regular, 8, innerX, y, C.ink);
+    y -= 10;
+  }
+  y -= 4;
+
+  const demoH = 72;
+  const bodyBottom = yBottom + demoH + 10;
+  const colGap = 12;
+  const colW = (innerW - colGap) / 2;
+
+  drawSectionLabel(page, doc.fonts, "This package adds", innerX, y);
+  y -= 10;
+  const included = [
+    ...g.included,
+    ...(g.includesBaseline
+      ? ["Plus the full website baseline listed on the packages at-a-glance page"]
+      : []),
+  ];
+  drawChecklist(page, doc.fonts, included, innerX, y, colW, 7);
+
+  drawSectionLabel(page, doc.fonts, "Ideal for", innerX + colW + colGap, y + 10);
+  drawChips(
+    page,
+    doc.fonts,
+    chipLabels(g.idealFor),
+    innerX + colW + colGap,
+    y,
+    colW,
+  );
+  const commonY = y - 36;
+  drawSectionLabel(page, doc.fonts, "Commonly used by", innerX + colW + colGap, commonY);
+  drawChips(
+    page,
+    doc.fonts,
+    chipLabels(g.commonlyUsedBy),
+    innerX + colW + colGap,
+    commonY - 12,
+    colW,
+  );
+
+  if (g.notes) {
+    drawSectionLabel(page, doc.fonts, "Notes", innerX, bodyBottom + 14);
+    for (const line of wrap(g.notes, doc.fonts.regular, 6.5, innerW).slice(0, 2)) {
+      drawText(page, line, doc.fonts.regular, 6.5, innerX, bodyBottom + 4, C.muted);
+    }
+  }
+
+  const qrImg = await embedQr(doc, g.seeLiveUrl);
+  drawDemoStudioPanel(page, doc.fonts, {
+    x: innerX,
+    yBottom: yBottom + 8,
+    w: innerW,
+    h: demoH,
+    productName: g.item.name,
+    url: g.seeLiveUrl,
+    qr: qrImg,
+    displayUrl: g.seeLiveUrl.replace(DEMO_STUDIO_ORIGIN, "kasitechinnovations.com"),
+  });
+}
+
+async function paintBundleCard(
+  doc: Doc,
+  page: PDFPage,
+  slot: Slot,
+  b: BundleGuide,
+  variant: number,
+) {
+  const { x, yBottom, w, h } = slot;
+  drawCardShell(page, x, yBottom, w, h);
+  const pad = 12;
+  const innerX = x + pad;
+  const innerW = w - pad * 2;
+  let y = yBottom + h - pad;
+
+  y = drawProductTitle(page, doc.fonts, {
+    icon: iconForCode(b.code),
+    name: b.name,
+    price: b.bundlePriceLabel,
+    x: innerX,
+    yTop: y,
+    w: innerW,
+    priceSize: 14,
+  });
+
+  if (b.showSavings && b.savingsTsh != null && b.savingsTsh > 0) {
+    drawSavingsBadge(
+      page,
+      doc.fonts,
+      `You save ${formatMoney(b.savingsTsh)}`,
+      innerX,
+      y,
+    );
+    y -= 18;
+  } else {
+    y -= 4;
+  }
+
+  drawSectionLabel(page, doc.fonts, "What this bundle is", innerX, y);
+  y -= 10;
+  for (const line of wrap(b.valueProp, doc.fonts.regular, 8, innerW).slice(0, 2)) {
+    drawText(page, line, doc.fonts.regular, 8, innerX, y, C.ink);
+    y -= 10;
+  }
+  y -= 2;
+
+  const demoH = 72;
+  const colGap = 12;
+  const colW = (innerW - colGap) / 2;
+
+  drawSectionLabel(page, doc.fonts, "Included", innerX, y);
+  const items = [
+    ...b.components.map((c) =>
       b.showSavings
         ? `${c.name} - normally ${c.priceLabel}`
         : `${c.name} - ${c.priceLabel} standalone`,
-      block.textWidth,
+    ),
+    ...b.entitlements.map(
+      (e) => `${e} (bundle entitlement - not a separate catalog charge)`,
+    ),
+  ];
+  drawChecklist(page, doc.fonts, items, innerX, y - 10, colW, 6);
+
+  if (variant === 1) {
+    drawSectionLabel(page, doc.fonts, "Why together", innerX + colW + colGap, y);
+    let wy = y - 10;
+    for (const line of wrap(b.whyTogether, doc.fonts.regular, 7, colW).slice(0, 5)) {
+      drawText(page, line, doc.fonts.regular, 7, innerX + colW + colGap, wy, C.grey);
+      wy -= 9;
+    }
+  } else {
+    drawSectionLabel(page, doc.fonts, "Industry", innerX + colW + colGap, y);
+    drawChips(
+      page,
+      doc.fonts,
+      chipLabels(b.industryHint || b.name),
+      innerX + colW + colGap,
+      y - 12,
+      colW,
     );
+    if (
+      b.showSavings &&
+      b.standaloneTotalTsh != null &&
+      b.savingsTsh != null &&
+      b.savingsTsh > 0
+    ) {
+      drawSectionLabel(
+        page,
+        doc.fonts,
+        "If bought separately",
+        innerX + colW + colGap,
+        y - 40,
+      );
+      drawText(
+        page,
+        formatMoney(b.standaloneTotalTsh),
+        doc.fonts.bold,
+        9,
+        innerX + colW + colGap,
+        y - 54,
+        C.ink,
+      );
+    } else if (b.pricingNote) {
+      drawSectionLabel(
+        page,
+        doc.fonts,
+        "Pricing note",
+        innerX + colW + colGap,
+        y - 40,
+      );
+      let ny = y - 52;
+      for (const line of wrap(b.pricingNote, doc.fonts.regular, 6.5, colW).slice(0, 4)) {
+        drawText(page, line, doc.fonts.regular, 6.5, innerX + colW + colGap, ny, C.muted);
+        ny -= 8;
+      }
+    }
   }
-  for (const e of b.entitlements) {
-    compactBullet(
-      ctx,
-      `${e} (bundle entitlement - not a separate catalog charge)`,
-      block.textWidth,
-    );
-  }
-  if (
-    b.showSavings &&
-    b.standaloneTotalTsh != null &&
-    b.savingsTsh != null &&
-    b.savingsTsh > 0
-  ) {
-    compactField(
-      ctx,
-      "IF BOUGHT SEPARATELY",
-      `${formatMoney(b.standaloneTotalTsh)}  ·  You save ${formatMoney(b.savingsTsh)}`,
-      block.textWidth,
-    );
-  } else if (b.pricingNote) {
-    compactField(ctx, "PRICING NOTE", b.pricingNote, block.textWidth);
-  }
-  closeDetailCard(ctx, block);
+
+  const qrImg = await embedQr(doc, b.seeLiveUrl);
+  drawDemoStudioPanel(page, doc.fonts, {
+    x: innerX,
+    yBottom: yBottom + 8,
+    w: innerW,
+    h: demoH,
+    productName: b.name,
+    url: b.seeLiveUrl,
+    qr: qrImg,
+    displayUrl: b.seeLiveUrl.replace(DEMO_STUDIO_ORIGIN, "kasitechinnovations.com"),
+  });
 }
 
-async function writeCapabilityDetail(
-  ctx: Ctx,
+async function paintCapabilityCard(
+  doc: Doc,
+  page: PDFPage,
+  slot: Slot,
   g: CapabilityGuide,
-  qr: QrCache,
+  variant: number,
 ) {
-  const block = await openDetailCard(
-    ctx,
-    g.item.name,
-    displayItemPrice(g.item),
-    g.seeLiveUrl,
-    qr,
-  );
-  compactField(ctx, "PURPOSE", g.valueProp, block.textWidth);
-  label(ctx, "INCLUDED");
-  for (const line of g.included) compactBullet(ctx, line, block.textWidth);
-  compactField(ctx, "IDEAL FOR", g.idealFor, block.textWidth);
-  compactField(ctx, "WORKFLOW", g.workflow, block.textWidth);
-  if (g.notes) compactField(ctx, "NOTES", g.notes, block.textWidth);
-  closeDetailCard(ctx, block);
-}
+  const { x, yBottom, w, h } = slot;
+  drawCardShell(page, x, yBottom, w, h);
+  const pad = 12;
+  const innerX = x + pad;
+  const innerW = w - pad * 2;
+  let y = yBottom + h - pad;
 
-type DetailBlock = {
-  qrBottom: number;
-  textWidth: number;
-};
+  y = drawProductTitle(page, doc.fonts, {
+    icon: iconForCode(g.item.code),
+    name: g.item.name,
+    price: displayItemPrice(g.item),
+    x: innerX,
+    yTop: y,
+    w: innerW,
+    priceSize: variant === 2 ? 15 : 13,
+  });
 
-/** Start a new page when two cards are already on this page, or space is tight. */
-function prepareCardSlot(ctx: Ctx, isFirstInSection: boolean): Ctx {
-  if (isFirstInSection) {
-    ctx.cardsOnPage = 0;
-    return ctx;
+  drawSectionLabel(page, doc.fonts, "Purpose", innerX, y);
+  y -= 10;
+  for (const line of wrap(g.valueProp, doc.fonts.regular, 8, innerW).slice(0, 2)) {
+    drawText(page, line, doc.fonts.regular, 8, innerX, y, C.ink);
+    y -= 10;
   }
-  if (ctx.cardsOnPage >= 2 || ctx.y < FOOT_CLEAR + SECOND_CARD_MIN) {
-    foot(ctx);
-    const next = page(ctx.pdf, ctx.font, ctx.fontBold, ctx.section);
-    next.cardsOnPage = 0;
-    return next;
+  y -= 4;
+
+  const demoH = 72;
+  const colGap = 12;
+  const colW = (innerW - colGap) / 2;
+
+  drawSectionLabel(page, doc.fonts, "Included", innerX, y);
+  drawChecklist(page, doc.fonts, g.included, innerX, y - 10, colW, 5);
+
+  if (variant !== 0) {
+    drawSectionLabel(page, doc.fonts, "Workflow", innerX + colW + colGap, y);
+    drawWorkflowDiagram(
+      page,
+      doc.fonts,
+      workflowSteps(g.workflow),
+      innerX + colW + colGap,
+      y - 10,
+      colW,
+    );
+  } else {
+    drawSectionLabel(page, doc.fonts, "Ideal for", innerX + colW + colGap, y);
+    drawChips(
+      page,
+      doc.fonts,
+      chipLabels(g.idealFor),
+      innerX + colW + colGap,
+      y - 12,
+      colW,
+    );
+    drawSectionLabel(page, doc.fonts, "Related", innerX + colW + colGap, y - 42);
+    drawChips(
+      page,
+      doc.fonts,
+      g.related.slice(0, 4),
+      innerX + colW + colGap,
+      y - 54,
+      colW,
+    );
   }
-  space(ctx, 8);
-  ctx.page.drawLine({
-    start: { x: M, y: ctx.y },
-    end: { x: PAGE.w - M, y: ctx.y },
-    thickness: 0.7,
-    color: RULE,
+
+  if (g.notes) {
+    const noteY = yBottom + demoH + 16;
+    drawSectionLabel(page, doc.fonts, "Notes", innerX, noteY + 10);
+    for (const line of wrap(g.notes, doc.fonts.regular, 6.5, innerW).slice(0, 2)) {
+      drawText(page, line, doc.fonts.regular, 6.5, innerX, noteY, C.muted);
+    }
+  }
+
+  const qrImg = await embedQr(doc, g.seeLiveUrl);
+  drawDemoStudioPanel(page, doc.fonts, {
+    x: innerX,
+    yBottom: yBottom + 8,
+    w: innerW,
+    h: demoH,
+    productName: g.item.name,
+    url: g.seeLiveUrl,
+    qr: qrImg,
+    displayUrl: g.seeLiveUrl.replace(DEMO_STUDIO_ORIGIN, "kasitechinnovations.com"),
   });
-  space(ctx, 14);
-  return ctx;
 }
 
-/** Title + price on the left, scannable QR on the right. */
-async function openDetailCard(
-  ctx: Ctx,
-  name: string,
-  price: string,
-  url: string,
-  qr: QrCache,
-): Promise<DetailBlock> {
-  ensure(ctx, QR_SIZE + 20);
-  const top = ctx.y;
-  const img = await embedQr(ctx.pdf, qr, url);
-  const qrX = PAGE.w - M - QR_SIZE;
-  const qrY = top - QR_SIZE;
+/* ───────────── Shared helpers ───────────── */
 
-  ctx.page.drawRectangle({
-    x: qrX - 3,
-    y: qrY - 3,
-    width: QR_SIZE + 6,
-    height: QR_SIZE + 6,
-    color: rgb(1, 1, 1),
-    borderColor: RULE,
-    borderWidth: 0.6,
-  });
-  ctx.page.drawImage(img, {
-    x: qrX,
-    y: qrY,
-    width: QR_SIZE,
-    height: QR_SIZE,
-  });
-
-  draw(ctx.page, name, ctx.fontBold, 12, M, top, BLACK);
-  const pw = ctx.fontBold.widthOfTextAtSize(sanitize(price), 10);
-  draw(ctx.page, price, ctx.fontBold, 10, M + TEXT_MAX - pw, top, BLACK);
-  ctx.y = top - 16;
-  draw(ctx.page, "Scan QR for Demo Studio", ctx.font, 7, M, ctx.y, MUTED);
-  ctx.y -= 12;
-  return { qrBottom: qrY - 6, textWidth: TEXT_MAX };
+function newPage(doc: Doc, section: string): PDFPage {
+  const pg = doc.pdf.addPage([PAGE.w, PAGE.h]);
+  paintHeader(pg, doc.fonts, section);
+  return pg;
 }
 
-function closeDetailCard(ctx: Ctx, block: DetailBlock) {
-  ctx.y = Math.min(ctx.y - 4, block.qrBottom - 8);
-  ctx.cardsOnPage += 1;
-}
-
-function cover(pdf: PDFDocument, font: PDFFont, fontBold: PDFFont) {
-  const pg = pdf.addPage([PAGE.w, PAGE.h]);
-  pg.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: BLACK });
-  pg.drawRectangle({ x: 0, y: PAGE.h - 10, width: PAGE.w, height: 10, color: LIME });
-  pg.drawRectangle({ x: 0, y: 0, width: 8, height: PAGE.h, color: LIME });
-  draw(pg, "KasiTech", fontBold, 40, M + 8, PAGE.h - 160, IVORY);
-  draw(pg, "SERVICES & PRICING", font, 13, M + 8, PAGE.h - 188, LIME);
-  draw(pg, "Commercial buying guide", font, 12, M + 8, PAGE.h - 230, IVORY);
-  draw(pg, "Understand what we sell, what each service does,", font, 11, M + 8, PAGE.h - 270, MUTED);
-  draw(pg, "what is included, who it is for, how pieces relate,", font, 11, M + 8, PAGE.h - 286, MUTED);
-  draw(pg, "how much it costs, and how to see it live -", font, 11, M + 8, PAGE.h - 302, MUTED);
-  draw(pg, "without guessing.", font, 11, M + 8, PAGE.h - 318, MUTED);
-  draw(pg, PRICE_BOOK_VERSION, fontBold, 11, M + 8, 80, LIME);
-  draw(pg, "All prices in Tanzanian Shillings (TSh)", font, 9, M + 8, 62, GREY);
-  draw(pg, "kasitechinnovations.com  |  Dar es Salaam", font, 9, M + 8, 46, GREY);
-}
-
-function paintHeader(
-  pg: PDFPage,
-  font: PDFFont,
-  fontBold: PDFFont,
+function sectionIntro(
+  doc: Doc,
   section: string,
-) {
-  pg.drawRectangle({ x: 0, y: PAGE.h - 34, width: PAGE.w, height: 34, color: BLACK });
-  pg.drawRectangle({ x: 0, y: PAGE.h - 34, width: 5, height: 34, color: LIME });
-  draw(pg, "KasiTech", fontBold, 8, M, PAGE.h - 20, LIME);
-  draw(pg, section.toUpperCase(), font, 7, M + 58, PAGE.h - 20, IVORY);
+  tocLabel: string,
+  paras: string[],
+): { page: PDFPage; y: number } {
+  const pg = newPage(doc, section);
+  mark(doc, tocLabel, pg);
+  let y = heading(pg, doc.fonts, section, CONTENT_TOP);
+  for (const p of paras) y = para(pg, doc.fonts, p, y);
+  y -= 4;
+  drawSectionLabel(pg, doc.fonts, "At a glance", M, y);
+  return { page: pg, y: y - 14 };
 }
 
-function fillHowToAndToc(
-  tocPage: PDFPage,
-  pdf: PDFDocument,
-  font: PDFFont,
-  fontBold: PDFFont,
-  toc: TocEntry[],
-) {
-  let y = PAGE.h - 58;
-  draw(tocPage, "How to read this guide", fontBold, 18, M, y, BLACK);
-  y -= 8;
-  tocPage.drawRectangle({ x: M, y, width: 36, height: 2, color: LIME });
-  y -= 20;
+function heading(page: PDFPage, fonts: Fonts, text: string, y: number): number {
+  drawText(page, text, fonts.bold, 18, M, y, C.black);
+  page.drawRectangle({ x: M, y: y - 8, width: 36, height: 2.5, color: C.lime });
+  return y - 24;
+}
+
+function para(page: PDFPage, fonts: Fonts, text: string, y: number): number {
+  for (const line of wrap(text, fonts.regular, 9, PAGE.w - M * 2)) {
+    drawText(page, line, fonts.regular, 9, M, y, C.grey);
+    y -= 12;
+  }
+  return y - 6;
+}
+
+function drawGlanceTable(
+  doc: Doc,
+  startPage: PDFPage,
+  rows: {
+    name: string;
+    price: string;
+    blurb: string;
+    icon: ReturnType<typeof iconForCode>;
+  }[],
+  yStart: number,
+  section: string,
+): { page: PDFPage; y: number } {
+  let page = startPage;
+  let y = yStart;
+  for (const row of rows) {
+    if (y < CONTENT_BOTTOM + 36) {
+      foot(doc, page);
+      page = newPage(doc, section);
+      y = CONTENT_TOP;
+    }
+    drawIcon(page, row.icon, M, y + 2, 11, C.ink);
+    drawText(page, row.name, doc.fonts.bold, 9, M + 16, y - 6, C.black);
+    drawPrice(page, doc.fonts, row.price, PAGE.w - M, y - 6, 9);
+    y -= 12;
+    const blurb = wrap(row.blurb, doc.fonts.regular, 7, PAGE.w - M * 2 - 16)[0] ?? "";
+    drawText(page, blurb, doc.fonts.regular, 7, M + 16, y, C.muted);
+    y -= 6;
+    page.drawLine({
+      start: { x: M, y },
+      end: { x: PAGE.w - M, y },
+      thickness: 0.4,
+      color: C.rule,
+    });
+    y -= 10;
+  }
+  return { page, y };
+}
+
+function foot(doc: Doc, page: PDFPage) {
+  const n = doc.pdf.getPages().indexOf(page) + 1;
+  paintFooter(page, doc.fonts, n, PRICE_BOOK_VERSION);
+}
+
+async function embedQr(doc: Doc, url: string): Promise<PDFImage> {
+  const hit = doc.qr.get(url);
+  if (hit) return hit;
+  const dataUrl = await QRCode.toDataURL(url, {
+    width: 256,
+    margin: 2,
+    errorCorrectionLevel: "H",
+    color: { dark: "#090909", light: "#FFFFFF" },
+  });
+  const raw = Buffer.from(dataUrl.split(",")[1]!, "base64");
+  const img = await doc.pdf.embedPng(raw);
+  doc.qr.set(url, img);
+  return img;
+}
+
+function fillHowTo(tocPage: PDFPage, doc: Doc) {
+  const { fonts, pdf, toc } = doc;
+  let y = CONTENT_TOP;
+  drawText(tocPage, "How to read this guide", fonts.bold, 18, M, y, C.black);
+  tocPage.drawRectangle({ x: M, y: y - 8, width: 36, height: 2.5, color: C.lime });
+  y -= 26;
 
   const intro =
     "This is KasiTech's commercial reference manual - not a brochure and not a technical manual. Every product is documented so you can decide with confidence.";
-  for (const line of wrap(intro, font, 9, PAGE.w - M * 2)) {
-    draw(tocPage, line, font, 9, M, y, GREY);
-    y -= 13;
-  }
-  y -= 8;
-
-  draw(tocPage, "HOW SECTIONS ARE ORGANISED", fontBold, 7, M, y, MUTED);
-  y -= 12;
-  for (const line of [
-    "1. At a glance - all items with prices on one page",
-    "2. Detail pages - two products per page, with a Demo Studio QR beside each name",
-    "Scan prices first. When something stands out, flip to its detail page.",
-  ]) {
-    draw(tocPage, `- ${line}`, font, 8, M, y, GREY);
+  for (const line of wrap(intro, fonts.regular, 9, PAGE.w - M * 2)) {
+    drawText(tocPage, line, fonts.regular, 9, M, y, C.grey);
     y -= 12;
   }
   y -= 10;
 
-  draw(tocPage, "SKIP TO A SECTION", fontBold, 7, M, y, MUTED);
-  y -= 14;
+  drawSectionLabel(tocPage, fonts, "How sections are organised", M, y);
+  y -= 12;
+  for (const line of [
+    "1. At a glance - all items with prices on one page",
+    "2. Detail pages - two premium product cards per page, each with a Demo Studio panel",
+    "Scan prices first. When something stands out, flip to its detail page.",
+  ]) {
+    drawIcon(tocPage, "check", M, y + 2, 9, C.limeDeep);
+    drawText(tocPage, line, fonts.regular, 8, M + 14, y - 4, C.grey);
+    y -= 14;
+  }
+  y -= 10;
 
-  // Prefer high-level section starts (glance pages + major sections)
+  drawSectionLabel(tocPage, fonts, "Skip to a section", M, y);
+  y -= 14;
   const skipLabels = [
     "Website packages - at a glance",
     "Popular bundles - at a glance",
@@ -555,54 +910,43 @@ function fillHowToAndToc(
     "FAQ",
     "Your journey",
   ];
-
   for (const label of skipLabels) {
     const entry = toc.find((t) => t.label === label);
     if (!entry) continue;
     const pageNum = pdf.getPages().indexOf(entry.page) + 1;
     const display = label.replace(" - at a glance", "");
-    const text = `${display}`;
+    drawText(tocPage, display, fonts.bold, 10, M, y, C.black);
     const pageLabel = `p. ${pageNum}`;
-    draw(tocPage, text, fontBold, 10, M, y, BLACK);
-    const pw = font.widthOfTextAtSize(pageLabel, 10);
-    draw(tocPage, pageLabel, font, 10, PAGE.w - M - pw, y, MUTED);
-
-    // Clickable link to destination page
+    const pw = fonts.regular.widthOfTextAtSize(pageLabel, 10);
+    drawText(tocPage, pageLabel, fonts.regular, 10, PAGE.w - M - pw, y, C.muted);
     addInternalLink(tocPage, M, y - 2, PAGE.w - M * 2, 14, entry.page);
-
-    y -= 18;
-    if (y < 80) break;
+    y -= 16;
   }
 
   y -= 8;
-  draw(tocPage, "SEE IT LIVE", fontBold, 7, M, y, MUTED);
+  drawSectionLabel(tocPage, fonts, "See it live", M, y);
   y -= 12;
-  const live =
-    `Each detail page has a Demo Studio QR. Open ${DEMO_STUDIO_ORIGIN}/demo-studio to configure live.`;
-  for (const line of wrap(live, font, 8, PAGE.w - M * 2)) {
-    draw(tocPage, line, font, 8, M, y, GREY);
+  for (const line of wrap(
+    `Each product card includes a Demo Studio panel with QR. Open ${DEMO_STUDIO_ORIGIN}/demo-studio to configure live.`,
+    fonts.regular,
+    8,
+    PAGE.w - M * 2,
+  )) {
+    drawText(tocPage, line, fonts.regular, 8, M, y, C.grey);
     y -= 11;
   }
   y -= 10;
-  const note =
-    "Formal quotations confirm final scope, compatibility, timeline, third-party fees, taxes, and commercial terms before commencement. This catalog is not an invoice.";
-  for (const line of wrap(note, font, 8, PAGE.w - M * 2)) {
-    draw(tocPage, line, font, 8, M, y, MUTED);
+  for (const line of wrap(
+    "Formal quotations confirm final scope, compatibility, timeline, third-party fees, taxes, and commercial terms before commencement. This catalog is not an invoice.",
+    fonts.regular,
+    8,
+    PAGE.w - M * 2,
+  )) {
+    drawText(tocPage, line, fonts.regular, 8, M, y, C.muted);
     y -= 11;
   }
 
-  const pageNum = pdf.getPages().indexOf(tocPage) + 1;
-  draw(
-    tocPage,
-    `${PRICE_BOOK_VERSION}  |  All prices in TSh  |  kasitechinnovations.com`,
-    font,
-    7,
-    M,
-    28,
-    MUTED,
-  );
-  const n = String(pageNum);
-  draw(tocPage, n, font, 7, PAGE.w - M - font.widthOfTextAtSize(n, 7), 28, MUTED);
+  paintFooter(tocPage, fonts, pdf.getPages().indexOf(tocPage) + 1, PRICE_BOOK_VERSION);
 }
 
 function addInternalLink(
@@ -624,189 +968,4 @@ function addInternalLink(
     }),
   );
   fromPage.node.addAnnot(link);
-}
-
-async function embedQr(
-  pdf: PDFDocument,
-  cache: QrCache,
-  url: string,
-): Promise<PDFImage> {
-  const hit = cache.get(url);
-  if (hit) return hit;
-  const dataUrl = await QRCode.toDataURL(url, {
-    width: 256,
-    margin: 2,
-    errorCorrectionLevel: "H",
-    color: { dark: "#090909", light: "#FFFFFF" },
-  });
-  const raw = Buffer.from(dataUrl.split(",")[1]!, "base64");
-  const img = await pdf.embedPng(raw);
-  cache.set(url, img);
-  return img;
-}
-
-function page(
-  pdf: PDFDocument,
-  font: PDFFont,
-  fontBold: PDFFont,
-  section: string,
-): Ctx {
-  const pg = pdf.addPage([PAGE.w, PAGE.h]);
-  paintHeader(pg, font, fontBold, section);
-  return { pdf, font, fontBold, page: pg, y: PAGE.h - 58, section, cardsOnPage: 0 };
-}
-
-function ensure(ctx: Ctx, need: number): Ctx {
-  if (ctx.y - need >= FOOT_CLEAR) return ctx;
-  foot(ctx);
-  const next = page(ctx.pdf, ctx.font, ctx.fontBold, ctx.section);
-  ctx.page = next.page;
-  ctx.y = next.y;
-  ctx.cardsOnPage = 0;
-  return ctx;
-}
-
-function sanitize(text: string): string {
-  return text
-    .replace(/\u2018|\u2019|\u02BC/g, "'")
-    .replace(/\u201C|\u201D/g, '"')
-    .replace(/\u2013|\u2014/g, "-")
-    .replace(/\u2022/g, "-")
-    .replace(/\u00B7|\u2022/g, "|")
-    .replace(/\u2192/g, "->")
-    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, "");
-}
-
-function draw(
-  page: PDFPage,
-  text: string,
-  font: PDFFont,
-  size: number,
-  x: number,
-  y: number,
-  color: ReturnType<typeof rgb>,
-) {
-  const clean = sanitize(text);
-  if (!clean) return;
-  page.drawText(clean, { x, y, size, font, color });
-}
-
-function space(ctx: Ctx, n: number) {
-  ctx.y -= n;
-}
-
-function h1(ctx: Ctx, t: string) {
-  draw(ctx.page, t, ctx.fontBold, 18, M, ctx.y, BLACK);
-  ctx.y -= 8;
-  ctx.page.drawRectangle({ x: M, y: ctx.y, width: 36, height: 2, color: LIME });
-  ctx.y -= 18;
-}
-
-function label(ctx: Ctx, t: string) {
-  ensure(ctx, 20);
-  draw(ctx.page, t, ctx.fontBold, 7, M, ctx.y, MUTED);
-  ctx.y -= 12;
-}
-
-function p(ctx: Ctx, text: string, size = 9, maxWidth = PAGE.w - M * 2) {
-  const lines = wrap(text, ctx.font, size, maxWidth);
-  for (const line of lines) {
-    ensure(ctx, size + 4);
-    draw(ctx.page, line, ctx.font, size, M, ctx.y, GREY);
-    ctx.y -= size + 4;
-  }
-}
-
-function bullet(ctx: Ctx, text: string) {
-  const lines = wrap(text, ctx.font, 8, PAGE.w - M * 2 - 12);
-  ensure(ctx, 12 * lines.length);
-  draw(ctx.page, "-", ctx.font, 8, M, ctx.y, LIME);
-  for (const line of lines) {
-    draw(ctx.page, line, ctx.font, 8, M + 10, ctx.y, GREY);
-    ctx.y -= 11;
-  }
-}
-
-function compactField(
-  ctx: Ctx,
-  labelText: string,
-  value: string,
-  maxWidth: number,
-) {
-  ensure(ctx, 22);
-  draw(ctx.page, labelText, ctx.fontBold, 6.5, M, ctx.y, MUTED);
-  ctx.y -= 10;
-  const lines = wrap(value, ctx.font, 8, maxWidth);
-  for (const line of lines) {
-    ensure(ctx, 11);
-    draw(ctx.page, line, ctx.font, 8, M, ctx.y, GREY);
-    ctx.y -= 10;
-  }
-  space(ctx, 3);
-}
-
-function compactBullet(ctx: Ctx, text: string, maxWidth: number) {
-  const lines = wrap(text, ctx.font, 8, maxWidth - 10);
-  ensure(ctx, 11 * Math.max(lines.length, 1));
-  draw(ctx.page, "-", ctx.font, 8, M, ctx.y, LIME);
-  for (const line of lines) {
-    draw(ctx.page, line, ctx.font, 8, M + 10, ctx.y, GREY);
-    ctx.y -= 10;
-  }
-}
-
-function glanceRow(ctx: Ctx, name: string, price: string, blurb: string) {
-  ensure(ctx, 34);
-  draw(ctx.page, name, ctx.fontBold, 10, M, ctx.y, BLACK);
-  const pw = ctx.fontBold.widthOfTextAtSize(sanitize(price), 10);
-  draw(ctx.page, price, ctx.fontBold, 10, PAGE.w - M - pw, ctx.y, BLACK);
-  ctx.y -= 13;
-  const oneLine = wrap(blurb, ctx.font, 8, PAGE.w - M * 2)[0] ?? "";
-  draw(ctx.page, oneLine, ctx.font, 8, M, ctx.y, MUTED);
-  ctx.y -= 6;
-  ctx.page.drawLine({
-    start: { x: M, y: ctx.y },
-    end: { x: PAGE.w - M, y: ctx.y },
-    thickness: 0.4,
-    color: RULE,
-  });
-  ctx.y -= 10;
-}
-
-function foot(ctx: Ctx) {
-  const pageNum = ctx.pdf.getPages().indexOf(ctx.page) + 1;
-  draw(
-    ctx.page,
-    `${PRICE_BOOK_VERSION}  |  All prices in TSh  |  kasitechinnovations.com`,
-    ctx.font,
-    7,
-    M,
-    28,
-    MUTED,
-  );
-  const n = String(pageNum);
-  draw(
-    ctx.page,
-    n,
-    ctx.font,
-    7,
-    PAGE.w - M - ctx.font.widthOfTextAtSize(n, 7),
-    28,
-    MUTED,
-  );
-}
-
-function wrap(text: string, font: PDFFont, size: number, max: number): string[] {
-  const words = sanitize(text).split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
-  let cur = "";
-  for (const word of words) {
-    const next = cur ? `${cur} ${word}` : word;
-    if (font.widthOfTextAtSize(next, size) > max && cur) {
-      lines.push(cur);
-      cur = word;
-    } else cur = next;
-  }
-  if (cur) lines.push(cur);
-  return lines.length ? lines : [""];
 }
