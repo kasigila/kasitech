@@ -21,12 +21,8 @@ import {
   type BundleGuide,
   type CapabilityGuide,
   type PackageGuide,
-  type PlanGuide,
 } from "@/commercial/catalog/buying-guide-content";
-import {
-  CATALOG_QR_TARGETS,
-  DEMO_STUDIO_ORIGIN,
-} from "@/demo-studio/configuration/deep-link";
+import { DEMO_STUDIO_ORIGIN } from "@/demo-studio/configuration/deep-link";
 
 const PAGE = { w: 595.28, h: 841.89 };
 const M = 48;
@@ -170,7 +166,7 @@ export async function buildCatalogPdf(): Promise<Buffer> {
     }
   }
 
-  // —— Care: glance then detail ——
+  // —— Care: one section (glance + compact detail — no per-tier page) ——
   {
     const plans = buildCareGuides();
     let ctx = page(pdf, font, fontBold, "Website Care");
@@ -186,23 +182,24 @@ export async function buildCatalogPdf(): Promise<Buffer> {
       "Exact hours, response times, and backup allowances are confirmed in your quotation. This catalog lists approved plan names and prices only - we do not invent entitlements.",
     );
     space(ctx, 10);
-    label(ctx, "AT A GLANCE");
+    label(ctx, "PLANS");
     for (const g of plans) {
+      ctx = ensure(ctx, 88);
       glanceRow(ctx, g.item.name, displayItemPrice(g.item), g.whoFor);
+      p(ctx, g.valueProp, 8);
+      p(ctx, `When to upgrade: ${g.whenUpgrade}`, 8);
+      space(ctx, 4);
     }
-    space(ctx, 8);
-    p(ctx, "Plan details follow.", 9);
+    space(ctx, 6);
+    p(
+      ctx,
+      `See Care on a live site: ${DEMO_STUDIO_ORIGIN}/demo-studio?care=professional`,
+      8,
+    );
     foot(ctx);
-
-    for (const g of plans) {
-      ctx = page(pdf, font, fontBold, "Website Care");
-      mark(`${g.item.name} detail`, ctx.page);
-      await writePlanDetail(ctx, g, qrCache);
-      foot(ctx);
-    }
   }
 
-  // —— KB: glance then detail ——
+  // —— KB: one section (no per-tier page) ——
   {
     const plans = buildKbGuides();
     let ctx = page(pdf, font, fontBold, "KasiTech Business");
@@ -218,73 +215,21 @@ export async function buildCatalogPdf(): Promise<Buffer> {
       "Only approved modules are documented. Launch unlocks website and analytics basics. Growth unlocks the fuller operator set. Pro, Scale, and Enterprise are commercial tiers - additional modules beyond Growth are scoped with KasiTech, not invented here.",
     );
     space(ctx, 10);
-    label(ctx, "AT A GLANCE");
+    label(ctx, "PLANS");
     for (const g of plans) {
+      ctx = ensure(ctx, 100);
       glanceRow(ctx, g.item.name, displayItemPrice(g.item), g.whoFor);
+      p(ctx, g.valueProp, 8);
+      for (const line of g.included) bullet(ctx, line);
+      p(ctx, `When to upgrade: ${g.whenUpgrade}`, 8);
+      space(ctx, 4);
     }
-    space(ctx, 8);
-    p(ctx, "Plan details follow.", 9);
-    foot(ctx);
-
-    for (const g of plans) {
-      ctx = page(pdf, font, fontBold, "KasiTech Business");
-      mark(`${g.item.name} detail`, ctx.page);
-      await writePlanDetail(ctx, g, qrCache);
-      foot(ctx);
-    }
-  }
-
-  // QR index
-  {
-    let ctx = page(pdf, font, fontBold, "See it live");
-    mark("See it live - QR index", ctx.page);
-    h1(ctx, "See it live");
+    space(ctx, 6);
     p(
       ctx,
-      "Scan a QR code or open the link. Demo Studio loads the matching fictional business, applies the package or bundle, calculates the live price, and shows what customers experience.",
+      `See KasiTech Business live: ${DEMO_STUDIO_ORIGIN}/demo-studio?kb=growth`,
+      8,
     );
-    space(ctx, 8);
-    p(ctx, `Base: ${DEMO_STUDIO_ORIGIN}/demo-studio`, 8);
-    space(ctx, 14);
-
-    let col = 0;
-    let rowTop = ctx.y;
-    for (const t of CATALOG_QR_TARGETS) {
-      const img = await embedQr(pdf, qrCache, t.url);
-      if (col === 0 && ctx.y < 150) {
-        foot(ctx);
-        ctx = page(pdf, font, fontBold, "See it live");
-        rowTop = ctx.y;
-      }
-      const x = col === 0 ? M : PAGE.w / 2 + 4;
-      if (col === 0) rowTop = ctx.y;
-      const size = 80;
-      // Force square draw box
-      ctx.page.drawRectangle({
-        x: x - 2,
-        y: rowTop - size - 6,
-        width: size + 4,
-        height: size + 4,
-        color: rgb(1, 1, 1),
-        borderColor: RULE,
-        borderWidth: 0.5,
-      });
-      ctx.page.drawImage(img, {
-        x,
-        y: rowTop - size - 4,
-        width: size,
-        height: size,
-      });
-      draw(ctx.page, t.label, fontBold, 8, x, rowTop - size - 18, BLACK);
-      const short = t.url.replace(DEMO_STUDIO_ORIGIN, "");
-      draw(ctx.page, short.slice(0, 40), font, 6, x, rowTop - size - 30, MUTED);
-      col += 1;
-      if (col === 2) {
-        col = 0;
-        ctx.y = rowTop - size - 48;
-      }
-    }
-    if (col === 1) ctx.y = rowTop - 140;
     foot(ctx);
   }
 
@@ -508,7 +453,6 @@ function fillHowToAndToc(
     "Popular capabilities - at a glance",
     "Website Care - at a glance",
     "KasiTech Business - at a glance",
-    "See it live - QR index",
     "FAQ",
     "Your journey",
   ];
@@ -517,7 +461,7 @@ function fillHowToAndToc(
     const entry = toc.find((t) => t.label === label);
     if (!entry) continue;
     const pageNum = pdf.getPages().indexOf(entry.page) + 1;
-    const display = label.replace(" - at a glance", "").replace(" - QR index", "");
+    const display = label.replace(" - at a glance", "");
     const text = `${display}`;
     const pageLabel = `p. ${pageNum}`;
     draw(tocPage, text, fontBold, 10, M, y, BLACK);
@@ -535,7 +479,7 @@ function fillHowToAndToc(
   draw(tocPage, "SEE IT LIVE", fontBold, 7, M, y, MUTED);
   y -= 12;
   const live =
-    `Open ${DEMO_STUDIO_ORIGIN}/demo-studio with the links or QR codes in this guide. Demo Studio selects the matching configuration and shows live pricing.`;
+    `Each detail page has a Demo Studio QR. Open ${DEMO_STUDIO_ORIGIN}/demo-studio to configure live.`;
   for (const line of wrap(live, font, 8, PAGE.w - M * 2)) {
     draw(tocPage, line, font, 8, M, y, GREY);
     y -= 11;
