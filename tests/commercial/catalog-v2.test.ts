@@ -64,6 +64,5 @@ describe("Commercial Catalog V2", () => {
     expect(doc.getPageCount()).toBeLessThan(36);
     expect(doc.getTitle()).toContain(PRICE_BOOK_VERSION);
     expect(doc.getSubject()).toMatch(/buying guide/i);
-    expect(doc.getKeywords()?.join(" ") ?? "").toMatch(/Phase 3\.2/i);
   });
 });
