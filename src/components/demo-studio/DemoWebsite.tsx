@@ -13,6 +13,10 @@ type Props = {
   caps: PreviewCapabilities;
   language: "en" | "sw";
   onLanguage?: (l: "en" | "sw") => void;
+  /** Initial path for Proposal Companion deep-links */
+  initialPath?: string;
+  /** Remount key when companion section changes */
+  pathKey?: string;
 };
 
 const SW: Record<string, string> = {
@@ -29,6 +33,14 @@ const SW: Record<string, string> = {
   Donate: "Changia",
 };
 
+function normalizePath(raw?: string): string {
+  if (!raw) return "home";
+  const p = raw.trim().toLowerCase();
+  if (p === "inquiry") return "enquiry";
+  if (p === "home" || p === "homepage") return "home";
+  return p;
+}
+
 function t(label: string, lang: "en" | "sw"): string {
   if (lang === "en") return label;
   return SW[label] ?? label;
@@ -36,15 +48,30 @@ function t(label: string, lang: "en" | "sw"): string {
 
 export function DemoWebsite(props: Props) {
   const { business: b } = props;
-  if (b.industry === "beauty") return <FlagshipAmani {...props} />;
-  if (b.industry === "restaurant") return <FlagshipJiko {...props} />;
-  if (b.industry === "tourism") return <FlagshipTembea {...props} />;
-  if (b.industry === "real-estate") return <FlagshipNuru {...props} />;
+  const keyed = (
+    <DemoWebsiteInner key={props.pathKey ?? props.initialPath ?? "default"} {...props} />
+  );
+  return keyed;
+}
+
+function DemoWebsiteInner(props: Props) {
+  const { business: b, caps, language, onLanguage } = props;
+  const flagship = { business: b, caps, language, onLanguage };
+  if (b.industry === "beauty") return <FlagshipAmani {...flagship} />;
+  if (b.industry === "restaurant") return <FlagshipJiko {...flagship} />;
+  if (b.industry === "tourism") return <FlagshipTembea {...flagship} />;
+  if (b.industry === "real-estate") return <FlagshipNuru {...flagship} />;
   return <GenericDemoWebsite {...props} />;
 }
 
-function GenericDemoWebsite({ business: b, caps, language, onLanguage }: Props) {
-  const [path, setPath] = useState("home");
+function GenericDemoWebsite({
+  business: b,
+  caps,
+  language,
+  onLanguage,
+  initialPath = "home",
+}: Props) {
+  const [path, setPath] = useState(() => normalizePath(initialPath));
   const [bookingStep, setBookingStep] = useState(0);
   const [bookingDone, setBookingDone] = useState(false);
   const [cart, setCart] = useState<{ name: string; priceLabel: string }[]>([]);
@@ -489,11 +516,152 @@ function GenericDemoWebsite({ business: b, caps, language, onLanguage }: Props) 
           <form className="mt-4 max-w-sm space-y-2" onSubmit={(e) => e.preventDefault()}>
             <input className="w-full border px-3 py-2 text-xs" placeholder="Name" />
             <input className="w-full border px-3 py-2 text-xs" placeholder="Email" />
+            <select className="w-full border px-3 py-2 text-xs">
+              <option>Residential buyer</option>
+              <option>Municipality / utility</option>
+              <option>Distributor / partner</option>
+              <option>Commercial / institutional</option>
+            </select>
             <textarea className="w-full border px-3 py-2 text-xs" placeholder="Message" rows={3} />
             <button type="submit" className="px-4 py-2 text-xs text-white" style={{ background: "var(--demo-accent)" }}>
               Send (demo)
             </button>
           </form>
+        </div>
+      )}
+
+      {path === "products" && (
+        <div className="px-5 py-8">
+          <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "var(--demo-accent)" }}>
+            Products
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">Product systems with institutional clarity.</h2>
+          <p className="mt-2 max-w-lg text-sm opacity-70">
+            Explore Credo’s portfolio with specs, use-cases, and a direct path to enquiry — not a generic product grid.
+          </p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {(b.products ?? b.services.map((s) => ({ name: s.name, priceLabel: "Enquire" }))).map(
+              (p) => (
+                <div key={p.name} className="border border-black/10 p-4">
+                  <div
+                    className="mb-3 aspect-[16/9]"
+                    style={{ background: `linear-gradient(135deg, ${b.accent}55, ${b.ink}88)` }}
+                  />
+                  <div className="font-medium">{p.name}</div>
+                  <div className="mt-1 text-[11px] opacity-60">{p.priceLabel}</div>
+                  <button
+                    type="button"
+                    className="mt-3 text-[11px] underline"
+                    onClick={() => setPath("enquiry")}
+                  >
+                    Request details
+                  </button>
+                </div>
+              ),
+            )}
+          </div>
+        </div>
+      )}
+
+      {path === "solutions" && (
+        <div className="px-5 py-8">
+          <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "var(--demo-accent)" }}>
+            Solutions
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">Audience-specific journeys.</h2>
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {[
+              { t: "Residential", d: "Solar cooling and home energy systems." },
+              { t: "Municipal", d: "Smart utilities and infrastructure." },
+              { t: "Partners", d: "Distributor and institutional pathways." },
+            ].map((x) => (
+              <div key={x.t} className="border border-black/10 p-4">
+                <div className="font-medium">{x.t}</div>
+                <p className="mt-1 text-[12px] opacity-70">{x.d}</p>
+                <button
+                  type="button"
+                  className="mt-3 text-[11px] underline"
+                  onClick={() => setPath("enquiry")}
+                >
+                  Start consultation
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {path === "projects" && (
+        <div className="px-5 py-8">
+          <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "var(--demo-accent)" }}>
+            Projects
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">Proof architecture.</h2>
+          <p className="mt-2 max-w-lg text-sm opacity-70">
+            Structured project templates ready for Credo-supplied deployments — field narrative, outcomes, and partners.
+          </p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {b.galleryLabels.map((g) => (
+              <div key={g} className="border border-black/10">
+                <div
+                  className="aspect-[16/9]"
+                  style={{ background: `linear-gradient(145deg, ${b.ink}, ${b.accent}99)` }}
+                />
+                <div className="p-4">
+                  <div className="font-medium">{g} deployment</div>
+                  <p className="mt-1 text-[12px] opacity-70">Case template · location · outcome</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {path === "about" && (
+        <div className="px-5 py-8">
+          <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "var(--demo-accent)" }}>
+            About
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">Institutional trust, clearly told.</h2>
+          <p className="mt-2 max-w-lg text-sm opacity-70">{b.tagline}</p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {b.team.map((m) => (
+              <div key={m.name} className="border border-black/10 p-4">
+                <div
+                  className="mb-3 h-14 w-14 rounded-full"
+                  style={{ background: `${b.accent}33` }}
+                />
+                <div className="font-medium">{m.name}</div>
+                <div className="text-[11px] opacity-60">{m.role}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {path === "contact" && (
+        <div className="px-5 py-8">
+          <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "var(--demo-accent)" }}>
+            Contact
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">Segmented lead capture.</h2>
+          <p className="mt-2 text-sm opacity-70">
+            {b.city} · {b.email} · {b.phone}
+          </p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {["Request a quote", "Partner with Credo", "Utility consultation", "Product support"].map(
+              (label) => (
+                <button
+                  key={label}
+                  type="button"
+                  className="border border-black/10 px-4 py-4 text-left text-sm font-medium hover:border-black/30"
+                  onClick={() => setPath("enquiry")}
+                >
+                  {label}
+                </button>
+              ),
+            )}
+          </div>
         </div>
       )}
 

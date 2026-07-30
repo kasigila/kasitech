@@ -24,11 +24,23 @@
 
 ```
 Proposal KT-CEG-2026-001
-  → Configuration (registry)
-  → Demo Studio Proposal Mode
+  → Proposal Companion (Demo Studio)
+  → Section-aware interactive views
   → Commercial Catalog / Engine
   → Quote → Contract → Development → Launch → Website Care
 ```
+
+### Proposal Companion
+
+Scan any **View Interactive Version** QR in the PDF to open Demo Studio with:
+
+- Credo branding + recommended configuration (read-only until Customize)
+- Banner: Proposal Companion · KT-CEG-2026-001 · current section
+- Recommended Investment / Monthly Partnership
+- Deep-link examples:
+  - `/demo-studio/proposal/credo-energy-group?section=recommended-website`
+  - `/demo-studio/proposal/credo-energy-group?section=products`
+  - `/demo-studio/proposal/credo-energy-group?section=analytics`
 
 Approved investment (do not change without commercial review):
 

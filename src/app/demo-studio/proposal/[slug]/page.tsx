@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DemoStudioApp } from "@/components/demo-studio/DemoStudioApp";
-import { getProposalPreset } from "@/proposals/registry";
+import {
+  getProposalPreset,
+  resolveCompanionSection,
+} from "@/proposals/registry";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -12,10 +15,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const proposal = getProposalPreset(slug);
   if (!proposal) {
-    return { title: "Proposal Demo" };
+    return { title: "Proposal Companion" };
   }
   return {
-    title: `${proposal.clientName} · Proposal Mode`,
+    title: `${proposal.clientName} · Proposal Companion`,
     description: proposal.disclaimer,
   };
 }
@@ -29,8 +32,17 @@ export default async function ProposalDemoStudioPage({
   const proposal = getProposalPreset(slug);
   if (!proposal) notFound();
 
-  const viewRaw = sp.view;
-  const view = Array.isArray(viewRaw) ? viewRaw[0] : viewRaw;
+  const pick = (k: string) => {
+    const v = sp[k];
+    return Array.isArray(v) ? v[0] : v;
+  };
+
+  const sectionKey = pick("section") ?? pick("view") ?? pick("page");
+  const companionSection =
+    resolveCompanionSection(sectionKey) ??
+    proposal.companionSections.find((s) => s.id === "recommended-website") ??
+    proposal.companionSections[0] ??
+    null;
 
   return (
     <DemoStudioApp
@@ -46,7 +58,9 @@ export default async function ProposalDemoStudioPage({
         proposalClientName: proposal.clientName,
         proposalReturnPath: proposal.proposalReturnPath,
         proposalBrand: proposal.brand,
-        proposalView: view,
+        proposalView: companionSection?.websitePath ?? pick("view"),
+        companionSection: companionSection ?? undefined,
+        companionSections: proposal.companionSections,
         catalogViewingLabel: `${proposal.clientName} · ${proposal.id}`,
       }}
     />

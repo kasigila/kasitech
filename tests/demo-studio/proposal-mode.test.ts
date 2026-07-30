@@ -3,6 +3,8 @@ import {
   CREDO_ENERGY_PROPOSAL,
   getProposalPreset,
   listProposalPresets,
+  resolveCompanionSection,
+  credoDemoUrl,
 } from "@/proposals/registry";
 import {
   parseProposalSearchParams,
@@ -46,6 +48,40 @@ describe("Credo proposal registry KT-CEG-2026-001", () => {
   });
 });
 
+describe("Proposal Companion sections", () => {
+  it("includes recommended website and major interactive views", () => {
+    const ids = CREDO_ENERGY_PROPOSAL.companionSections.map((s) => s.id);
+    expect(ids).toContain("recommended-website");
+    expect(ids).toContain("products");
+    expect(ids).toContain("analytics");
+    expect(ids).toContain("cms");
+    expect(ids).toContain("enquiry");
+    expect(ids).toContain("care");
+    expect(ids).toContain("kasitech-business");
+  });
+
+  it("resolves section by id, page number, and legacy aliases", () => {
+    const rw = resolveCompanionSection("recommended-website");
+    expect(rw?.sectionLabel).toBe("Section 12 – Recommended Website");
+    expect(rw?.websitePath).toBe("home");
+
+    expect(resolveCompanionSection("12")?.id).toBe("recommended-website");
+    expect(resolveCompanionSection("home")?.id).toBe("homepage");
+    expect(resolveCompanionSection("inquiry")?.id).toBe("enquiry");
+    expect(resolveCompanionSection("nav")?.id).toBe("navigation");
+  });
+
+  it("builds companion URLs with section query", () => {
+    expect(credoDemoUrl("recommended-website")).toContain(
+      "section=recommended-website",
+    );
+    expect(credoDemoUrl("analytics")).toContain("section=analytics");
+    expect(proposalDemoStudioUrl(CREDO_ENERGY_PROPOSAL, "products")).toContain(
+      "view=products",
+    );
+  });
+});
+
 describe("Proposal Mode deep-links", () => {
   it("parses ?proposal=KT-CEG-2026-001", () => {
     const preset = parseProposalSearchParams({
@@ -53,6 +89,7 @@ describe("Proposal Mode deep-links", () => {
     });
     expect(preset?.slug).toBe("credo-energy-group");
     expect(preset?.disclaimer).toContain("KT-CEG-2026-001");
+    expect(preset?.companionSections.length).toBeGreaterThan(5);
   });
 
   it("parses ?client=credo-energy-group", () => {
@@ -66,15 +103,6 @@ describe("Proposal Mode deep-links", () => {
     expect(
       parseDemoStudioSearchParams({ proposal: "KT-CEG-2026-001" }),
     ).toBeNull();
-  });
-
-  it("builds dedicated proposal Demo Studio URLs", () => {
-    expect(proposalDemoStudioUrl(CREDO_ENERGY_PROPOSAL)).toContain(
-      "/demo-studio/proposal/credo-energy-group",
-    );
-    expect(proposalDemoStudioUrl("KT-CEG-2026-001", "products")).toContain(
-      "view=products",
-    );
   });
 
   it("hydrates commercial state from catalog links still works", () => {

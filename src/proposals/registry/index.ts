@@ -17,9 +17,16 @@ export function listProposalPresets(): ProposalPreset[] {
   return [CREDO_ENERGY_PROPOSAL];
 }
 
-export { CREDO_ENERGY_PROPOSAL, credoDemoUrl, CREDO_QR_TARGETS } from "./credo-energy";
+export {
+  CREDO_ENERGY_PROPOSAL,
+  credoDemoUrl,
+  CREDO_QR_TARGETS,
+  resolveCompanionSection,
+} from "./credo-energy";
 export type {
   ProposalPreset,
   ProposalInvestment,
   ProposalContact,
+  ProposalCompanionSection,
+  CompanionHighlight,
 } from "./types";

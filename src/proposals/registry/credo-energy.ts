@@ -1,7 +1,20 @@
 import { emptyCommercialState } from "@/demo-studio/commercial/bridge";
-import type { ProposalPreset } from "./types";
+import type { ProposalCompanionSection, ProposalPreset } from "./types";
 
 const DEMO_ORIGIN = "https://www.kasitechinnovations.com";
+
+function section(
+  partial: Omit<ProposalCompanionSection, "sectionLabel" | "qrAsset" | "qrLabel"> & {
+    qrLabel?: string;
+  },
+): ProposalCompanionSection {
+  return {
+    ...partial,
+    sectionLabel: `Section ${partial.pageNumber} – ${partial.title}`,
+    qrAsset: `section-${partial.id}.png`,
+    qrLabel: partial.qrLabel ?? "View Interactive Version",
+  };
+}
 
 /**
  * Credo Energy Group — Proposal KT-CEG-2026-001
@@ -134,22 +147,179 @@ export const CREDO_ENERGY_PROPOSAL: ProposalPreset = {
   configurationKey: "KT-CONFIG-CEG2026001",
   disclaimer:
     "This demonstration represents the recommended solution presented in Proposal KT-CEG-2026-001.",
+  companionSections: [
+    section({
+      id: "overview",
+      pageNumber: 2,
+      title: "Executive Dashboard",
+      websitePath: "home",
+      highlight: "website",
+    }),
+    section({
+      id: "future-presence",
+      pageNumber: 6,
+      title: "Future Digital Presence",
+      websitePath: "home",
+      highlight: "website",
+    }),
+    section({
+      id: "recommended-website",
+      pageNumber: 12,
+      title: "Recommended Website",
+      websitePath: "home",
+      highlight: "website",
+    }),
+    section({
+      id: "homepage",
+      pageNumber: 13,
+      title: "Homepage Concept",
+      websitePath: "home",
+      highlight: "website",
+    }),
+    section({
+      id: "products",
+      pageNumber: 13,
+      title: "Products",
+      websitePath: "products",
+      highlight: "website",
+    }),
+    section({
+      id: "solutions",
+      pageNumber: 13,
+      title: "Solutions",
+      websitePath: "solutions",
+      highlight: "website",
+    }),
+    section({
+      id: "about",
+      pageNumber: 14,
+      title: "About",
+      websitePath: "about",
+      highlight: "website",
+    }),
+    section({
+      id: "projects",
+      pageNumber: 14,
+      title: "Projects",
+      websitePath: "projects",
+      highlight: "website",
+    }),
+    section({
+      id: "contact",
+      pageNumber: 14,
+      title: "Contact",
+      websitePath: "contact",
+      highlight: "website",
+    }),
+    section({
+      id: "navigation",
+      pageNumber: 15,
+      title: "Mega Navigation",
+      websitePath: "home",
+      highlight: "nav",
+    }),
+    section({
+      id: "enquiry",
+      pageNumber: 15,
+      title: "Inquiry Flow",
+      websitePath: "enquiry",
+      highlight: "website",
+    }),
+    section({
+      id: "walkthrough",
+      pageNumber: 17,
+      title: "Website Walkthrough",
+      websitePath: "home",
+      highlight: "website",
+    }),
+    section({
+      id: "analytics",
+      pageNumber: 17,
+      title: "Analytics",
+      websitePath: "home",
+      highlight: "analytics",
+    }),
+    section({
+      id: "cms",
+      pageNumber: 17,
+      title: "CMS",
+      websitePath: "home",
+      highlight: "cms",
+    }),
+    section({
+      id: "journeys",
+      pageNumber: 18,
+      title: "User Journeys · Inquiry",
+      websitePath: "enquiry",
+      highlight: "website",
+    }),
+    section({
+      id: "social",
+      pageNumber: 19,
+      title: "Social Media",
+      websitePath: "home",
+      highlight: "social",
+    }),
+    section({
+      id: "care",
+      pageNumber: 28,
+      title: "Website Care",
+      websitePath: "home",
+      highlight: "care",
+    }),
+    section({
+      id: "investment",
+      pageNumber: 28,
+      title: "Investment",
+      websitePath: "home",
+      highlight: "investment",
+    }),
+    section({
+      id: "kasitech-business",
+      pageNumber: 29,
+      title: "KasiTech Business · Future Platform",
+      studioMode: "business",
+      highlight: "kb",
+    }),
+  ],
 };
 
 /** Canonical Demo Studio URL builders for proposal QR / SEE IT LIVE deep-links. */
-export function credoDemoUrl(view?: string): string {
+export function credoDemoUrl(sectionOrView?: string): string {
   const base = `${DEMO_ORIGIN}/demo-studio/proposal/credo-energy-group`;
-  if (!view) return base;
-  return `${base}?view=${encodeURIComponent(view)}`;
+  if (!sectionOrView) return base;
+  // Prefer section= for companion deep-links
+  const known = CREDO_ENERGY_PROPOSAL.companionSections.find(
+    (s) => s.id === sectionOrView || String(s.pageNumber) === sectionOrView,
+  );
+  if (known) {
+    return `${base}?section=${encodeURIComponent(known.id)}`;
+  }
+  return `${base}?view=${encodeURIComponent(sectionOrView)}`;
 }
 
-export const CREDO_QR_TARGETS: { id: string; label: string; view: string }[] = [
-  { id: "demo-home", label: "Interactive Demo", view: "home" },
-  { id: "demo-products", label: "Products", view: "products" },
-  { id: "demo-projects", label: "Projects", view: "projects" },
-  { id: "demo-about", label: "About", view: "about" },
-  { id: "demo-contact", label: "Inquiry", view: "contact" },
-  { id: "demo-analytics", label: "Analytics", view: "analytics" },
-  { id: "demo-cms", label: "CMS", view: "cms" },
-  { id: "demo-nav", label: "Navigation", view: "nav" },
-];
+export function resolveCompanionSection(
+  key: string | null | undefined,
+): ProposalCompanionSection | null {
+  if (!key) return null;
+  const k = key.trim().toLowerCase();
+  return (
+    CREDO_ENERGY_PROPOSAL.companionSections.find(
+      (s) =>
+        s.id === k ||
+        String(s.pageNumber) === k ||
+        s.title.toLowerCase() === k ||
+        // legacy view aliases
+        (k === "home" && s.id === "homepage") ||
+        (k === "inquiry" && s.id === "enquiry") ||
+        (k === "nav" && s.id === "navigation"),
+    ) ?? null
+  );
+}
+
+export const CREDO_QR_TARGETS: { id: string; label: string; view: string }[] =
+  CREDO_ENERGY_PROPOSAL.companionSections.map((s) => ({
+    id: s.id,
+    label: s.title,
+    view: s.id,
+  }));

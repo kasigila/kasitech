@@ -39,7 +39,7 @@ import { normalizeExclusiveFeatureCodes } from "@/demo-studio/configuration/norm
 import { outcomeForCode } from "@/demo-studio/configuration/outcomes";
 import type { CommercialSnapshot } from "@/commercial";
 import { billingLabel } from "@/commercial/catalog/presentation";
-import type { ProposalInvestment } from "@/proposals/registry";
+import type { ProposalInvestment, ProposalCompanionSection } from "@/proposals/registry";
 import type { FictionalBusiness } from "@/demo-studio/industries/businesses";
 import { DemoWebsite } from "./DemoWebsite";
 import { KbPreview } from "./KbPreview";
@@ -73,6 +73,8 @@ type Props = {
     proposalReturnPath?: string;
     proposalBrand?: FictionalBusiness;
     proposalView?: string;
+    companionSection?: ProposalCompanionSection;
+    companionSections?: ProposalCompanionSection[];
   };
 };
 
@@ -164,7 +166,19 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
 
   const [device, setDevice] = useState<PreviewDevice>("desktop");
   const [deviceInitialized, setDeviceInitialized] = useState(false);
-  const [studioMode, setStudioMode] = useState<StudioMode>("website");
+  const [studioMode, setStudioMode] = useState<StudioMode>(
+    initialConfig?.companionSection?.studioMode ?? "website",
+  );
+  const [companionSection, setCompanionSection] = useState(
+    initialConfig?.companionSection ?? null,
+  );
+  const [websitePath, setWebsitePath] = useState(
+    initialConfig?.companionSection?.websitePath ??
+      initialConfig?.proposalView ??
+      "home",
+  );
+  const companionSections = initialConfig?.companionSections ?? [];
+  const companionHighlight = companionSection?.highlight ?? "website";
   const [compareMode, setCompareMode] = useState<CompareMode>("build");
   const [featureGroup, setFeatureGroup] = useState<FeatureGroup>("recommended");
   const [language, setLanguage] = useState<"en" | "sw">("en");
@@ -656,7 +670,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
       )}
 
       {proposalBanner && initialConfig?.fromProposal && (
-        <ProposalEntryBanner
+        <ProposalCompanionBanner
           proposalId={initialConfig.proposalId ?? "Proposal"}
           clientName={initialConfig.proposalClientName ?? "Client"}
           disclaimer={
@@ -664,14 +678,23 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
             "This demonstration represents the recommended solution."
           }
           investment={initialConfig.proposalInvestment}
-          recommended={initialConfig.proposalRecommended}
-          returnPath={initialConfig.proposalReturnPath}
+          section={companionSection}
+          sections={companionSections}
           locked={proposalLocked}
-          onExplore={() => {
-            setProposalBanner(true);
+          onSelectSection={(s) => {
+            setCompanionSection(s);
+            if (s.studioMode) setStudioMode(s.studioMode);
+            else setStudioMode("website");
+            if (s.websitePath) setWebsitePath(s.websitePath);
             trackDemo("proposal_explore", {
               proposal: initialConfig.proposalId,
+              section: s.id,
             });
+            if (typeof window !== "undefined" && initialConfig.proposalSlug) {
+              const url = new URL(window.location.href);
+              url.searchParams.set("section", s.id);
+              window.history.replaceState({}, "", url.toString());
+            }
           }}
           onCustomize={() => {
             setProposalLocked(false);
@@ -789,12 +812,52 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
               style={{ width: deviceWidth, maxWidth: "100%" }}
             >
               {studioMode === "website" ? (
-                <DemoWebsite
-                  business={business}
-                  caps={caps}
-                  language={language}
-                  onLanguage={setLanguage}
-                />
+                <div className="relative h-full">
+                  <DemoWebsite
+                    business={business}
+                    caps={caps}
+                    language={language}
+                    onLanguage={setLanguage}
+                    initialPath={websitePath}
+                    pathKey={companionSection?.id ?? websitePath}
+                  />
+                  {companionHighlight === "analytics" && (
+                    <CompanionOverlay
+                      title="Executive analytics"
+                      body="Journey visibility, enquiry sources, and campaign attribution — so Credo leadership decides with evidence after launch."
+                    />
+                  )}
+                  {companionHighlight === "cms" && (
+                    <CompanionOverlay
+                      title="Professional CMS"
+                      body="Publish products, projects, and insights without engineering tickets. Operator training included in the recommended engagement."
+                    />
+                  )}
+                  {companionHighlight === "care" && (
+                    <CompanionOverlay
+                      title="Website Care"
+                      body="TZS 800,000 / month — updates, monitoring, security hygiene, performance watch, and a monthly health note."
+                    />
+                  )}
+                  {companionHighlight === "social" && (
+                    <CompanionOverlay
+                      title="Social Media Management"
+                      body="TZS 1,200,000 / month — 16 posts · 8 stories · 2 reels · strategy, community, scheduling, and reporting."
+                    />
+                  )}
+                  {companionHighlight === "investment" && (
+                    <CompanionOverlay
+                      title="Recommended investment"
+                      body="Website TZS 7,500,000 one-time · Monthly partnership TZS 2,000,000 (Care + Social). Payment 40% / 40% / 20%."
+                    />
+                  )}
+                  {companionHighlight === "nav" && (
+                    <CompanionOverlay
+                      title="Mega navigation"
+                      body="Audience-aware IA across Products, Solutions, Projects, About, and Contact — built for multi-vertical discovery."
+                    />
+                  )}
+                </div>
               ) : (
                 <KbPreview
                   kbPlan={commercial.kbPlan}
@@ -2196,13 +2259,29 @@ function CatalogEntryBanner({
   );
 }
 
-function ProposalEntryBanner({
+function CompanionOverlay({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/85 via-black/55 to-transparent p-4 pt-16 text-kasi-ivory">
+      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
+        Proposal Companion focus
+      </div>
+      <div className="mt-1 font-display text-lg">{title}</div>
+      <p className="mt-1 max-w-xl text-[12px] leading-relaxed text-white/75">
+        {body}
+      </p>
+    </div>
+  );
+}
+
+function ProposalCompanionBanner({
   proposalId,
   clientName,
   disclaimer,
   investment,
-  recommended,
+  section,
+  sections,
   locked,
+  onSelectSection,
   onCustomize,
   onReturn,
   onDismiss,
@@ -2211,68 +2290,91 @@ function ProposalEntryBanner({
   clientName: string;
   disclaimer: string;
   investment?: ProposalInvestment;
-  recommended?: ProposalRecommended;
-  returnPath?: string;
+  section: ProposalCompanionSection | null;
+  sections: ProposalCompanionSection[];
   locked: boolean;
-  onExplore: () => void;
+  onSelectSection: (s: ProposalCompanionSection) => void;
   onCustomize: () => void;
   onReturn: () => void;
   onDismiss: () => void;
 }) {
+  const primarySections = sections.filter((s) =>
+    [
+      "recommended-website",
+      "homepage",
+      "products",
+      "projects",
+      "enquiry",
+      "analytics",
+      "cms",
+      "care",
+      "kasitech-business",
+    ].includes(s.id),
+  );
+
   return (
     <div className="border-b border-kasi-green/50 bg-[#0d1a12] px-4 py-4 text-[12px] text-kasi-ivory">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
-            Proposal Mode{locked ? " · Read-only recommendation" : " · Customizing"}
+            Proposal Companion
+            {locked ? " · Read-only recommendation" : " · Customizing"}
           </div>
-          <div className="mt-1 font-display text-lg">
-            {clientName} · {proposalId}
+          <div className="mt-1 font-display text-xl">
+            Proposal: {proposalId}
+          </div>
+          <div className="mt-1 text-[13px] text-kasi-ivory/90">
+            {section
+              ? `You're currently viewing ${section.sectionLabel}.`
+              : `${clientName} · recommended solution`}
           </div>
           <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-kasi-grey">
             {disclaimer}
           </p>
-          <dl className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {recommended && (
-              <>
-                <div>
-                  <dt className="text-kasi-grey">Recommended package</dt>
-                  <dd>{recommended.packageLabel}</dd>
-                </div>
-                <div>
-                  <dt className="text-kasi-grey">Care</dt>
-                  <dd>{recommended.careLabel}</dd>
-                </div>
-                <div>
-                  <dt className="text-kasi-grey">Social</dt>
-                  <dd>{recommended.socialLabel}</dd>
-                </div>
-              </>
-            )}
-            {investment && (
-              <>
-                <div>
-                  <dt className="text-kasi-grey">Website investment</dt>
-                  <dd className="font-mono text-kasi-green">
-                    {formatTsh(investment.websiteOneTimeTsh)}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-kasi-grey">Monthly partnership</dt>
-                  <dd className="font-mono text-kasi-green">
-                    {formatTsh(investment.totalMonthlyTsh)}
-                  </dd>
-                </div>
-              </>
-            )}
-          </dl>
-          {recommended?.capabilities?.length ? (
-            <p className="mt-3 text-[11px] text-kasi-grey">
-              <span className="text-kasi-ivory">Capabilities · </span>
-              {recommended.capabilities.slice(0, 5).join(" · ")}
-              {recommended.capabilities.length > 5 ? " · …" : ""}
-            </p>
-          ) : null}
+          {investment && (
+            <dl className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <dt className="text-kasi-grey">Recommended Investment</dt>
+                <dd className="font-mono text-base text-kasi-green">
+                  {formatTsh(investment.websiteOneTimeTsh)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-kasi-grey">Monthly Partnership</dt>
+                <dd className="font-mono text-base text-kasi-green">
+                  {formatTsh(investment.totalMonthlyTsh)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-kasi-grey">Care · Social</dt>
+                <dd className="font-mono text-kasi-ivory">
+                  {formatTsh(investment.careMonthlyTsh)} ·{" "}
+                  {formatTsh(investment.socialMonthlyTsh)}
+                </dd>
+              </div>
+            </dl>
+          )}
+          {primarySections.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {primarySections.map((s) => {
+                const active = section?.id === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => onSelectSection(s)}
+                    className={`px-2.5 py-1 text-[10px] uppercase tracking-wider ${
+                      active
+                        ? "bg-kasi-green text-kasi-black"
+                        : "border border-white/15 text-kasi-grey hover:border-kasi-green/50 hover:text-kasi-ivory"
+                    }`}
+                  >
+                    {s.title}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
         <div className="flex shrink-0 flex-col gap-2">
           {locked ? (
