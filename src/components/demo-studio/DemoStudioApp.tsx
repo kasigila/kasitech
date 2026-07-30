@@ -39,8 +39,20 @@ import { normalizeExclusiveFeatureCodes } from "@/demo-studio/configuration/norm
 import { outcomeForCode } from "@/demo-studio/configuration/outcomes";
 import type { CommercialSnapshot } from "@/commercial";
 import { billingLabel } from "@/commercial/catalog/presentation";
+import type { ProposalInvestment, ProposalCompanionSection } from "@/proposals/registry";
+import type { FictionalBusiness } from "@/demo-studio/industries/businesses";
 import { DemoWebsite } from "./DemoWebsite";
 import { KbPreview } from "./KbPreview";
+
+type ProposalRecommended = {
+  packageLabel: string;
+  careLabel: string;
+  socialLabel: string;
+  kbPlanLabel: string | null;
+  capabilities: string[];
+  modules: string[];
+  architecture: string[];
+};
 
 type Props = {
   initialIndustry?: DemoIndustryId;
@@ -51,6 +63,18 @@ type Props = {
     frozenSnapshot?: CommercialSnapshot;
     fromCatalog?: boolean;
     catalogViewingLabel?: string;
+    fromProposal?: boolean;
+    proposalId?: string;
+    proposalSlug?: string;
+    proposalDisclaimer?: string;
+    proposalInvestment?: ProposalInvestment;
+    proposalRecommended?: ProposalRecommended;
+    proposalClientName?: string;
+    proposalReturnPath?: string;
+    proposalBrand?: FictionalBusiness;
+    proposalView?: string;
+    companionSection?: ProposalCompanionSection;
+    companionSections?: ProposalCompanionSection[];
   };
 };
 
@@ -142,7 +166,19 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
 
   const [device, setDevice] = useState<PreviewDevice>("desktop");
   const [deviceInitialized, setDeviceInitialized] = useState(false);
-  const [studioMode, setStudioMode] = useState<StudioMode>("website");
+  const [studioMode, setStudioMode] = useState<StudioMode>(
+    initialConfig?.companionSection?.studioMode ?? "website",
+  );
+  const [companionSection, setCompanionSection] = useState(
+    initialConfig?.companionSection ?? null,
+  );
+  const [websitePath, setWebsitePath] = useState(
+    initialConfig?.companionSection?.websitePath ??
+      initialConfig?.proposalView ??
+      "home",
+  );
+  const companionSections = initialConfig?.companionSections ?? [];
+  const companionHighlight = companionSection?.highlight ?? "website";
   const [compareMode, setCompareMode] = useState<CompareMode>("build");
   const [featureGroup, setFeatureGroup] = useState<FeatureGroup>("recommended");
   const [language, setLanguage] = useState<"en" | "sw">("en");
@@ -169,8 +205,16 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
   const [catalogLocked, setCatalogLocked] = useState(
     Boolean(initialConfig?.fromCatalog),
   );
+  const [proposalBanner, setProposalBanner] = useState(
+    Boolean(initialConfig?.fromProposal),
+  );
+  const [proposalLocked, setProposalLocked] = useState(
+    Boolean(initialConfig?.fromProposal),
+  );
   const catalogLabel = initialConfig?.catalogViewingLabel ?? "Catalog selection";
-  const readOnly = Boolean(initialConfig?.readOnly) || catalogLocked;
+  const fromProposal = Boolean(initialConfig?.fromProposal);
+  const readOnly =
+    Boolean(initialConfig?.readOnly) || catalogLocked || proposalLocked;
 
   useEffect(() => {
     if (deviceInitialized) return;
@@ -223,7 +267,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
     [activeCommercial],
   );
   const business = commercial.industry
-    ? businessForIndustry(commercial.industry)
+    ? initialConfig?.proposalBrand ?? businessForIndustry(commercial.industry)
     : null;
 
   const bundleHints = useMemo(
@@ -625,6 +669,50 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
         />
       )}
 
+      {proposalBanner && initialConfig?.fromProposal && (
+        <ProposalCompanionBanner
+          proposalId={initialConfig.proposalId ?? "Proposal"}
+          clientName={initialConfig.proposalClientName ?? "Client"}
+          disclaimer={
+            initialConfig.proposalDisclaimer ??
+            "This demonstration represents the recommended solution."
+          }
+          investment={initialConfig.proposalInvestment}
+          section={companionSection}
+          sections={companionSections}
+          locked={proposalLocked}
+          onSelectSection={(s) => {
+            setCompanionSection(s);
+            if (s.studioMode) setStudioMode(s.studioMode);
+            else setStudioMode("website");
+            if (s.websitePath) setWebsitePath(s.websitePath);
+            trackDemo("proposal_explore", {
+              proposal: initialConfig.proposalId,
+              section: s.id,
+            });
+            if (typeof window !== "undefined" && initialConfig.proposalSlug) {
+              const url = new URL(window.location.href);
+              url.searchParams.set("section", s.id);
+              window.history.replaceState({}, "", url.toString());
+            }
+          }}
+          onCustomize={() => {
+            setProposalLocked(false);
+            trackDemo("proposal_customize", {
+              proposal: initialConfig.proposalId,
+            });
+          }}
+          onReturn={() => {
+            if (typeof window !== "undefined") {
+              window.location.href =
+                initialConfig.proposalReturnPath ??
+                "/proposals/credo-energy-group/";
+            }
+          }}
+          onDismiss={() => setProposalBanner(false)}
+        />
+      )}
+
       {statusMsg && (
         <div className="border-b border-kasi-border bg-[#111] px-4 py-1.5 text-[12px] text-kasi-grey">
           {statusMsg}
@@ -724,12 +812,52 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
               style={{ width: deviceWidth, maxWidth: "100%" }}
             >
               {studioMode === "website" ? (
-                <DemoWebsite
-                  business={business}
-                  caps={caps}
-                  language={language}
-                  onLanguage={setLanguage}
-                />
+                <div className="relative h-full">
+                  <DemoWebsite
+                    business={business}
+                    caps={caps}
+                    language={language}
+                    onLanguage={setLanguage}
+                    initialPath={websitePath}
+                    pathKey={companionSection?.id ?? websitePath}
+                  />
+                  {companionHighlight === "analytics" && (
+                    <CompanionOverlay
+                      title="Executive analytics"
+                      body="Journey visibility, enquiry sources, and campaign attribution — so Credo leadership decides with evidence after launch."
+                    />
+                  )}
+                  {companionHighlight === "cms" && (
+                    <CompanionOverlay
+                      title="Professional CMS"
+                      body="Publish products, projects, and insights without engineering tickets. Operator training included in the recommended engagement."
+                    />
+                  )}
+                  {companionHighlight === "care" && (
+                    <CompanionOverlay
+                      title="Website Care"
+                      body="TZS 800,000 / month — updates, monitoring, security hygiene, performance watch, and a monthly health note."
+                    />
+                  )}
+                  {companionHighlight === "social" && (
+                    <CompanionOverlay
+                      title="Social Media Management"
+                      body="TZS 1,200,000 / month — 16 posts · 8 stories · 2 reels · strategy, community, scheduling, and reporting."
+                    />
+                  )}
+                  {companionHighlight === "investment" && (
+                    <CompanionOverlay
+                      title="Recommended investment"
+                      body="Website TZS 7,500,000 one-time · Monthly partnership TZS 2,000,000 (Care + Social). Payment 40% / 40% / 20%."
+                    />
+                  )}
+                  {companionHighlight === "nav" && (
+                    <CompanionOverlay
+                      title="Mega navigation"
+                      body="Audience-aware IA across Products, Solutions, Projects, About, and Contact — built for multi-vertical discovery."
+                    />
+                  )}
+                </div>
               ) : (
                 <KbPreview
                   kbPlan={commercial.kbPlan}
@@ -793,6 +921,8 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
               onCompare={() => setModals((m) => ({ ...m, compare: true }))}
               readOnly={readOnly}
               book={book}
+              proposalInvestment={initialConfig?.proposalInvestment}
+              proposalLocked={proposalLocked}
             />
           </aside>
         )}
@@ -834,6 +964,8 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
                 onCompare={() => setModals((m) => ({ ...m, compare: true }))}
                 readOnly={readOnly}
                 book={book}
+                proposalInvestment={initialConfig?.proposalInvestment}
+                proposalLocked={proposalLocked}
               />
             ) : (
               <Controls
@@ -1519,14 +1651,15 @@ function BuildSummaryPanel(props: {
   onCompare: () => void;
   readOnly: boolean;
   book: ReturnType<typeof loadPriceBook>;
+  proposalInvestment?: ProposalInvestment;
+  proposalLocked?: boolean;
 }) {
-  const { pricing, commercial, book } = props;
+  const { pricing, commercial, book, proposalInvestment, proposalLocked } = props;
   return (
     <div className="flex h-full flex-col overflow-y-auto p-3">
       <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
-        Your KasiTech build
-      </div>
-      <dl className="mt-3 space-y-1 text-[12px] text-kasi-grey">
+        {proposalInvestment ? "Proposal recommendation" : "Your KasiTech build"}
+      </div>      <dl className="mt-3 space-y-1 text-[12px] text-kasi-grey">
         <Row
           k="Package"
           v={
@@ -1614,29 +1747,63 @@ function BuildSummaryPanel(props: {
       </div>
 
       <div className="mt-4 space-y-1 border-t border-kasi-border pt-3">
-        <div className="flex justify-between text-sm">
-          <span>One-time</span>
-          <span className="font-mono">{formatTsh(pricing.totals.oneTimeTsh)}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span>Monthly</span>
-          <span className="font-mono">
-            {formatTsh(pricing.totals.monthlyTsh)}/mo
-          </span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span>Annual</span>
-          <span className="font-mono">
-            {formatTsh(pricing.totals.annualTsh)}/yr
-          </span>
-        </div>
-        {pricing.totals.estimatedFirst12MonthsTsh != null && (
-          <div className="flex justify-between pt-1 text-sm text-kasi-green">
-            <span>First 12 months</span>
-            <span className="font-mono">
-              {formatTsh(pricing.totals.estimatedFirst12MonthsTsh)}
-            </span>
-          </div>
+        {proposalInvestment && proposalLocked ? (
+          <>
+            <div className="mb-2 text-[10px] uppercase tracking-wider text-kasi-green">
+              Approved proposal investment
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Website</span>
+              <span className="font-mono text-kasi-green">
+                {formatTsh(proposalInvestment.websiteOneTimeTsh)}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Care / month</span>
+              <span className="font-mono">
+                {formatTsh(proposalInvestment.careMonthlyTsh)}/mo
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Social / month</span>
+              <span className="font-mono">
+                {formatTsh(proposalInvestment.socialMonthlyTsh)}/mo
+              </span>
+            </div>
+            <div className="flex justify-between pt-1 text-sm text-kasi-green">
+              <span>Monthly partnership</span>
+              <span className="font-mono">
+                {formatTsh(proposalInvestment.totalMonthlyTsh)}/mo
+              </span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex justify-between text-sm">
+              <span>One-time</span>
+              <span className="font-mono">{formatTsh(pricing.totals.oneTimeTsh)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Monthly</span>
+              <span className="font-mono">
+                {formatTsh(pricing.totals.monthlyTsh)}/mo
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Annual</span>
+              <span className="font-mono">
+                {formatTsh(pricing.totals.annualTsh)}/yr
+              </span>
+            </div>
+            {pricing.totals.estimatedFirst12MonthsTsh != null && (
+              <div className="flex justify-between pt-1 text-sm text-kasi-green">
+                <span>First 12 months</span>
+                <span className="font-mono">
+                  {formatTsh(pricing.totals.estimatedFirst12MonthsTsh)}
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -2078,6 +2245,157 @@ function CatalogEntryBanner({
             onClick={onCustomize}
           >
             Customize this build
+          </button>
+          <button
+            type="button"
+            className="text-[11px] text-kasi-grey underline"
+            onClick={onDismiss}
+          >
+            Dismiss banner
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompanionOverlay({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/85 via-black/55 to-transparent p-4 pt-16 text-kasi-ivory">
+      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
+        Proposal Companion focus
+      </div>
+      <div className="mt-1 font-display text-lg">{title}</div>
+      <p className="mt-1 max-w-xl text-[12px] leading-relaxed text-white/75">
+        {body}
+      </p>
+    </div>
+  );
+}
+
+function ProposalCompanionBanner({
+  proposalId,
+  clientName,
+  disclaimer,
+  investment,
+  section,
+  sections,
+  locked,
+  onSelectSection,
+  onCustomize,
+  onReturn,
+  onDismiss,
+}: {
+  proposalId: string;
+  clientName: string;
+  disclaimer: string;
+  investment?: ProposalInvestment;
+  section: ProposalCompanionSection | null;
+  sections: ProposalCompanionSection[];
+  locked: boolean;
+  onSelectSection: (s: ProposalCompanionSection) => void;
+  onCustomize: () => void;
+  onReturn: () => void;
+  onDismiss: () => void;
+}) {
+  const primarySections = sections.filter((s) =>
+    [
+      "recommended-website",
+      "homepage",
+      "products",
+      "projects",
+      "enquiry",
+      "analytics",
+      "cms",
+      "care",
+      "kasitech-business",
+    ].includes(s.id),
+  );
+
+  return (
+    <div className="border-b border-kasi-green/50 bg-[#0d1a12] px-4 py-4 text-[12px] text-kasi-ivory">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
+            Proposal Companion
+            {locked ? " · Read-only recommendation" : " · Customizing"}
+          </div>
+          <div className="mt-1 font-display text-xl">
+            Proposal: {proposalId}
+          </div>
+          <div className="mt-1 text-[13px] text-kasi-ivory/90">
+            {section
+              ? `You're currently viewing ${section.sectionLabel}.`
+              : `${clientName} · recommended solution`}
+          </div>
+          <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-kasi-grey">
+            {disclaimer}
+          </p>
+          {investment && (
+            <dl className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <dt className="text-kasi-grey">Recommended Investment</dt>
+                <dd className="font-mono text-base text-kasi-green">
+                  {formatTsh(investment.websiteOneTimeTsh)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-kasi-grey">Monthly Partnership</dt>
+                <dd className="font-mono text-base text-kasi-green">
+                  {formatTsh(investment.totalMonthlyTsh)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-kasi-grey">Care · Social</dt>
+                <dd className="font-mono text-kasi-ivory">
+                  {formatTsh(investment.careMonthlyTsh)} ·{" "}
+                  {formatTsh(investment.socialMonthlyTsh)}
+                </dd>
+              </div>
+            </dl>
+          )}
+          {primarySections.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {primarySections.map((s) => {
+                const active = section?.id === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => onSelectSection(s)}
+                    className={`px-2.5 py-1 text-[10px] uppercase tracking-wider ${
+                      active
+                        ? "bg-kasi-green text-kasi-black"
+                        : "border border-white/15 text-kasi-grey hover:border-kasi-green/50 hover:text-kasi-ivory"
+                    }`}
+                  >
+                    {s.title}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        <div className="flex shrink-0 flex-col gap-2">
+          {locked ? (
+            <button
+              type="button"
+              className="bg-kasi-green px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-kasi-black"
+              onClick={onCustomize}
+            >
+              Customize This Recommendation
+            </button>
+          ) : (
+            <div className="bg-white/10 px-3 py-2 text-center text-[11px] uppercase tracking-wider text-kasi-green">
+              Editing unlocked
+            </div>
+          )}
+          <button
+            type="button"
+            className="border border-white/20 px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-kasi-ivory"
+            onClick={onReturn}
+          >
+            Return to Proposal
           </button>
           <button
             type="button"

@@ -10,6 +10,9 @@ import {
   writeFileSync,
   existsSync,
   statSync,
+  cpSync,
+  readdirSync,
+  readFileSync,
 } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
@@ -43,6 +46,12 @@ function findChrome(): string {
   );
 }
 
+function countPages(htmlPath: string): number {
+  const html = readFileSync(htmlPath, "utf8");
+  const matches = html.match(/class="page[\s"]/g);
+  return matches?.length ?? 0;
+}
+
 async function main() {
   if (!existsSync(HTML)) {
     throw new Error(`Missing proposal HTML at ${HTML}`);
@@ -64,6 +73,13 @@ async function main() {
       resolve(publicSrc, "research.md"),
     );
   }
+  // Sync assets (photos + QR) for the public HTML preview
+  const assetsSrc = resolve(SRC_DIR, "assets");
+  if (existsSync(assetsSrc)) {
+    cpSync(assetsSrc, resolve(publicSrc, "assets"), { recursive: true });
+  }
+
+  const pages = countPages(HTML);
 
   const browser = await puppeteer.launch({
     executablePath: findChrome(),
@@ -80,11 +96,11 @@ async function main() {
     const page = await browser.newPage();
     await page.goto(pathToFileURL(HTML).href, {
       waitUntil: "networkidle0",
-      timeout: 120_000,
+      timeout: 180_000,
     });
-    // Allow webfonts to settle
+    // Allow webfonts and images to settle
     await page.evaluateHandle("document.fonts.ready");
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 1200));
 
     const pdf = await page.pdf({
       path: OUT_PDF,
@@ -105,10 +121,14 @@ async function main() {
             "Digital Transformation Proposal — Credo Energy Group | KasiTech",
           ref: "KT-CEG-2026-001",
           date: "2026-07-30",
-          pages: 20,
+          pages,
+          configurationKey: "KT-CONFIG-CEG2026001",
+          demoStudio:
+            "https://www.kasitechinnovations.com/demo-studio/proposal/credo-energy-group",
           pdf: "KasiTech_Credo_Energy_Group_Digital_Transformation_Proposal.pdf",
           editableSource: "proposals/credo-energy-group/",
           bytes,
+          assetDirs: existsSync(assetsSrc) ? readdirSync(assetsSrc) : [],
         },
         null,
         2,
@@ -117,6 +137,7 @@ async function main() {
 
     console.log(`Wrote ${OUT_PDF}`);
     console.log(`Alias  ${OUT_ALIAS}`);
+    console.log(`Pages  ${pages}`);
     console.log(`Editable source: proposals/credo-energy-group/`);
   } finally {
     await browser.close();

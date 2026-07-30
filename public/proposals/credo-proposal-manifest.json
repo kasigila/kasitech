@@ -2,8 +2,14 @@
   "title": "Digital Transformation Proposal — Credo Energy Group | KasiTech",
   "ref": "KT-CEG-2026-001",
   "date": "2026-07-30",
-  "pages": 20,
+  "pages": 34,
+  "configurationKey": "KT-CONFIG-CEG2026001",
+  "demoStudio": "https://www.kasitechinnovations.com/demo-studio/proposal/credo-energy-group",
   "pdf": "KasiTech_Credo_Energy_Group_Digital_Transformation_Proposal.pdf",
   "editableSource": "proposals/credo-energy-group/",
-  "bytes": 998286
+  "bytes": 4319265,
+  "assetDirs": [
+    "photos",
+    "qr"
+  ]
 }
