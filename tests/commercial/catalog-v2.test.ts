@@ -1,0 +1,59 @@
+import { describe, expect, it } from "vitest";
+import {
+  commercialStateFromDeepLink,
+  parseDemoStudioSearchParams,
+  demoStudioUrl,
+} from "@/demo-studio/configuration/deep-link";
+import { buildCatalogPdf } from "@/commercial/catalog/pdf";
+import { buildBundleGuides } from "@/commercial/catalog/buying-guide-content";
+import { PRICE_BOOK_VERSION } from "@/commercial";
+
+describe("Commercial Catalog V2", () => {
+  it("deep link: restaurant bundle selects industry + bundle", () => {
+    const link = parseDemoStudioSearchParams(
+      new URLSearchParams("bundle=restaurant"),
+    );
+    expect(link).not.toBeNull();
+    expect(link!.bundleCode).toBe("BND-REST");
+    expect(link!.industry).toBe("restaurant");
+    const state = commercialStateFromDeepLink(link!);
+    expect(state.bundleCode).toBe("BND-REST");
+    expect(state.packageCode).toBeNull();
+  });
+
+  it("deep link: package + feature + kb", () => {
+    const link = parseDemoStudioSearchParams({
+      package: "professional",
+      feature: "appointment-booking",
+      kb: "growth",
+      industry: "beauty",
+    });
+    expect(link!.packageCode).toBe("WEB-PRO");
+    expect(link!.featureCodes).toContain("BKG-APT");
+    expect(link!.kbPlan).toBe("KB-GROW");
+    expect(demoStudioUrl({ bundle: "restaurant" })).toContain(
+      "bundle=restaurant",
+    );
+  });
+
+  it("bundle guides expose standalone total and savings without customer math", () => {
+    const rest = buildBundleGuides().find((b) => b.code === "BND-REST");
+    expect(rest).toBeTruthy();
+    expect(rest!.components.length).toBeGreaterThanOrEqual(4);
+    expect(rest!.standaloneTotalTsh).toBe(900000 + 300000 + 600000 + 150000);
+    expect(rest!.bundlePriceTsh).toBe(1850000);
+    expect(rest!.savingsTsh).toBe(100000);
+    expect(rest!.showSavings).toBe(true);
+  });
+
+  it("catalog V2 PDF is multi-page buying guide", async () => {
+    const pdf = await buildCatalogPdf();
+    expect(pdf.byteLength).toBeGreaterThan(20000);
+    const { PDFDocument } = await import("pdf-lib");
+    const doc = await PDFDocument.load(pdf);
+    expect(doc.getPageCount()).toBeGreaterThanOrEqual(12);
+    expect(doc.getTitle()).toContain(PRICE_BOOK_VERSION);
+    // No printed calendar-date requirement — subject/title must not invent products
+    expect(doc.getSubject()).toMatch(/buying guide/i);
+  });
+});

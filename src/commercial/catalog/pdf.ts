@@ -1,46 +1,31 @@
-import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
-import { loadPriceBook } from "@/commercial/price-book/load";
+import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage, type PDFImage } from "pdf-lib";
+import QRCode from "qrcode";
+import { PRICE_BOOK_VERSION } from "@/commercial/types";
+import { displayItemPrice } from "@/commercial/catalog/presentation";
 import {
-  PACKAGE_POSITIONING,
-  catalogMeta,
-  displayItemPrice,
-  getBundleViews,
-  getWebsitePackages,
-} from "@/commercial/catalog/presentation";
-import { PRICE_BOOK_VERSION, type CatalogItem } from "@/commercial/types";
-import { formatTsh } from "@/commercial/money";
+  FAQ_ENTRIES,
+  WEB_BASELINE_INCLUDED,
+  buildBundleGuides,
+  buildCapabilityGuides,
+  buildCareGuides,
+  buildKbGuides,
+  buildPackageGuides,
+  formatMoney,
+} from "@/commercial/catalog/buying-guide-content";
+import {
+  CATALOG_QR_TARGETS,
+  DEMO_STUDIO_ORIGIN,
+} from "@/demo-studio/configuration/deep-link";
 
-const PAGE = { w: 595.28, h: 841.89 }; // A4
+const PAGE = { w: 595.28, h: 841.89 };
 const M = 48;
 const BLACK = rgb(0.035, 0.035, 0.035);
 const IVORY = rgb(0.957, 0.949, 0.918);
 const LIME = rgb(0.78, 1, 0);
-const GREY = rgb(0.42, 0.42, 0.4);
+const GREY = rgb(0.38, 0.38, 0.36);
 const MUTED = rgb(0.55, 0.55, 0.52);
 const RULE = rgb(0.88, 0.86, 0.82);
-
-/** Highlight codes for the client-facing “capabilities” pages — approved SKUs only. */
-const HIGHLIGHT_CODES = [
-  "BKG-APT",
-  "BKG-STAFF",
-  "BKG-REST",
-  "BKG-TOUR",
-  "PAY-STD",
-  "ECOM-START",
-  "REST-MENU",
-  "REST-AMENU",
-  "TOUR-CAT",
-  "RE-LIST",
-  "LOC-GBP",
-  "LOC-REV",
-  "SEO-FND",
-  "SEO-PRO",
-  "LANG-ENSW",
-  "ADD-INQ",
-];
-
-const CARE_CODES = ["CARE-ESS", "CARE-STD", "CARE-BUS", "CARE-PRO", "CARE-PRI"];
-const KB_CODES = ["KB-LAUNCH", "KB-GROW", "KB-PRO", "KB-SCALE", "KB-ENT"];
+const SOFT = rgb(0.97, 0.96, 0.94);
 
 type Ctx = {
   pdf: PDFDocument;
@@ -48,311 +33,443 @@ type Ctx = {
   fontBold: PDFFont;
   page: PDFPage;
   y: number;
+  section: string;
 };
 
 /**
- * Client-share Services & Pricing catalog — intentional document from KT-PB-2026.1.
- * Designed for meetings and WhatsApp/email sharing (not a webpage print).
+ * Commercial Catalog V2 — buying guide from KT-PB-2026.1.
+ * No printed calendar date. Prices unchanged. No invented products.
  */
 export async function buildCatalogPdf(): Promise<Buffer> {
-  const book = loadPriceBook();
-  const meta = catalogMeta();
-  const packages = getWebsitePackages(book);
-  const bundles = getBundleViews(book);
-  const today = new Date().toISOString().slice(0, 10);
-
   const pdf = await PDFDocument.create();
   pdf.setTitle(`KasiTech Services & Pricing · ${PRICE_BOOK_VERSION}`);
   pdf.setAuthor("KasiTech");
-  pdf.setSubject("Client services and pricing catalog");
+  pdf.setSubject("Commercial buying guide");
   pdf.setCreator("KasiTech");
-  pdf.setKeywords([PRICE_BOOK_VERSION, "Tanzania", "pricing"]);
+  pdf.setKeywords([PRICE_BOOK_VERSION, "catalog", "Tanzania"]);
 
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdf.embedFont(StandardFonts.HelveticaBold);
 
-  // —— Cover ——
-  {
-    const page = pdf.addPage([PAGE.w, PAGE.h]);
-    page.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: BLACK });
-    page.drawRectangle({
-      x: 0,
-      y: PAGE.h - 12,
-      width: PAGE.w,
-      height: 12,
-      color: LIME,
+  const qrImages = new Map<string, PDFImage>();
+  for (const t of CATALOG_QR_TARGETS) {
+    const dataUrl = await QRCode.toDataURL(t.url, {
+      width: 160,
+      margin: 1,
+      color: { dark: "#090909", light: "#ffffff" },
     });
-    page.drawRectangle({
-      x: 0,
-      y: 0,
-      width: 8,
-      height: PAGE.h,
-      color: LIME,
-    });
-
-    drawText(page, "KasiTech", fontBold, 42, M + 8, PAGE.h - 160, IVORY);
-    drawText(page, "SERVICES & PRICING", font, 14, M + 8, PAGE.h - 190, LIME);
-    drawText(
-      page,
-      "A clear catalog of websites, features,",
-      font,
-      13,
-      M + 8,
-      PAGE.h - 260,
-      IVORY,
-    );
-    drawText(
-      page,
-      "bundles, and ongoing care for Tanzanian",
-      font,
-      13,
-      M + 8,
-      PAGE.h - 278,
-      IVORY,
-    );
-    drawText(page, "businesses.", font, 13, M + 8, PAGE.h - 296, IVORY);
-
-    drawText(page, meta.tagline, font, 11, M + 8, PAGE.h - 360, MUTED);
-    drawText(
-      page,
-      `${PRICE_BOOK_VERSION}  ·  All prices in TSh  ·  ${today}`,
-      font,
-      9,
-      M + 8,
-      72,
-      MUTED,
-    );
-    drawText(
-      page,
-      "kasitechinnovations.com  ·  Dar es Salaam",
-      font,
-      9,
-      M + 8,
-      56,
-      GREY,
-    );
+    const raw = Buffer.from(dataUrl.split(",")[1]!, "base64");
+    qrImages.set(t.label, await pdf.embedPng(raw));
   }
 
-  // —— Intro ——
-  {
-    const ctx = newPage(pdf, font, fontBold, "Welcome");
-    body(
-      ctx,
-      "This catalog shows approved KasiTech offerings and prices from our current Price Book. Scope is fixed for the stated package or service unless marked Custom Quote. Nothing extra is billed without your written approval.",
-    );
-    space(ctx, 16);
-    sectionTitle(ctx, "How to use this");
-    bullet(ctx, "Start with a website package — or an industry bundle if it fits.");
-    bullet(ctx, "Add features your customers need (booking, payments, shop, SEO…).");
-    bullet(ctx, "Choose Care and KasiTech Business if you want ongoing support.");
-    bullet(ctx, "We’ll confirm a formal quotation before any work begins.");
-    space(ctx, 18);
-    sectionTitle(ctx, "Also useful");
-    bullet(ctx, "Live pricing: kasitechinnovations.com/pricing");
-    bullet(ctx, "Configure a build visually: kasitechinnovations.com/demo-studio");
-    space(ctx, 24);
-    noteBox(
-      ctx,
-      meta.disclaimer +
-        " Formal quotations confirm final scope, timeline, third-party fees, taxes, and commercial terms.",
-    );
-    footer(ctx, 2);
-  }
+  cover(pdf, font, fontBold);
+  howToRead(pdf, font, fontBold);
 
-  // —— Website packages ——
+  // Packages
   {
-    let ctx = newPage(pdf, font, fontBold, "Website packages");
-    body(
+    let ctx = page(pdf, font, fontBold, "Website packages");
+    h1(ctx, "Website packages");
+    p(
       ctx,
-      "Every serious digital presence starts here. Pick the package that matches how much structure and content your business needs.",
+      "Every serious digital presence starts with a website package. Higher packages include more structure — pages, content types, and architecture — so you can see why Signature costs more than Essential.",
     );
-    space(ctx, 14);
+    space(ctx, 8);
+    p(
+      ctx,
+      "All packages WEB-ONE through WEB-SIG include the website baseline below. Custom Platform is quoted separately.",
+    );
+    space(ctx, 6);
+    label(ctx, "WEBSITE BASELINE (INCLUDED IN PACKAGES)");
+    for (const b of WEB_BASELINE_INCLUDED) bullet(ctx, b);
+    space(ctx, 10);
 
-    for (const p of packages) {
-      if (ctx.y < 140) {
-        footer(ctx, pdf.getPageCount());
-        ctx = newPage(pdf, font, fontBold, "Website packages");
-      }
-      const pos = PACKAGE_POSITIONING[p.code];
-      packageCard(ctx, p, pos?.bestFor, pos?.plain);
-      space(ctx, 10);
+    for (const g of buildPackageGuides()) {
+      ctx = ensure(ctx, 220);
+      productHeader(ctx, g.item.name, displayItemPrice(g.item));
+      field(ctx, "VALUE", g.valueProp);
+      field(ctx, "WHAT IT DOES", g.whatItDoes);
+      label(ctx, "WHAT IS INCLUDED");
+      for (const line of g.included) bullet(ctx, line);
+      field(ctx, "IDEAL FOR", g.idealFor);
+      field(ctx, "COMMONLY USED BY", g.commonlyUsedBy);
+      if (g.timeline) field(ctx, "TYPICAL TIMELINE", g.timeline);
+      seeLive(ctx, g.seeLiveUrl, qrImages);
+      if (g.notes) field(ctx, "NOTES", g.notes);
+      divider(ctx);
     }
-    footer(ctx, pdf.getPageCount());
-  }
-
-  // —— Bundles ——
-  {
-    let ctx = newPage(pdf, font, fontBold, "Popular bundles");
-    body(
-      ctx,
-      "Bundles combine a website with the features most businesses in that category need — often with approved savings versus buying each piece alone.",
-    );
-    space(ctx, 14);
-
-    for (const b of bundles) {
-      if (ctx.y < 130) {
-        footer(ctx, pdf.getPageCount());
-        ctx = newPage(pdf, font, fontBold, "Popular bundles");
-      }
-      const includes = b.chargeComponents.map((c) => c.name).join(" · ");
-      const save =
-        b.savings?.showSavings && b.savings.savingsTsh != null
-          ? `Save ${formatTsh(b.savings.savingsTsh)} vs buying separately`
-          : null;
-      rowCard(
-        ctx,
-        b.item.name,
-        b.priceLabel,
-        b.item.clientDescription,
-        includes ? `Includes: ${includes}` : null,
-        save,
-      );
-      space(ctx, 10);
+    // Comparison table
+    ctx = ensure(ctx, 200);
+    h2(ctx, "Website packages at a glance");
+    const pkgs = buildPackageGuides();
+    for (const g of pkgs) {
+      ctx = ensure(ctx, 36);
+      const line = `${g.item.name}  ·  ${displayItemPrice(g.item)}  ·  ${g.idealFor}`;
+      p(ctx, line, 8);
     }
-    footer(ctx, pdf.getPageCount());
+    foot(ctx);
   }
 
-  // —— Capabilities ——
+  // Bundles
   {
-    let ctx = newPage(pdf, font, fontBold, "Popular capabilities");
-    body(
+    let ctx = page(pdf, font, fontBold, "Popular bundles");
+    h1(ctx, "Popular bundles");
+    p(
       ctx,
-      "Add what your customers need. Prices below are standalone; some are included in packages or absorbed by bundles when you choose those.",
+      "Bundles group the services customers usually need together. Every line below shows individual prices, the standalone total, the bundle price, and savings — you never have to calculate.",
+    );
+    space(ctx, 10);
+
+    for (const b of buildBundleGuides()) {
+      ctx = ensure(ctx, 260);
+      productHeader(ctx, b.name, b.bundlePriceLabel);
+      field(ctx, "WHAT THIS BUNDLE IS", b.valueProp);
+      field(ctx, "WHY THESE SERVICES BELONG TOGETHER", b.whyTogether);
+      label(ctx, "WHAT IS INCLUDED (WITH STANDALONE PRICES)");
+      for (const c of b.components) {
+        bullet(ctx, `${c.name}  —  normally ${c.priceLabel}`);
+      }
+      for (const e of b.entitlements) {
+        bullet(ctx, `${e} (included entitlement — not a separate charge)`);
+      }
+      space(ctx, 6);
+      if (b.standaloneTotalTsh != null) {
+        field(ctx, "TOTAL IF PURCHASED SEPARATELY", formatMoney(b.standaloneTotalTsh));
+      }
+      field(ctx, "BUNDLE PRICE", b.bundlePriceLabel);
+      if (b.showSavings && b.savingsTsh != null && b.savingsTsh > 0) {
+        field(ctx, "YOU SAVE", formatMoney(b.savingsTsh));
+      } else {
+        field(
+          ctx,
+          "SAVINGS",
+          "Shown only when the Price Book authorises a savings figure for this bundle.",
+        );
+      }
+      seeLive(ctx, b.seeLiveUrl, qrImages);
+      divider(ctx);
+    }
+    foot(ctx);
+  }
+
+  // Capabilities
+  {
+    let ctx = page(pdf, font, fontBold, "Popular capabilities");
+    h1(ctx, "Popular capabilities");
+    p(
+      ctx,
+      "Add capabilities to a package or use them inside a bundle. If a capability is included in your package or absorbed by a bundle, you are not charged again for that inclusion.",
+    );
+    space(ctx, 10);
+
+    for (const g of buildCapabilityGuides()) {
+      ctx = ensure(ctx, 200);
+      productHeader(ctx, g.item.name, displayItemPrice(g.item));
+      field(ctx, "PURPOSE", g.valueProp);
+      field(ctx, "WHAT IT DOES", g.whatItDoes);
+      label(ctx, "INCLUDED FUNCTIONALITY");
+      for (const line of g.included) bullet(ctx, line);
+      field(ctx, "IDEAL FOR", g.idealFor);
+      field(ctx, "COMMONLY USED BY", g.commonlyUsedBy);
+      field(ctx, "RELATED CAPABILITIES", g.related.join(" · "));
+      field(ctx, "EXAMPLE WORKFLOW", g.workflow);
+      seeLive(ctx, g.seeLiveUrl, qrImages);
+      if (g.notes) field(ctx, "NOTES", g.notes);
+      divider(ctx);
+    }
+    foot(ctx);
+  }
+
+  // Care
+  {
+    let ctx = page(pdf, font, fontBold, "Website Care");
+    h1(ctx, "What is Website Care?");
+    p(
+      ctx,
+      "A website is not finished at launch. Content changes, security needs attention, and small improvements appear. Website Care is the commercial relationship for ongoing maintenance after launch.",
+    );
+    space(ctx, 6);
+    p(
+      ctx,
+      "Exact hours, response times, and backup allowances are confirmed in your quotation. This catalog lists approved plan names and prices only — we do not invent entitlements.",
     );
     space(ctx, 12);
 
-    for (const code of HIGHLIGHT_CODES) {
-      const item = book.itemByCode.get(code);
-      if (!item || !item.active) continue;
-      if (ctx.y < 90) {
-        footer(ctx, pdf.getPageCount());
-        ctx = newPage(pdf, font, fontBold, "Popular capabilities");
-      }
-      simpleRow(ctx, item.name, displayItemPrice(item), item.clientDescription);
-      space(ctx, 6);
+    for (const g of buildCareGuides()) {
+      ctx = ensure(ctx, 150);
+      productHeader(ctx, g.item.name, displayItemPrice(g.item));
+      field(ctx, "VALUE", g.valueProp);
+      field(ctx, "WHO IT IS FOR", g.whoFor);
+      label(ctx, "INCLUDED");
+      for (const line of g.included) bullet(ctx, line);
+      field(ctx, "WHEN TO UPGRADE", g.whenUpgrade);
+      seeLive(ctx, g.seeLiveUrl, qrImages);
+      if (g.notes) field(ctx, "NOTES", g.notes);
+      divider(ctx);
     }
-    footer(ctx, pdf.getPageCount());
+
+    ctx = ensure(ctx, 120);
+    h2(ctx, "Care plans at a glance");
+    for (const g of buildCareGuides()) {
+      p(ctx, `${g.item.name}  ·  ${displayItemPrice(g.item)}  ·  ${g.whoFor}`, 8);
+    }
+    foot(ctx);
   }
 
-  // —— Care + KB ——
+  // KB
   {
-    let ctx = newPage(pdf, font, fontBold, "Care & KasiTech Business");
-    sectionTitle(ctx, "Website Care");
-    body(
+    let ctx = page(pdf, font, fontBold, "KasiTech Business");
+    h1(ctx, "What is KasiTech Business?");
+    p(
       ctx,
-      "Ongoing care plans keep your site healthy after launch. Exact inclusions for your plan are confirmed in your quotation.",
+      "KasiTech Business transforms a website into a business management platform — so owners can manage website content, analytics, bookings, customers, catalog/services, feedback, QR experiences, locations, and day-to-day operations from one place.",
     );
-    space(ctx, 10);
-    for (const code of CARE_CODES) {
-      const item = book.itemByCode.get(code);
-      if (!item) continue;
-      if (ctx.y < 80) {
-        footer(ctx, pdf.getPageCount());
-        ctx = newPage(pdf, font, fontBold, "Care & KasiTech Business");
-      }
-      simpleRow(ctx, item.name, displayItemPrice(item), item.clientDescription);
-      space(ctx, 6);
+    space(ctx, 6);
+    p(
+      ctx,
+      "Only approved modules are documented. Launch unlocks website and analytics basics. Growth unlocks the fuller operator set. Pro, Scale, and Enterprise are commercial tiers — additional modules beyond Growth are scoped with KasiTech, not invented here.",
+    );
+    space(ctx, 12);
+
+    for (const g of buildKbGuides()) {
+      ctx = ensure(ctx, 150);
+      productHeader(ctx, g.item.name, displayItemPrice(g.item));
+      field(ctx, "VALUE", g.valueProp);
+      field(ctx, "WHO IT IS FOR", g.whoFor);
+      label(ctx, "MODULES / SCOPE");
+      for (const line of g.included) bullet(ctx, line);
+      field(ctx, "WHEN TO UPGRADE", g.whenUpgrade);
+      seeLive(ctx, g.seeLiveUrl, qrImages);
+      if (g.notes) field(ctx, "NOTES", g.notes);
+      divider(ctx);
     }
 
-    space(ctx, 16);
-    sectionTitle(ctx, "KasiTech Business");
-    body(
-      ctx,
-      "Owner tools for your website and operations — from Launch analytics through Growth modules such as bookings and customers.",
-    );
-    space(ctx, 10);
-    for (const code of KB_CODES) {
-      const item = book.itemByCode.get(code);
-      if (!item) continue;
-      if (ctx.y < 80) {
-        footer(ctx, pdf.getPageCount());
-        ctx = newPage(pdf, font, fontBold, "Care & KasiTech Business");
-      }
-      simpleRow(ctx, item.name, displayItemPrice(item), item.clientDescription);
-      space(ctx, 6);
+    ctx = ensure(ctx, 100);
+    h2(ctx, "KasiTech Business at a glance");
+    for (const g of buildKbGuides()) {
+      p(ctx, `${g.item.name}  ·  ${displayItemPrice(g.item)}  ·  ${g.whoFor}`, 8);
     }
-    footer(ctx, pdf.getPageCount());
+    foot(ctx);
   }
 
-  // —— Closing ——
+  // QR index
   {
-    const page = pdf.addPage([PAGE.w, PAGE.h]);
-    page.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: BLACK });
-    page.drawRectangle({
-      x: 0,
-      y: PAGE.h - 8,
-      width: PAGE.w,
-      height: 8,
-      color: LIME,
-    });
-
-    drawText(page, "Ready when you are", fontBold, 28, M, PAGE.h - 180, IVORY);
-    drawText(
-      page,
-      "Tell us about your business — or build a live estimate",
-      font,
-      12,
-      M,
-      PAGE.h - 220,
-      MUTED,
+    let ctx = page(pdf, font, fontBold, "See it live · QR");
+    h1(ctx, "See it live");
+    p(
+      ctx,
+      "Scan a QR code or open the link. Demo Studio loads the matching fictional business, applies the package or bundle, calculates the live price, and shows what customers experience.",
     );
-    drawText(page, "in Demo Studio and send it to us.", font, 12, M, PAGE.h - 238, MUTED);
+    space(ctx, 8);
+    p(ctx, `Base: ${DEMO_STUDIO_ORIGIN}/demo-studio`, 8);
+    space(ctx, 12);
 
-    drawText(page, "kasitechinnovations.com", fontBold, 14, M, PAGE.h - 300, LIME);
-    drawText(page, "/pricing", font, 12, M, PAGE.h - 322, IVORY);
-    drawText(page, "/demo-studio", font, 12, M, PAGE.h - 340, IVORY);
+    let col = 0;
+    let rowY = ctx.y;
+    for (const t of CATALOG_QR_TARGETS) {
+      const img = qrImages.get(t.label);
+      if (!img) continue;
+      if (col === 0 && ctx.y < 160) {
+        foot(ctx);
+        ctx = page(pdf, font, fontBold, "See it live · QR");
+        rowY = ctx.y;
+      }
+      const x = col === 0 ? M : PAGE.w / 2 + 8;
+      if (col === 0) rowY = ctx.y;
+      const size = 72;
+      ctx.page.drawImage(img, { x, y: rowY - size - 4, width: size, height: size });
+      draw(ctx.page, t.label, fontBold, 8, x, rowY - size - 16, BLACK);
+      const short = t.url.replace(DEMO_STUDIO_ORIGIN, "");
+      draw(ctx.page, short.slice(0, 42), font, 6, x, rowY - size - 28, MUTED);
+      col += 1;
+      if (col === 2) {
+        col = 0;
+        ctx.y = rowY - size - 44;
+      }
+    }
+    if (col === 1) ctx.y = rowY - 120;
+    foot(ctx);
+  }
 
-    drawText(
-      page,
-      "This document is a pricing catalog, not a quotation or invoice.",
+  // FAQ
+  {
+    let ctx = page(pdf, font, fontBold, "FAQ");
+    h1(ctx, "Frequently asked questions");
+    space(ctx, 8);
+    for (const f of FAQ_ENTRIES) {
+      ctx = ensure(ctx, 70);
+      draw(ctx.page, f.q, fontBold, 10, M, ctx.y, BLACK);
+      ctx.y -= 14;
+      p(ctx, f.a, 9);
+      space(ctx, 8);
+    }
+    foot(ctx);
+  }
+
+  // Journey
+  {
+    const pg = pdf.addPage([PAGE.w, PAGE.h]);
+    pg.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: BLACK });
+    pg.drawRectangle({ x: 0, y: PAGE.h - 8, width: PAGE.w, height: 8, color: LIME });
+    draw(pg, "Your journey with KasiTech", fontBold, 22, M, PAGE.h - 100, IVORY);
+    const steps = [
+      ["1 · Choose", "Pick a package, bundle, or capability from this catalog."],
+      ["2 · Configure", "Open Demo Studio — see the live fictional site and price."],
+      ["3 · Approve", "Receive a formal quotation. Nothing starts without written approval."],
+      ["4 · Build", "We design and build the agreed scope."],
+      ["5 · Launch", "Go live with QA, domain connection, and launch support."],
+      ["6 · Grow", "Add Care, KasiTech Business, and new capabilities over time."],
+    ];
+    let y = PAGE.h - 150;
+    for (const [t, d] of steps) {
+      draw(pg, t, fontBold, 12, M, y, LIME);
+      draw(pg, d, font, 10, M, y - 16, MUTED);
+      y -= 48;
+    }
+    draw(pg, "Demo Studio sits in step 2 — Configure.", font, 10, M, y - 10, IVORY);
+    draw(pg, DEMO_STUDIO_ORIGIN + "/demo-studio", fontBold, 11, M, y - 36, LIME);
+    draw(
+      pg,
+      `${PRICE_BOOK_VERSION}  ·  All prices in TSh  ·  kasitechinnovations.com`,
       font,
       8,
       M,
-      100,
+      48,
       GREY,
     );
-    drawText(
-      page,
-      `${PRICE_BOOK_VERSION}  ·  © KasiTech  ·  Dar es Salaam, Tanzania`,
+    draw(
+      pg,
+      "This catalog is a commercial reference — not a quotation or invoice.",
       font,
       8,
       M,
-      82,
+      34,
       MUTED,
     );
   }
 
-  const bytes = await pdf.save();
-  return Buffer.from(bytes);
+  return Buffer.from(await pdf.save());
 }
 
-function newPage(
+function cover(pdf: PDFDocument, font: PDFFont, fontBold: PDFFont) {
+  const page = pdf.addPage([PAGE.w, PAGE.h]);
+  page.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: BLACK });
+  page.drawRectangle({ x: 0, y: PAGE.h - 10, width: PAGE.w, height: 10, color: LIME });
+  page.drawRectangle({ x: 0, y: 0, width: 8, height: PAGE.h, color: LIME });
+  draw(page, "KasiTech", fontBold, 40, M + 8, PAGE.h - 160, IVORY);
+  draw(page, "SERVICES & PRICING", font, 13, M + 8, PAGE.h - 188, LIME);
+  draw(page, "Commercial buying guide", font, 12, M + 8, PAGE.h - 230, IVORY);
+  draw(
+    page,
+    "Understand what we sell, what each service does,",
+    font,
+    11,
+    M + 8,
+    PAGE.h - 270,
+    MUTED,
+  );
+  draw(
+    page,
+    "what is included, who it is for, how pieces relate,",
+    font,
+    11,
+    M + 8,
+    PAGE.h - 286,
+    MUTED,
+  );
+  draw(
+    page,
+    "how much it costs, and how to see it live —",
+    font,
+    11,
+    M + 8,
+    PAGE.h - 302,
+    MUTED,
+  );
+  draw(page, "without guessing.", font, 11, M + 8, PAGE.h - 318, MUTED);
+  draw(page, PRICE_BOOK_VERSION, fontBold, 11, M + 8, 80, LIME);
+  draw(page, "All prices in Tanzanian Shillings (TSh)", font, 9, M + 8, 62, GREY);
+  draw(page, "kasitechinnovations.com  ·  Dar es Salaam", font, 9, M + 8, 46, GREY);
+}
+
+function howToRead(pdf: PDFDocument, font: PDFFont, fontBold: PDFFont) {
+  const ctx = page(pdf, font, fontBold, "How to read this guide");
+  h1(ctx, "How to read this guide");
+  p(
+    ctx,
+    "This is KasiTech’s commercial reference manual — not a brochure and not a technical manual. Every product is documented so you can decide with confidence.",
+  );
+  space(ctx, 10);
+  label(ctx, "EVERY PRODUCT FOLLOWS THE SAME STRUCTURE");
+  for (const line of [
+    "Name and price",
+    "Short value proposition (what you gain)",
+    "What it does",
+    "What is included",
+    "Ideal for / commonly used by",
+    "See it live (Demo Studio link + QR where shown)",
+    "Notes when something important must be confirmed in a quotation",
+  ]) {
+    bullet(ctx, line);
+  }
+  space(ctx, 10);
+  label(ctx, "PRICES APPEAR WHERE YOU NEED THEM");
+  p(
+    ctx,
+    "Bundle pages show each component’s standalone price, the total if bought separately, the bundle price, and savings. You should never flip pages to reconstruct a total.",
+  );
+  space(ctx, 8);
+  label(ctx, "SEE IT LIVE");
+  p(
+    ctx,
+    `Open ${DEMO_STUDIO_ORIGIN}/demo-studio with the links in this guide. Demo Studio selects the matching configuration, loads a fictional Tanzanian business, and shows live pricing.`,
+  );
+  space(ctx, 8);
+  p(
+    ctx,
+    "Formal quotations confirm final scope, compatibility, timeline, third-party fees, taxes, and commercial terms before commencement. This catalog is not an invoice.",
+  );
+  foot(ctx);
+}
+
+function page(
   pdf: PDFDocument,
   font: PDFFont,
   fontBold: PDFFont,
-  title: string,
+  section: string,
 ): Ctx {
-  const page = pdf.addPage([PAGE.w, PAGE.h]);
-  page.drawRectangle({
-    x: 0,
-    y: PAGE.h - 36,
-    width: PAGE.w,
-    height: 36,
-    color: BLACK,
-  });
-  page.drawRectangle({
-    x: 0,
-    y: PAGE.h - 36,
-    width: 6,
-    height: 36,
-    color: LIME,
-  });
-  drawText(page, "KasiTech", fontBold, 9, M, PAGE.h - 22, LIME);
-  drawText(page, title.toUpperCase(), font, 8, M + 70, PAGE.h - 22, IVORY);
-  return { pdf, font, fontBold, page, y: PAGE.h - 64 };
+  const pg = pdf.addPage([PAGE.w, PAGE.h]);
+  pg.drawRectangle({ x: 0, y: PAGE.h - 34, width: PAGE.w, height: 34, color: BLACK });
+  pg.drawRectangle({ x: 0, y: PAGE.h - 34, width: 5, height: 34, color: LIME });
+  draw(pg, "KasiTech", fontBold, 8, M, PAGE.h - 20, LIME);
+  draw(pg, section.toUpperCase(), font, 7, M + 58, PAGE.h - 20, IVORY);
+  return { pdf, font, fontBold, page: pg, y: PAGE.h - 58, section };
 }
 
-function drawText(
+function ensure(ctx: Ctx, need: number): Ctx {
+  if (ctx.y - need >= 56) return ctx;
+  foot(ctx);
+  const next = page(ctx.pdf, ctx.font, ctx.fontBold, ctx.section);
+  ctx.page = next.page;
+  ctx.y = next.y;
+  return ctx;
+}
+
+function sanitize(text: string): string {
+  return text
+    .replace(/→/g, "->")
+    .replace(/—/g, "-")
+    .replace(/–/g, "-")
+    .replace(/·/g, "|")
+    .replace(/'/g, "'")
+    .replace(/'/g, "'")
+    .replace(/'/g, "'")
+    .replace(/"/g, '"')
+    .replace(/"/g, '"')
+    .replace(/•/g, "-")
+    .replace(/[^\x00-\x7F]/g, "?");
+}
+
+function draw(
   page: PDFPage,
   text: string,
   font: PDFFont,
@@ -361,242 +478,143 @@ function drawText(
   y: number,
   color: ReturnType<typeof rgb>,
 ) {
-  page.drawText(text, { x, y, size, font, color });
-}
-
-function ensure(ctx: Ctx, need: number) {
-  if (ctx.y - need < 56) {
-    footer(ctx, ctx.pdf.getPageCount());
-    const next = newPage(ctx.pdf, ctx.font, ctx.fontBold, "Continued");
-    ctx.page = next.page;
-    ctx.y = next.y;
-  }
+  page.drawText(sanitize(text), {
+    x,
+    y,
+    size,
+    font,
+    color,
+  });
 }
 
 function space(ctx: Ctx, n: number) {
   ctx.y -= n;
 }
 
-function sectionTitle(ctx: Ctx, title: string) {
-  ensure(ctx, 28);
-  drawText(ctx.page, title, ctx.fontBold, 13, M, ctx.y, BLACK);
-  ctx.y -= 6;
-  ctx.page.drawRectangle({
-    x: M,
-    y: ctx.y,
-    width: 40,
-    height: 2,
-    color: LIME,
-  });
+function h1(ctx: Ctx, t: string) {
+  draw(ctx.page, t, ctx.fontBold, 18, M, ctx.y, BLACK);
+  ctx.y -= 8;
+  ctx.page.drawRectangle({ x: M, y: ctx.y, width: 36, height: 2, color: LIME });
+  ctx.y -= 18;
+}
+
+function h2(ctx: Ctx, t: string) {
+  ctx = ensure(ctx, 40);
+  draw(ctx.page, t, ctx.fontBold, 12, M, ctx.y, BLACK);
   ctx.y -= 16;
 }
 
-function body(ctx: Ctx, text: string) {
-  const lines = wrap(text, ctx.font, 10, PAGE.w - M * 2);
+function label(ctx: Ctx, t: string) {
+  ctx = ensure(ctx, 20);
+  draw(ctx.page, t, ctx.fontBold, 7, M, ctx.y, MUTED);
+  ctx.y -= 12;
+}
+
+function p(ctx: Ctx, text: string, size = 9) {
+  const lines = wrap(text, ctx.font, size, PAGE.w - M * 2);
   for (const line of lines) {
-    ensure(ctx, 14);
-    drawText(ctx.page, line, ctx.font, 10, M, ctx.y, GREY);
-    ctx.y -= 14;
+    ctx = ensure(ctx, size + 4);
+    draw(ctx.page, line, ctx.font, size, M, ctx.y, GREY);
+    ctx.y -= size + 4;
   }
 }
 
 function bullet(ctx: Ctx, text: string) {
-  const lines = wrap(text, ctx.font, 10, PAGE.w - M * 2 - 14);
-  ensure(ctx, 14 * lines.length);
-  drawText(ctx.page, "•", ctx.font, 10, M, ctx.y, LIME);
-  for (let i = 0; i < lines.length; i++) {
-    drawText(ctx.page, lines[i]!, ctx.font, 10, M + 14, ctx.y, GREY);
-    ctx.y -= 14;
-  }
-}
-
-function noteBox(ctx: Ctx, text: string) {
-  const lines = wrap(text, ctx.font, 8, PAGE.w - M * 2 - 24);
-  const h = lines.length * 11 + 20;
-  ensure(ctx, h + 8);
-  ctx.page.drawRectangle({
-    x: M,
-    y: ctx.y - h + 8,
-    width: PAGE.w - M * 2,
-    height: h,
-    color: rgb(0.96, 0.95, 0.92),
-  });
-  let ty = ctx.y - 8;
+  const lines = wrap(text, ctx.font, 8, PAGE.w - M * 2 - 12);
+  ctx = ensure(ctx, 12 * lines.length);
+  draw(ctx.page, "-", ctx.font, 8, M, ctx.y, LIME);
   for (const line of lines) {
-    drawText(ctx.page, line, ctx.font, 8, M + 12, ty, GREY);
-    ty -= 11;
+    draw(ctx.page, line, ctx.font, 8, M + 10, ctx.y, GREY);
+    ctx.y -= 11;
   }
-  ctx.y -= h + 8;
 }
 
-function packageCard(
-  ctx: Ctx,
-  item: CatalogItem,
-  bestFor?: string,
-  plain?: string,
-) {
-  const price = displayItemPrice(item);
-  const desc = plain || item.clientDescription;
-  const best = bestFor || "";
-  const descLines = wrap(desc, ctx.font, 9, PAGE.w - M * 2 - 24);
-  const bestLines = best ? wrap(`Best for: ${best}`, ctx.font, 8, PAGE.w - M * 2 - 24) : [];
-  const h = 28 + descLines.length * 12 + bestLines.length * 11 + 16;
+function field(ctx: Ctx, labelText: string, value: string) {
+  ctx = ensure(ctx, 28);
+  draw(ctx.page, labelText, ctx.fontBold, 7, M, ctx.y, MUTED);
+  ctx.y -= 11;
+  p(ctx, value, 9);
+  space(ctx, 4);
+}
 
-  ensure(ctx, h + 4);
-  const bottom = ctx.y - h;
+function productHeader(ctx: Ctx, name: string, price: string) {
+  ctx = ensure(ctx, 40);
   ctx.page.drawRectangle({
     x: M,
-    y: bottom,
+    y: ctx.y - 8,
     width: PAGE.w - M * 2,
-    height: h,
-    borderColor: RULE,
-    borderWidth: 1,
+    height: 28,
+    color: SOFT,
   });
-  ctx.page.drawRectangle({
-    x: M,
-    y: bottom,
-    width: 3,
-    height: h,
-    color: LIME,
-  });
-
-  drawText(ctx.page, item.name, ctx.fontBold, 11, M + 14, ctx.y - 16, BLACK);
+  draw(ctx.page, name, ctx.fontBold, 12, M + 8, ctx.y, BLACK);
   const pw = ctx.fontBold.widthOfTextAtSize(price, 10);
-  drawText(
-    ctx.page,
-    price,
-    ctx.fontBold,
-    10,
-    PAGE.w - M - 14 - pw,
-    ctx.y - 16,
-    BLACK,
-  );
-
-  let ty = ctx.y - 34;
-  for (const line of descLines) {
-    drawText(ctx.page, line, ctx.font, 9, M + 14, ty, GREY);
-    ty -= 12;
-  }
-  for (const line of bestLines) {
-    drawText(ctx.page, line, ctx.font, 8, M + 14, ty, MUTED);
-    ty -= 11;
-  }
-  ctx.y = bottom - 4;
+  draw(ctx.page, price, ctx.fontBold, 10, PAGE.w - M - 8 - pw, ctx.y, BLACK);
+  ctx.y -= 28;
 }
 
-function rowCard(
+function seeLive(
   ctx: Ctx,
-  name: string,
-  price: string,
-  desc: string,
-  includes: string | null,
-  save: string | null,
+  url: string,
+  qrImages: Map<string, PDFImage>,
 ) {
-  const descLines = wrap(desc, ctx.font, 9, PAGE.w - M * 2 - 24);
-  const incLines = includes
-    ? wrap(includes, ctx.font, 8, PAGE.w - M * 2 - 24)
-    : [];
-  const h =
-    28 +
-    descLines.length * 12 +
-    incLines.length * 11 +
-    (save ? 14 : 0) +
-    14;
-
-  ensure(ctx, h + 4);
-  const bottom = ctx.y - h;
-  ctx.page.drawRectangle({
-    x: M,
-    y: bottom,
-    width: PAGE.w - M * 2,
-    height: h,
-    borderColor: RULE,
-    borderWidth: 1,
-  });
-
-  drawText(ctx.page, name, ctx.fontBold, 11, M + 14, ctx.y - 16, BLACK);
-  const pw = ctx.fontBold.widthOfTextAtSize(price, 10);
-  drawText(
-    ctx.page,
-    price,
-    ctx.fontBold,
-    10,
-    PAGE.w - M - 14 - pw,
-    ctx.y - 16,
-    BLACK,
-  );
-
-  let ty = ctx.y - 34;
-  for (const line of descLines) {
-    drawText(ctx.page, line, ctx.font, 9, M + 14, ty, GREY);
-    ty -= 12;
+  ctx = ensure(ctx, 50);
+  draw(ctx.page, "SEE IT LIVE", ctx.fontBold, 7, M, ctx.y, MUTED);
+  ctx.y -= 11;
+  const short = url.replace(DEMO_STUDIO_ORIGIN, "kasitechinnovations.com");
+  p(ctx, short, 8);
+  // Attach QR if we have a matching target URL
+  for (const [label, img] of qrImages) {
+    const t = CATALOG_QR_TARGETS.find((x) => x.label === label);
+    if (t && t.url === url) {
+      ctx = ensure(ctx, 70);
+      ctx.page.drawImage(img, {
+        x: PAGE.w - M - 56,
+        y: ctx.y - 52,
+        width: 52,
+        height: 52,
+      });
+      break;
+    }
   }
-  for (const line of incLines) {
-    drawText(ctx.page, line, ctx.font, 8, M + 14, ty, MUTED);
-    ty -= 11;
-  }
-  if (save) {
-    drawText(ctx.page, save, ctx.fontBold, 8, M + 14, ty, rgb(0.35, 0.5, 0));
-  }
-  ctx.y = bottom - 4;
+  space(ctx, 4);
 }
 
-function simpleRow(
-  ctx: Ctx,
-  name: string,
-  price: string,
-  desc: string,
-) {
-  const descLines = wrap(desc, ctx.font, 8, PAGE.w - M * 2 - 8);
-  ensure(ctx, 20 + descLines.length * 10);
-  drawText(ctx.page, name, ctx.fontBold, 10, M, ctx.y, BLACK);
-  const pw = ctx.fontBold.widthOfTextAtSize(price, 9);
-  drawText(ctx.page, price, ctx.fontBold, 9, PAGE.w - M - pw, ctx.y, BLACK);
-  ctx.y -= 12;
+function divider(ctx: Ctx) {
+  ctx = ensure(ctx, 16);
   ctx.page.drawLine({
-    start: { x: M, y: ctx.y + 4 },
-    end: { x: PAGE.w - M, y: ctx.y + 4 },
-    thickness: 0.4,
+    start: { x: M, y: ctx.y },
+    end: { x: PAGE.w - M, y: ctx.y },
+    thickness: 0.5,
     color: RULE,
   });
-  for (const line of descLines.slice(0, 2)) {
-    drawText(ctx.page, line, ctx.font, 8, M, ctx.y, MUTED);
-    ctx.y -= 10;
-  }
+  ctx.y -= 14;
 }
 
-function footer(ctx: Ctx, pageNum: number) {
-  drawText(
+function foot(ctx: Ctx) {
+  draw(
     ctx.page,
-    `${PRICE_BOOK_VERSION}  ·  kasitechinnovations.com`,
+    `${PRICE_BOOK_VERSION}  ·  All prices in TSh  ·  kasitechinnovations.com`,
     ctx.font,
     7,
     M,
     28,
     MUTED,
   );
-  const label = String(pageNum);
-  const w = ctx.font.widthOfTextAtSize(label, 7);
-  drawText(ctx.page, label, ctx.font, 7, PAGE.w - M - w, 28, MUTED);
+  const n = String(ctx.pdf.getPageCount());
+  const w = ctx.font.widthOfTextAtSize(n, 7);
+  draw(ctx.page, n, ctx.font, 7, PAGE.w - M - w, 28, MUTED);
 }
 
-function wrap(
-  text: string,
-  font: PDFFont,
-  size: number,
-  maxWidth: number,
-): string[] {
-  const words = text.split(/\s+/);
+function wrap(text: string, font: PDFFont, size: number, max: number): string[] {
+  const words = sanitize(text).split(/\s+/);
   const lines: string[] = [];
   let cur = "";
   for (const word of words) {
     const next = cur ? `${cur} ${word}` : word;
-    if (font.widthOfTextAtSize(next, size) > maxWidth && cur) {
+    if (font.widthOfTextAtSize(next, size) > max && cur) {
       lines.push(cur);
       cur = word;
-    } else {
-      cur = next;
-    }
+    } else cur = next;
   }
   if (cur) lines.push(cur);
   return lines.length ? lines : [""];

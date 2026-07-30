@@ -30,4 +30,10 @@ export {
 } from "./configuration/mutations";
 export { normalizeExclusiveFeatureCodes } from "./configuration/normalize";
 export { outcomeForCode } from "./configuration/outcomes";
+export {
+  parseDemoStudioSearchParams,
+  commercialStateFromDeepLink,
+  demoStudioUrl,
+  CATALOG_QR_TARGETS,
+} from "./configuration/deep-link";
 export type * from "./types";

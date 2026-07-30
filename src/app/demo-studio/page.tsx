@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { DemoStudioApp } from "@/components/demo-studio/DemoStudioApp";
-import type { DemoIndustryId } from "@/demo-studio/types";
+import {
+  commercialStateFromDeepLink,
+  parseDemoStudioSearchParams,
+} from "@/demo-studio/configuration/deep-link";
 
 export const metadata: Metadata = {
   title: "Demo Studio",
@@ -9,11 +12,24 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ industry?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function DemoStudioPage({ searchParams }: Props) {
   const sp = await searchParams;
-  const industry = sp.industry as DemoIndustryId | undefined;
-  return <DemoStudioApp initialIndustry={industry} />;
+  const deepLink = parseDemoStudioSearchParams(sp);
+  const initialConfig = deepLink
+    ? {
+        ...commercialStateFromDeepLink(deepLink),
+        catalogViewingLabel: deepLink.viewingLabel,
+        fromCatalog: true as const,
+      }
+    : undefined;
+
+  return (
+    <DemoStudioApp
+      initialIndustry={deepLink?.industry ?? undefined}
+      initialConfig={initialConfig}
+    />
+  );
 }

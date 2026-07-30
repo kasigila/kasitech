@@ -49,6 +49,8 @@ type Props = {
     priceBookVersion?: string;
     readOnly?: boolean;
     frozenSnapshot?: CommercialSnapshot;
+    fromCatalog?: boolean;
+    catalogViewingLabel?: string;
   };
 };
 
@@ -161,7 +163,14 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
     submit?: boolean;
     compare?: boolean;
   }>({});
-  const readOnly = Boolean(initialConfig?.readOnly);
+  const [catalogBanner, setCatalogBanner] = useState(
+    Boolean(initialConfig?.fromCatalog),
+  );
+  const [catalogLocked, setCatalogLocked] = useState(
+    Boolean(initialConfig?.fromCatalog),
+  );
+  const catalogLabel = initialConfig?.catalogViewingLabel ?? "Catalog selection";
+  const readOnly = Boolean(initialConfig?.readOnly) || catalogLocked;
 
   useEffect(() => {
     if (deviceInitialized) return;
@@ -599,6 +608,21 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
           </a>{" "}
           starts a new configuration.
         </div>
+      )}
+
+      {catalogBanner && (
+        <CatalogEntryBanner
+          label={catalogLabel}
+          commercial={commercial}
+          pricing={pricing}
+          book={book}
+          onCustomize={() => {
+            setCatalogLocked(false);
+            setCatalogBanner(false);
+            trackDemo("catalog_customize", { label: catalogLabel });
+          }}
+          onDismiss={() => setCatalogBanner(false)}
+        />
       )}
 
       {statusMsg && (
@@ -1909,5 +1933,157 @@ function CompareModal({
         </div>
       )}
     </Modal>
+  );
+}
+
+function CatalogEntryBanner({
+  label,
+  commercial,
+  pricing,
+  book,
+  onCustomize,
+  onDismiss,
+}: {
+  label: string;
+  commercial: CommercialConfigState;
+  pricing: ReturnType<typeof priceStudioConfiguration>;
+  book: ReturnType<typeof loadPriceBook>;
+  onCustomize: () => void;
+  onDismiss: () => void;
+}) {
+  const bundle = commercial.bundleCode
+    ? getItem(book, commercial.bundleCode)
+    : null;
+  const pkg = commercial.packageCode
+    ? getItem(book, commercial.packageCode)
+    : null;
+  const hints = detectEligibleBundles({
+    ...commercial,
+    bundleCode: null,
+  });
+  const match = commercial.bundleCode
+    ? hints.find((h) => h.bundleCode === commercial.bundleCode)
+    : null;
+  // When bundle already applied, price via components for display
+  const comps = commercial.bundleCode
+    ? (book.componentsByBundle.get(commercial.bundleCode) ?? []).filter(
+        (c) => c.role === "CHARGE",
+      )
+    : [];
+  const standalone = comps.reduce((s, c) => {
+    const it = book.itemByCode.get(c.componentCode);
+    return s + (it?.priceTsh ?? 0);
+  }, 0);
+  const bundlePrice = bundle?.priceTsh ?? null;
+  const saved =
+    bundlePrice != null && standalone > bundlePrice
+      ? standalone - bundlePrice
+      : match?.savingsTsh ?? null;
+
+  return (
+    <div className="border-b border-kasi-green/40 bg-kasi-green/10 px-4 py-3 text-[12px] text-kasi-ivory">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
+            Viewing from catalog
+          </div>
+          <div className="mt-1 font-display text-lg">{label}</div>
+          <dl className="mt-2 grid gap-1 sm:grid-cols-2">
+            {bundle && (
+              <div>
+                <dt className="text-kasi-grey">Bundle</dt>
+                <dd>
+                  {bundle.name}
+                  {bundle.priceTsh != null ? ` · ${formatTsh(bundle.priceTsh)}` : ""}
+                </dd>
+              </div>
+            )}
+            {pkg && (
+              <div>
+                <dt className="text-kasi-grey">Website package</dt>
+                <dd>
+                  {pkg.name} · {formatTsh(pkg.priceTsh ?? 0)}
+                </dd>
+              </div>
+            )}
+            {comps.length > 0 && (
+              <div className="sm:col-span-2">
+                <dt className="text-kasi-grey">Included (charge components)</dt>
+                <dd>
+                  {comps
+                    .map((c) => {
+                      const it = book.itemByCode.get(c.componentCode);
+                      return it
+                        ? `${it.name} (${formatTsh(it.priceTsh ?? 0)})`
+                        : c.componentCode;
+                    })
+                    .join(" · ")}
+                </dd>
+              </div>
+            )}
+            {commercial.featureCodes.length > 0 && !bundle && (
+              <div className="sm:col-span-2">
+                <dt className="text-kasi-grey">Features</dt>
+                <dd>
+                  {commercial.featureCodes
+                    .map((c) => getItem(book, c)?.name ?? c)
+                    .join(" · ")}
+                </dd>
+              </div>
+            )}
+            {commercial.kbPlan && (
+              <div>
+                <dt className="text-kasi-grey">KasiTech Business</dt>
+                <dd>{getItem(book, commercial.kbPlan)?.name}</dd>
+              </div>
+            )}
+            {commercial.carePlan && (
+              <div>
+                <dt className="text-kasi-grey">Care</dt>
+                <dd>{getItem(book, commercial.carePlan)?.name}</dd>
+              </div>
+            )}
+            <div>
+              <dt className="text-kasi-grey">Live total (one-time)</dt>
+              <dd className="font-mono text-kasi-green">
+                {formatTsh(pricing.totals.oneTimeTsh)}
+              </dd>
+            </div>
+            {standalone > 0 && bundlePrice != null && (
+              <>
+                <div>
+                  <dt className="text-kasi-grey">Standalone value</dt>
+                  <dd className="font-mono">{formatTsh(standalone)}</dd>
+                </div>
+                {saved != null && saved > 0 && (
+                  <div>
+                    <dt className="text-kasi-grey">You save</dt>
+                    <dd className="font-mono text-kasi-green">
+                      {formatTsh(saved)}
+                    </dd>
+                  </div>
+                )}
+              </>
+            )}
+          </dl>
+        </div>
+        <div className="flex shrink-0 flex-col gap-2">
+          <button
+            type="button"
+            className="bg-kasi-green px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-kasi-black"
+            onClick={onCustomize}
+          >
+            Customize this build
+          </button>
+          <button
+            type="button"
+            className="text-[11px] text-kasi-grey underline"
+            onClick={onDismiss}
+          >
+            Dismiss banner
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
