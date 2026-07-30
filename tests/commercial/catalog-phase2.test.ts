@@ -90,10 +90,11 @@ describe("Phase 2 catalog presentation", () => {
   it("PDF generates and embeds price book version", async () => {
     const pdf = await buildCatalogPdf();
     expect(pdf.byteLength).toBeGreaterThan(1000);
-    const asText = pdf.toString("binary");
-    expect(asText.startsWith("%PDF")).toBe(true);
-    // PDFKit stores title as UTF-16BE; assert version digits appear in info
-    expect(asText.includes("2026") || asText.includes("KT-PB")).toBe(true);
-    expect(asText.includes("KasiTech") || asText.includes("PDFKit")).toBe(true);
+    expect(pdf.subarray(0, 4).toString()).toBe("%PDF");
+    const { PDFDocument } = await import("pdf-lib");
+    const doc = await PDFDocument.load(pdf);
+    expect(doc.getPageCount()).toBeGreaterThanOrEqual(5);
+    expect(doc.getTitle()).toContain("KT-PB-2026.1");
+    expect(doc.getAuthor()).toBe("KasiTech");
   });
 });
