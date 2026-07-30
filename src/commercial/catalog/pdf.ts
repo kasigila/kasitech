@@ -374,20 +374,35 @@ async function writeBundleDetail(ctx: Ctx, b: BundleGuide, qr: QrCache) {
   productHeader(ctx, b.name, b.bundlePriceLabel);
   field(ctx, "WHAT THIS BUNDLE IS", b.valueProp);
   field(ctx, "WHY THESE SERVICES BELONG TOGETHER", b.whyTogether);
-  label(ctx, "WHAT IS INCLUDED (WITH STANDALONE PRICES)");
+  label(
+    ctx,
+    b.showSavings
+      ? "WHAT IS INCLUDED (WITH STANDALONE PRICES)"
+      : "WHAT IS INCLUDED",
+  );
   for (const c of b.components) {
-    bullet(ctx, `${c.name}  -  normally ${c.priceLabel}`);
+    bullet(
+      ctx,
+      b.showSavings
+        ? `${c.name}  -  normally ${c.priceLabel}`
+        : `${c.name}  -  ${c.priceLabel} as a standalone service`,
+    );
   }
   for (const e of b.entitlements) {
-    bullet(ctx, `${e} (included entitlement - not a separate charge)`);
+    bullet(ctx, `${e} (included in this bundle - not a separate catalog charge)`);
   }
   space(ctx, 6);
-  if (b.standaloneTotalTsh != null) {
-    field(ctx, "TOTAL IF PURCHASED SEPARATELY", formatMoney(b.standaloneTotalTsh));
-  }
   field(ctx, "BUNDLE PRICE", b.bundlePriceLabel);
-  if (b.showSavings && b.savingsTsh != null && b.savingsTsh > 0) {
+  if (
+    b.showSavings &&
+    b.standaloneTotalTsh != null &&
+    b.savingsTsh != null &&
+    b.savingsTsh > 0
+  ) {
+    field(ctx, "TOTAL IF PURCHASED SEPARATELY", formatMoney(b.standaloneTotalTsh));
     field(ctx, "YOU SAVE", formatMoney(b.savingsTsh));
+  } else if (b.pricingNote) {
+    field(ctx, "PRICING NOTE", b.pricingNote);
   }
   await seeLive(ctx, b.seeLiveUrl, qr);
 }

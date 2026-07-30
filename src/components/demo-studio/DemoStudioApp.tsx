@@ -1970,15 +1970,18 @@ function CatalogEntryBanner({
         (c) => c.role === "CHARGE",
       )
     : [];
-  const standalone = comps.reduce((s, c) => {
-    const it = book.itemByCode.get(c.componentCode);
-    return s + (it?.priceTsh ?? 0);
-  }, 0);
   const bundlePrice = bundle?.priceTsh ?? null;
-  const saved =
-    bundlePrice != null && standalone > bundlePrice
-      ? standalone - bundlePrice
-      : match?.savingsTsh ?? null;
+  const showSave =
+    Boolean(match?.showSavings) &&
+    match?.savingsTsh != null &&
+    match.savingsTsh > 0;
+  const standalone = showSave
+    ? comps.reduce((s, c) => {
+        const it = book.itemByCode.get(c.componentCode);
+        return s + (it?.priceTsh ?? 0);
+      }, 0)
+    : 0;
+  const saved = showSave ? match!.savingsTsh : null;
 
   return (
     <div className="border-b border-kasi-green/40 bg-kasi-green/10 px-4 py-3 text-[12px] text-kasi-ivory">
@@ -2002,7 +2005,8 @@ function CatalogEntryBanner({
               <div>
                 <dt className="text-kasi-grey">Website package</dt>
                 <dd>
-                  {pkg.name} · {formatTsh(pkg.priceTsh ?? 0)}
+                  {pkg.name}
+                  {pkg.priceTsh != null ? ` · ${formatTsh(pkg.priceTsh)}` : " · Custom quote"}
                 </dd>
               </div>
             )}
@@ -2014,7 +2018,7 @@ function CatalogEntryBanner({
                     .map((c) => {
                       const it = book.itemByCode.get(c.componentCode);
                       return it
-                        ? `${it.name} (${formatTsh(it.priceTsh ?? 0)})`
+                        ? `${it.name}${it.priceTsh != null ? ` (${formatTsh(it.priceTsh)})` : ""}`
                         : c.componentCode;
                     })
                     .join(" · ")}
@@ -2049,7 +2053,7 @@ function CatalogEntryBanner({
                 {formatTsh(pricing.totals.oneTimeTsh)}
               </dd>
             </div>
-            {standalone > 0 && bundlePrice != null && (
+            {showSave && standalone > 0 && bundlePrice != null && (
               <>
                 <div>
                   <dt className="text-kasi-grey">Standalone value</dt>

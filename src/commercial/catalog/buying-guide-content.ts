@@ -71,6 +71,8 @@ export type BundleGuide = {
   showSavings: boolean;
   seeLiveUrl: string;
   industryHint: string;
+  /** Shown when we intentionally hide a buy-separately total */
+  pricingNote: string | null;
 };
 
 function packageExtras(code: string): string[] {
@@ -488,20 +490,18 @@ function industryForFeature(code: string): string {
 
 export function buildBundleGuides(): BundleGuide[] {
   const views = getBundleViews();
-  const book = loadPriceBook();
   return views.map((b) => {
-    const standalone = b.chargeComponents.reduce((sum, c) => {
-      const it = book.itemByCode.get(c.code);
-      return sum + (it?.priceTsh ?? 0);
-    }, 0);
     const bundlePrice = b.item.priceTsh;
-    const savings =
-      bundlePrice != null && standalone > bundlePrice
-        ? standalone - bundlePrice
-        : b.savings?.savingsTsh ?? null;
+    // Only use Price Book engine savings — never invent a "buy separately"
+    // total that makes the bundle look more expensive (e.g. Beauty includes
+    // Gallery + Social entitlements with no standalone prices).
     const showSavings =
-      Boolean(b.savings?.showSavings && savings != null && savings > 0) ||
-      (savings != null && savings > 0);
+      Boolean(b.savings?.showSavings) &&
+      b.savings?.savingsTsh != null &&
+      b.savings.savingsTsh > 0;
+    const standaloneTotalTsh = showSavings
+      ? (b.savings?.individualValueTsh ?? null)
+      : null;
 
     return {
       code: b.item.code,
@@ -510,16 +510,22 @@ export function buildBundleGuides(): BundleGuide[] {
       whyTogether: bundleWhy(b.item.code),
       components: b.chargeComponents,
       entitlements: b.entitlements.map((e) => e.name),
-      standaloneTotalTsh: standalone || null,
+      standaloneTotalTsh,
       bundlePriceLabel: b.priceLabel,
       bundlePriceTsh: bundlePrice,
-      savingsTsh: showSavings ? savings : null,
+      savingsTsh: showSavings ? b.savings!.savingsTsh : null,
       showSavings,
       seeLiveUrl: demoStudioUrl({
         industry: industryForBundle(b.item.code),
         bundle: bundleSlug(b.item.code),
       }),
       industryHint: industryForBundle(b.item.code),
+      pricingNote: showSavings
+        ? null
+        : b.entitlements.length > 0
+          ? "Packaged outcome price. Included entitlements (listed above) are not sold as separate catalog line items, so a 'buy separately' total is not shown."
+          : b.savings?.reasonIfHidden ??
+            "No approved savings vs standalone chargeable components for this bundle.",
     };
   });
 }

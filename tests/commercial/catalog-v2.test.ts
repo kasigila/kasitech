@@ -40,10 +40,19 @@ describe("Commercial Catalog V2", () => {
     const rest = buildBundleGuides().find((b) => b.code === "BND-REST");
     expect(rest).toBeTruthy();
     expect(rest!.components.length).toBeGreaterThanOrEqual(4);
+    expect(rest!.showSavings).toBe(true);
     expect(rest!.standaloneTotalTsh).toBe(900000 + 300000 + 600000 + 150000);
     expect(rest!.bundlePriceTsh).toBe(1850000);
     expect(rest!.savingsTsh).toBe(100000);
-    expect(rest!.showSavings).toBe(true);
+  });
+
+  it("beauty bundle does not show a misleading buy-separately total", () => {
+    const beauty = buildBundleGuides().find((b) => b.code === "BND-BEAUTY");
+    expect(beauty).toBeTruthy();
+    expect(beauty!.showSavings).toBe(false);
+    expect(beauty!.standaloneTotalTsh).toBeNull();
+    expect(beauty!.savingsTsh).toBeNull();
+    expect(beauty!.pricingNote).toMatch(/entitlement/i);
   });
 
   it("catalog V2 PDF is multi-page buying guide", async () => {
