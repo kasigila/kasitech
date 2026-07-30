@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ALL_INDUSTRIES,
   businessForIndustry,
   chargeableRecommendations,
   clientValidationMessages,
   detectEligibleBundles,
+  detectPackageBundleOverlap,
   emptyCommercialState,
   FEATURE_REGISTRY,
   formatDelta,
@@ -20,6 +21,8 @@ import {
   PRICE_BOOK_VERSION,
   priceStudioConfiguration,
   replaceExclusiveMember,
+  clearExclusiveFamily,
+  activeExclusiveCode,
   resolvePreviewCapabilities,
   trackDemo,
   estimateDelivery,
@@ -32,6 +35,8 @@ import {
   type StudioMode,
   type CompareMode,
 } from "@/demo-studio";
+import { normalizeExclusiveFeatureCodes } from "@/demo-studio/configuration/normalize";
+import { outcomeForCode } from "@/demo-studio/configuration/outcomes";
 import type { CommercialSnapshot } from "@/commercial";
 import { billingLabel } from "@/commercial/catalog/presentation";
 import { DemoWebsite } from "./DemoWebsite";
@@ -55,9 +60,48 @@ const GROUPS: { id: FeatureGroup; label: string }[] = [
   { id: "commerce", label: "Commerce" },
   { id: "content", label: "Content" },
   { id: "marketing", label: "Marketing" },
+  { id: "local", label: "Local search" },
   { id: "advanced", label: "Advanced" },
   { id: "all", label: "All features" },
 ];
+
+const EXCLUSIVE_FEATURE_FAMILIES = [
+  "BOOKING_APPOINTMENT",
+  "RESTAURANT_MENU",
+  "LOGISTICS_TRACKING",
+  "ECOM_STORE",
+];
+
+const PACKAGE_BLURBS: Record<string, { bestFor: string; value: string }> = {
+  "WEB-ONE": {
+    bestFor: "Solo offers & landing pages",
+    value: "One clear page that explains what you do",
+  },
+  "WEB-ESS": {
+    bestFor: "Small businesses getting online",
+    value: "Multi-page site for services, about, and contact",
+  },
+  "WEB-BUS": {
+    bestFor: "Growing local brands",
+    value: "Richer structure for content and conversion",
+  },
+  "WEB-BUSP": {
+    bestFor: "Established businesses",
+    value: "Stronger information architecture",
+  },
+  "WEB-PRO": {
+    bestFor: "Professional services",
+    value: "Credibility, cases, and enquiry-led journeys",
+  },
+  "WEB-SIG": {
+    bestFor: "Premium brands",
+    value: "Signature presence for high-trust selling",
+  },
+  "WEB-CUS": {
+    bestFor: "Unique requirements",
+    value: "Scoped custom website — quote with KasiTech",
+  },
+};
 
 const CARE = ["CARE-ESS", "CARE-STD", "CARE-BUS", "CARE-PRO", "CARE-PRI"];
 const KB = ["KB-LAUNCH", "KB-GROW", "KB-PRO", "KB-SCALE", "KB-ENT"];
@@ -95,6 +139,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
   }));
 
   const [device, setDevice] = useState<PreviewDevice>("desktop");
+  const [deviceInitialized, setDeviceInitialized] = useState(false);
   const [studioMode, setStudioMode] = useState<StudioMode>("website");
   const [compareMode, setCompareMode] = useState<CompareMode>("build");
   const [featureGroup, setFeatureGroup] = useState<FeatureGroup>("recommended");
@@ -117,6 +162,15 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
     compare?: boolean;
   }>({});
   const readOnly = Boolean(initialConfig?.readOnly);
+
+  useEffect(() => {
+    if (deviceInitialized) return;
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches) {
+      setDevice("mobile");
+    }
+    setDeviceInitialized(true);
+  }, [deviceInitialized]);
+
 
   const livePricing = useMemo(
     () => priceStudioConfiguration(commercial),
@@ -168,6 +222,11 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
     [commercial],
   );
 
+  const packageBundleOverlap = useMemo(
+    () => detectPackageBundleOverlap(commercial),
+    [commercial],
+  );
+
   const deliveryEst = estimateDelivery(
     commercial.packageCode,
     commercial.delivery,
@@ -207,15 +266,19 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
           ...next,
           bundleCode: bundle,
           packageCode: null,
-          featureCodes: chargeableRecommendations(industry).filter(
-            (c) => !["SEO-PRO", "SEO-FND"].includes(c),
+          featureCodes: normalizeExclusiveFeatureCodes(
+            chargeableRecommendations(industry).filter(
+              (c) => !["SEO-PRO", "SEO-FND"].includes(c),
+            ),
           ),
         };
       } else {
         next = {
           ...next,
           packageCode: INDUSTRY_PACKAGE_HINTS[industry],
-          featureCodes: chargeableRecommendations(industry),
+          featureCodes: normalizeExclusiveFeatureCodes(
+            chargeableRecommendations(industry),
+          ),
         };
       }
     } else if (mode === "package") {
@@ -407,7 +470,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
       <Shell>
         <EntryTitle
           title="What type of business are you building for?"
-          sub="Choose an industry to load a realistic fictional website."
+          sub="Choose your type of business to see what KasiTech could build for you."
         />
         <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {ALL_INDUSTRIES.map((ind) => {
@@ -598,6 +661,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
                 );
               }}
               bundleHints={bundleHints}
+              packageBundleOverlap={packageBundleOverlap}
               readOnly={readOnly}
               packages={WEB_PKGS}
               care={CARE}
@@ -685,7 +749,19 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
               deliveryEst={deliveryEst}
               changeLog={changeLog}
               bundleHints={bundleHints}
+              packageBundleOverlap={packageBundleOverlap}
               onApplyBundle={(code) => setBundle(code)}
+              onUseBundleWebsite={() =>
+                applyCommercial(
+                  { ...commercial, packageCode: null },
+                  "Using website included in bundle",
+                )
+              }
+              onKeepPackageAndBundle={() =>
+                setStatusMsg(
+                  "Kept both — package and bundle remain separate charges as priced.",
+                )
+              }
               onSave={saveBuild}
               onShare={shareBuild}
               onEstimate={downloadEstimate}
@@ -714,7 +790,19 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
                 deliveryEst={deliveryEst}
                 changeLog={changeLog}
                 bundleHints={bundleHints}
+              packageBundleOverlap={packageBundleOverlap}
                 onApplyBundle={(code) => setBundle(code)}
+                onUseBundleWebsite={() =>
+                  applyCommercial(
+                    { ...commercial, packageCode: null },
+                    "Using website included in bundle",
+                  )
+                }
+                onKeepPackageAndBundle={() =>
+                  setStatusMsg(
+                    "Kept both — package and bundle remain separate charges as priced.",
+                  )
+                }
                 onSave={saveBuild}
                 onShare={shareBuild}
                 onEstimate={downloadEstimate}
@@ -756,6 +844,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
                   applyCommercial({ ...commercial, delivery: d }, `Delivery ${d}`)
                 }
                 bundleHints={bundleHints}
+              packageBundleOverlap={packageBundleOverlap}
                 readOnly={readOnly}
                 packages={WEB_PKGS}
                 care={CARE}
@@ -772,18 +861,32 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
 
       {modals.save && configId && (
         <Modal onClose={() => setModals((m) => ({ ...m, save: false }))}>
-          <h3 className="font-display text-xl">Build saved</h3>
+          <h3 id="demo-studio-modal-title" className="font-display text-xl pr-8">
+            Build saved
+          </h3>
           <p className="mt-2 font-mono text-sm text-kasi-green">{configId}</p>
           <p className="mt-2 text-sm text-kasi-grey">
             Share link: /build/{configId}
           </p>
-          <button
-            type="button"
-            className="mt-4 text-sm text-kasi-green"
-            onClick={() => shareBuild()}
-          >
-            Copy / share link
-          </button>
+          <div className="mt-4 flex flex-col gap-2">
+            <button
+              type="button"
+              className="border border-kasi-border px-3 py-2 text-sm text-kasi-ivory"
+              onClick={() => shareBuild()}
+            >
+              Copy / share link
+            </button>
+            <button
+              type="button"
+              className="border border-kasi-border px-3 py-2 text-sm text-kasi-ivory"
+              onClick={() => downloadEstimate()}
+            >
+              Download project estimate
+            </button>
+          </div>
+          <p className="mt-3 text-[11px] text-kasi-grey">
+            Press Escape, click outside, or Close to continue configuring.
+          </p>
         </Modal>
       )}
 
@@ -890,17 +993,45 @@ function Modal({
   children: ReactNode;
   onClose: () => void;
 }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4">
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-md border border-kasi-border bg-kasi-black p-6"
+        aria-labelledby="demo-studio-modal-title"
+        className="relative w-full max-w-md border border-kasi-border bg-kasi-black p-6 shadow-xl"
+        onMouseDown={(e) => e.stopPropagation()}
       >
+        <button
+          type="button"
+          aria-label="Close"
+          className="absolute right-3 top-3 px-2 py-1 text-sm text-kasi-grey hover:text-kasi-ivory"
+          onClick={onClose}
+        >
+          Close
+        </button>
         {children}
         <button
           type="button"
-          className="mt-6 text-sm text-kasi-grey"
+          className="mt-6 w-full border border-kasi-border py-2 text-sm text-kasi-ivory"
           onClick={onClose}
         >
           Close
@@ -908,6 +1039,166 @@ function Modal({
       </div>
     </div>
   );
+}
+
+function FeaturePicker(props: {
+  featureList: typeof FEATURE_REGISTRY;
+  commercial: CommercialConfigState;
+  pricing: ReturnType<typeof priceStudioConfiguration>;
+  book: ReturnType<typeof loadPriceBook>;
+  readOnly: boolean;
+  onToggle: (code: string) => void;
+}) {
+  const { featureList, commercial, pricing, book, onToggle } = props;
+  const rendered = new Set<string>();
+  const nodes: ReactNode[] = [];
+
+  for (const familyCode of EXCLUSIVE_FEATURE_FAMILIES) {
+    const family = book.families.find((f) => f.code === familyCode);
+    if (!family) continue;
+    const members = featureList.filter((f) =>
+      family.members.some((m) => m.code === f.featureCode),
+    );
+    if (members.length < 2) continue;
+    for (const m of members) rendered.add(m.featureCode);
+    const active = activeExclusiveCode(commercial.featureCodes, familyCode);
+    nodes.push(
+      <li key={familyCode} className="border border-kasi-border/70 p-2">
+        <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-grey">
+          {family.name}
+        </div>
+        <div className="space-y-2" role="radiogroup" aria-label={family.name}>
+          <label className="flex cursor-pointer gap-2">
+            <input
+              type="radio"
+              name={`ex-${familyCode}`}
+              checked={!active}
+              disabled={props.readOnly}
+              onChange={() => {
+                const cleared = clearExclusiveFamily(
+                  commercial.featureCodes,
+                  familyCode,
+                );
+                // Toggle off active member via onToggle of active if present
+                if (active) onToggle(active);
+                else if (cleared.length !== commercial.featureCodes.length) {
+                  /* no-op */
+                }
+              }}
+            />
+            <span className="text-xs text-kasi-grey">None</span>
+          </label>
+          {family.members
+            .slice()
+            .sort((a, b) => a.rank - b.rank)
+            .map((m) => {
+              const entry = members.find((f) => f.featureCode === m.code);
+              if (!entry) return null;
+              const item = getItem(book, m.code);
+              const includesLower = Boolean(m.includesLower);
+              return (
+                <label key={m.code} className="flex cursor-pointer gap-2">
+                  <input
+                    type="radio"
+                    name={`ex-${familyCode}`}
+                    checked={active === m.code}
+                    disabled={props.readOnly}
+                    onChange={() => {
+                      if (active !== m.code) onToggle(m.code);
+                    }}
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-xs text-kasi-ivory">
+                      {item?.name ?? m.code}
+                    </span>
+                    <span className="block text-[11px] text-kasi-grey">
+                      {entry.shortExplanation}
+                    </span>
+                    {includesLower && (
+                      <span className="mt-0.5 block text-[10px] text-kasi-green/80">
+                        Includes lower tier capability
+                      </span>
+                    )}
+                    <span className="mt-1 block font-mono text-[10px] text-kasi-green">
+                      {item?.priceTsh != null
+                        ? `${formatTsh(item.priceTsh)}${
+                            item.billing === "MONTHLY"
+                              ? "/mo"
+                              : item.billing === "ANNUAL"
+                                ? "/yr"
+                                : ""
+                          }`
+                        : billingLabel(item?.billing ?? "INCLUDED")}
+                    </span>
+                  </span>
+                </label>
+              );
+            })}
+        </div>
+      </li>,
+    );
+  }
+
+  for (const f of featureList) {
+    if (rendered.has(f.featureCode)) continue;
+    const item = getItem(book, f.featureCode);
+    const selected = commercial.featureCodes.includes(f.featureCode);
+    const suppressed = pricing.suppressedCodes.some(
+      (s) => s.code === f.featureCode,
+    );
+    const included =
+      suppressed ||
+      (commercial.packageCode &&
+        (book.inclusionsByPackage.get(commercial.packageCode) ?? []).includes(
+          f.featureCode,
+        ));
+    const isLocal = f.group === "local";
+    nodes.push(
+      <li key={f.featureCode} className="border border-kasi-border/70 p-2">
+        <label className="flex cursor-pointer gap-2">
+          <input
+            type="checkbox"
+            checked={selected || Boolean(included && !selected)}
+            disabled={props.readOnly}
+            onChange={() => onToggle(f.featureCode)}
+          />
+          <span className="min-w-0 flex-1">
+            <span className="block text-xs text-kasi-ivory">
+              {item?.name ?? f.featureCode}
+            </span>
+            <span className="block text-[11px] text-kasi-grey">
+              {f.shortExplanation}
+            </span>
+            {isLocal && (
+              <span className="mt-1 block text-[10px] text-kasi-grey/80">
+                What this does: improves how customers find and trust you locally.
+                How it helps: more discovery without changing your website layout.
+              </span>
+            )}
+            <span className="mt-1 block font-mono text-[10px] text-kasi-green">
+              {included && !selected
+                ? `INCLUDED${
+                    commercial.packageCode
+                      ? ` WITH ${getItem(book, commercial.packageCode)?.name}`
+                      : ""
+                  }`
+                : item?.priceTsh != null
+                  ? `${formatTsh(item.priceTsh)}${
+                      item.billing === "MONTHLY"
+                        ? "/mo"
+                        : item.billing === "ANNUAL"
+                          ? "/yr"
+                          : ""
+                    }`
+                  : billingLabel(item?.billing ?? "INCLUDED")}
+            </span>
+          </span>
+        </label>
+      </li>,
+    );
+  }
+
+  return <ul className="space-y-2">{nodes}</ul>;
 }
 
 function Controls(props: {
@@ -927,6 +1218,7 @@ function Controls(props: {
   onSocial: (code: string | null) => void;
   onDelivery: (d: CommercialConfigState["delivery"]) => void;
   bundleHints: ReturnType<typeof detectEligibleBundles>;
+  packageBundleOverlap: ReturnType<typeof detectPackageBundleOverlap>;
   readOnly: boolean;
   packages: string[];
   care: string[];
@@ -952,27 +1244,65 @@ function Controls(props: {
       {!compact && (
         <>
           <Section label="Website package">
-            <select
-              className="w-full border border-kasi-border bg-transparent px-2 py-1.5 text-xs"
-              disabled={props.readOnly}
-              value={commercial.packageCode ?? ""}
-              onChange={(e) =>
-                props.onPackage(e.target.value || null)
-              }
-            >
-              <option value="">None</option>
+            <div className="space-y-2">
+              <button
+                type="button"
+                disabled={props.readOnly}
+                onClick={() => props.onPackage(null)}
+                className={`w-full border px-2 py-2 text-left text-[11px] ${
+                  !commercial.packageCode
+                    ? "border-kasi-green bg-kasi-green/10"
+                    : "border-kasi-border"
+                }`}
+              >
+                None — add features à la carte
+              </button>
               {props.packages.map((c) => {
                 const item = getItem(book, c);
+                const blurb = PACKAGE_BLURBS[c];
+                const selected = commercial.packageCode === c;
                 return (
-                  <option key={c} value={c}>
-                    {item?.name}
-                    {item?.priceTsh != null
-                      ? ` · ${formatTsh(item.priceTsh)}`
-                      : " · Custom quote"}
-                  </option>
+                  <button
+                    key={c}
+                    type="button"
+                    disabled={props.readOnly}
+                    onClick={() => props.onPackage(c)}
+                    className={`w-full border px-2 py-2 text-left ${
+                      selected
+                        ? "border-kasi-green bg-kasi-green/10"
+                        : "border-kasi-border"
+                    }`}
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-xs text-kasi-ivory">
+                        {item?.name ?? c}
+                      </span>
+                      <span className="shrink-0 font-mono text-[10px] text-kasi-green">
+                        {item?.priceTsh != null
+                          ? formatTsh(item.priceTsh)
+                          : "Quote"}
+                      </span>
+                    </div>
+                    {blurb && (
+                      <>
+                        <div className="mt-1 text-[10px] text-kasi-grey">
+                          Best for: {blurb.bestFor}
+                        </div>
+                        <div className="text-[10px] text-kasi-grey/80">
+                          {blurb.value}
+                        </div>
+                      </>
+                    )}
+                  </button>
                 );
               })}
-            </select>
+              <a
+                href="/pricing"
+                className="inline-block text-[10px] text-kasi-green underline"
+              >
+                Compare packages on Pricing →
+              </a>
+            </div>
           </Section>
           <Section label="Bundle">
             <select
@@ -1012,51 +1342,14 @@ function Controls(props: {
             </button>
           ))}
         </div>
-        <ul className="space-y-2">
-          {featureList.map((f) => {
-            const item = getItem(book, f.featureCode);
-            const selected = commercial.featureCodes.includes(f.featureCode);
-            const suppressed = pricing.suppressedCodes.some(
-              (s) => s.code === f.featureCode,
-            );
-            const included =
-              suppressed ||
-              (commercial.packageCode &&
-                (book.inclusionsByPackage.get(commercial.packageCode) ?? []).includes(
-                  f.featureCode,
-                ));
-            return (
-              <li
-                key={f.featureCode}
-                className="border border-kasi-border/70 p-2"
-              >
-                <label className="flex cursor-pointer gap-2">
-                  <input
-                    type="checkbox"
-                    checked={selected || Boolean(included && !selected)}
-                    disabled={props.readOnly}
-                    onChange={() => onToggle(f.featureCode)}
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-xs text-kasi-ivory">
-                      {item?.name ?? f.featureCode}
-                    </span>
-                    <span className="block text-[11px] text-kasi-grey">
-                      {f.shortExplanation}
-                    </span>
-                    <span className="mt-1 block font-mono text-[10px] text-kasi-green">
-                      {included && !selected
-                        ? `INCLUDED${commercial.packageCode ? ` WITH ${getItem(book, commercial.packageCode)?.name}` : ""}`
-                        : item?.priceTsh != null
-                          ? `${formatTsh(item.priceTsh)}${item.billing === "MONTHLY" ? "/mo" : item.billing === "ANNUAL" ? "/yr" : ""}`
-                          : billingLabel(item?.billing ?? "INCLUDED")}
-                    </span>
-                  </span>
-                </label>
-              </li>
-            );
-          })}
-        </ul>
+        <FeaturePicker
+          featureList={featureList}
+          commercial={commercial}
+          pricing={pricing}
+          book={book}
+          readOnly={props.readOnly}
+          onToggle={onToggle}
+        />
       </Section>
 
       {!compact && (
@@ -1070,6 +1363,11 @@ function Controls(props: {
             allowNone
             disabled={props.readOnly}
           />
+          <p className="mb-4 -mt-2 text-[10px] text-kasi-grey">
+            Care plans cover ongoing website care. Exact inclusions (response
+            times, update allowance) are confirmed by KasiTech for your plan —
+            Demo Studio shows approved plan names and catalog prices only.
+          </p>
           <TierSelect
             label="KasiTech Business"
             value={commercial.kbPlan}
@@ -1186,7 +1484,10 @@ function BuildSummaryPanel(props: {
   deliveryEst: ReturnType<typeof estimateDelivery>;
   changeLog: PriceChangeEntry[];
   bundleHints: ReturnType<typeof detectEligibleBundles>;
+  packageBundleOverlap: ReturnType<typeof detectPackageBundleOverlap>;
   onApplyBundle: (code: string) => void;
+  onUseBundleWebsite: () => void;
+  onKeepPackageAndBundle: () => void;
   onSave: () => void;
   onShare: () => void;
   onEstimate: () => void;
@@ -1239,6 +1540,55 @@ function BuildSummaryPanel(props: {
         <Row k="Est. delivery" v={props.deliveryEst.baselineLabel} />
       </dl>
 
+      {props.packageBundleOverlap && (
+        <div className="mt-3 border border-amber-700/50 bg-amber-950/30 p-2 text-[11px] text-amber-50">
+          <p>{props.packageBundleOverlap.message}</p>
+          <div className="mt-2 flex flex-col gap-1">
+            <button
+              type="button"
+              className="text-left text-kasi-green underline"
+              onClick={props.onUseBundleWebsite}
+            >
+              Use bundle website
+            </button>
+            <button
+              type="button"
+              className="text-left text-amber-100/80 underline"
+              onClick={props.onKeepPackageAndBundle}
+            >
+              Keep business package + bundle
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-4 space-y-2 border-t border-kasi-border pt-3">
+        <div className="font-mono text-[10px] uppercase tracking-wider text-kasi-grey">
+          What you&apos;re building
+        </div>
+        {pricing.charges.slice(0, 8).map((ch) => (
+          <div key={ch.itemCode + ch.name} className="text-[11px]">
+            <div className="flex justify-between gap-2">
+              <span className="text-kasi-ivory">{ch.name}</span>
+              <span className="shrink-0 font-mono text-kasi-green">
+                {formatTsh(ch.amountTsh)}
+                {ch.billing === "MONTHLY"
+                  ? "/mo"
+                  : ch.billing === "ANNUAL"
+                    ? "/yr"
+                    : ""}
+              </span>
+            </div>
+            <p className="text-kasi-grey">{outcomeForCode(ch.itemCode)}</p>
+          </div>
+        ))}
+        {pricing.charges.length > 8 && (
+          <p className="text-[10px] text-kasi-grey">
+            +{pricing.charges.length - 8} more lines in the estimate PDF
+          </p>
+        )}
+      </div>
+
       <div className="mt-4 space-y-1 border-t border-kasi-border pt-3">
         <div className="flex justify-between text-sm">
           <span>One-time</span>
@@ -1275,14 +1625,16 @@ function BuildSummaryPanel(props: {
                   You can save {formatTsh(b.savingsTsh)} with {b.name}
                 </p>
               ) : (
-                <p>This bundle matches your build: {b.name}</p>
+                <p>{b.name} matches your build</p>
               )}
               <button
                 type="button"
                 className="mt-1 text-kasi-green underline"
                 onClick={() => props.onApplyBundle(b.bundleCode)}
               >
-                Apply bundle
+                {b.showSavings && b.savingsTsh != null
+                  ? "Apply bundle"
+                  : "View / apply bundle"}
               </button>
             </div>
           ))}

@@ -3,6 +3,10 @@
 import { useMemo, useState } from "react";
 import type { FictionalBusiness } from "@/demo-studio/industries/businesses";
 import type { PreviewCapabilities } from "@/demo-studio/configuration/capabilities";
+import { FlagshipAmani } from "./previews/FlagshipAmani";
+import { FlagshipJiko } from "./previews/FlagshipJiko";
+import { FlagshipTembea } from "./previews/FlagshipTembea";
+import { FlagshipNuru } from "./previews/FlagshipNuru";
 
 type Props = {
   business: FictionalBusiness;
@@ -30,7 +34,16 @@ function t(label: string, lang: "en" | "sw"): string {
   return SW[label] ?? label;
 }
 
-export function DemoWebsite({ business: b, caps, language, onLanguage }: Props) {
+export function DemoWebsite(props: Props) {
+  const { business: b } = props;
+  if (b.industry === "beauty") return <FlagshipAmani {...props} />;
+  if (b.industry === "restaurant") return <FlagshipJiko {...props} />;
+  if (b.industry === "tourism") return <FlagshipTembea {...props} />;
+  if (b.industry === "real-estate") return <FlagshipNuru {...props} />;
+  return <GenericDemoWebsite {...props} />;
+}
+
+function GenericDemoWebsite({ business: b, caps, language, onLanguage }: Props) {
   const [path, setPath] = useState("home");
   const [bookingStep, setBookingStep] = useState(0);
   const [bookingDone, setBookingDone] = useState(false);

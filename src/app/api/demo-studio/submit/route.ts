@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { persistSubmissionIntent } from "@/demo-studio/persistence/submissions";
-import { getConfigStore } from "@/demo-studio/persistence/store";
+import {
+  getConfigStore,
+  PersistenceMisconfiguredError,
+} from "@/demo-studio/persistence/store";
 
 export const runtime = "nodejs";
 
@@ -39,6 +42,9 @@ export async function POST(req: Request) {
       leadStatus: row.leadStatus,
     });
   } catch (e) {
+    if (e instanceof PersistenceMisconfiguredError) {
+      return NextResponse.json({ error: e.message }, { status: 503 });
+    }
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Submit failed" },
       { status: 500 },

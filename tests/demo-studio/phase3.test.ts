@@ -286,9 +286,11 @@ describe("Phase 3 Demo Studio", () => {
       snapshot: pricing.snapshot,
     });
     expect(pdf.byteLength).toBeGreaterThan(800);
-    const text = pdf.toString("binary");
-    expect(text.startsWith("%PDF")).toBe(true);
-    expect(text.includes("2026") || text.includes("KT-PB")).toBe(true);
+    expect(pdf.subarray(0, 4).toString()).toBe("%PDF");
+    const { PDFDocument } = await import("pdf-lib");
+    const doc = await PDFDocument.load(pdf);
+    expect(doc.getTitle()).toContain("KT-CONFIG-TEST01");
+    expect(doc.getSubject()).toContain(PRICE_BOOK_VERSION);
   });
 
   it("validation: unknown selection yields client-facing failure path", () => {

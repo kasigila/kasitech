@@ -35,6 +35,7 @@ export type FeatureGroup =
   | "commerce"
   | "content"
   | "marketing"
+  | "local"
   | "advanced"
   | "all";
 

@@ -20,9 +20,14 @@ export { trackDemo } from "./analytics/track";
 export { KB_MODULES, kbModuleState, planLabel } from "./configuration/kb-modules";
 export {
   detectEligibleBundles,
+  detectPackageBundleOverlap,
   replaceExclusiveMember,
   exclusiveFamilyFor,
+  clearExclusiveFamily,
+  activeExclusiveCode,
   makeChangeEntry,
   formatDelta,
 } from "./configuration/mutations";
+export { normalizeExclusiveFeatureCodes } from "./configuration/normalize";
+export { outcomeForCode } from "./configuration/outcomes";
 export type * from "./types";

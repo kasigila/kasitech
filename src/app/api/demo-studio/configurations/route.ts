@@ -6,7 +6,10 @@ import type { CommercialConfigState, DemoIndustryId } from "@/demo-studio/types"
 import {
   generateEditToken,
 } from "@/demo-studio/persistence/types";
-import { getConfigStore } from "@/demo-studio/persistence/store";
+import {
+  getConfigStore,
+  PersistenceMisconfiguredError,
+} from "@/demo-studio/persistence/store";
 
 export const runtime = "nodejs";
 
@@ -82,6 +85,9 @@ export async function POST(req: Request) {
       sharePath: `/build/${record.configurationId}`,
     });
   } catch (e) {
+    if (e instanceof PersistenceMisconfiguredError) {
+      return NextResponse.json({ error: e.message }, { status: 503 });
+    }
     const msg = e instanceof Error ? e.message : "Save failed";
     const status = msg === "EDIT_FORBIDDEN" ? 403 : 500;
     return NextResponse.json({ error: msg }, { status });
@@ -89,17 +95,27 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const id = url.searchParams.get("id");
-  if (!id) {
-    return NextResponse.json({ error: "id required" }, { status: 400 });
+  try {
+    const url = new URL(req.url);
+    const id = url.searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "id required" }, { status: 400 });
+    }
+    const store = await getConfigStore();
+    const record = await store.getById(id);
+    if (!record) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    // Public read — never return editTokenHash
+    const { editTokenHash: _, ...publicRecord } = record;
+    return NextResponse.json(publicRecord);
+  } catch (e) {
+    if (e instanceof PersistenceMisconfiguredError) {
+      return NextResponse.json({ error: e.message }, { status: 503 });
+    }
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Load failed" },
+      { status: 500 },
+    );
   }
-  const store = await getConfigStore();
-  const record = await store.getById(id);
-  if (!record) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-  // Public read — never return editTokenHash
-  const { editTokenHash: _, ...publicRecord } = record;
-  return NextResponse.json(publicRecord);
 }

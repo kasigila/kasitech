@@ -27,7 +27,7 @@ export const INDUSTRY_RECOMMENDATIONS: Record<DemoIndustryId, string[]> = {
     "BKG-TOUR",
     "TOUR-INQ",
     "PAY-STD",
-    "ADD-MULTI",
+    "LANG-ENSW",
     "LOC-GBP",
   ],
   "real-estate": ["RE-LIST", "RE-FILT", "RE-INQ", "RE-MAP", "RE-AGENT", "ADD-INQ"],
