@@ -177,8 +177,9 @@ Capture post-deploy into `phase3-production-visual-audit/` (or successor folder)
 - [x] KB module depth + gating
 - [x] Package picker / summary outcomes / client language
 - [x] Tests green (66)
-- [ ] Production re-QA after deploy (operator / post-push)
+- [x] Production re-QA after deploy (estimate fixed; save fail-safe verified; **DB env still required for durable save**)
 - [ ] Administrator sign-off
+- [ ] Production `DATABASE_URL` + migrations (operator)
 
 ---
 
