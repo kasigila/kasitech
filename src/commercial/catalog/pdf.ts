@@ -370,17 +370,6 @@ async function writeCapabilityDetail(
   if (g.notes) field(ctx, "NOTES", g.notes);
 }
 
-async function writePlanDetail(ctx: Ctx, g: PlanGuide, qr: QrCache) {
-  productHeader(ctx, g.item.name, displayItemPrice(g.item));
-  field(ctx, "VALUE", g.valueProp);
-  field(ctx, "WHO IT IS FOR", g.whoFor);
-  label(ctx, "INCLUDED");
-  for (const line of g.included) bullet(ctx, line);
-  field(ctx, "WHEN TO UPGRADE", g.whenUpgrade);
-  await seeLive(ctx, g.seeLiveUrl, qr);
-  if (g.notes) field(ctx, "NOTES", g.notes);
-}
-
 function cover(pdf: PDFDocument, font: PDFFont, fontBold: PDFFont) {
   const pg = pdf.addPage([PAGE.w, PAGE.h]);
   pg.drawRectangle({ x: 0, y: 0, width: PAGE.w, height: PAGE.h, color: BLACK });
