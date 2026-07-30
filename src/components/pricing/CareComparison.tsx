@@ -1,75 +1,63 @@
 import type { CatalogItem } from "@/commercial/types";
-import { displayItemPrice, billingLabel } from "@/commercial/catalog/presentation";
+import { displayItemPrice } from "@/commercial/catalog/presentation";
 import { cn } from "@/lib/cn";
 
 type Props = {
   plans: CatalogItem[];
 };
 
-/** Care comparison — catalog text only; no invented SLAs/hours. */
-export function CareComparison({ plans }: Props) {
-  const columns = [
-    { code: "NONE", name: "No Care Plan", item: null as CatalogItem | null },
-    ...plans.map((p) => ({ code: p.code, name: p.name, item: p })),
-  ];
+function payLabel(item: CatalogItem): string {
+  if (item.billing === "MONTHLY") return "Paid monthly";
+  if (item.billing === "ANNUAL") return "Paid yearly";
+  if (item.billing === "CUSTOM_QUOTE") return "Ask us";
+  return "One-time";
+}
 
+/** Care plans as readable cards — no wide spreadsheet. */
+export function CareComparison({ plans }: Props) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-        <thead>
-          <tr className="border-b border-kasi-border">
-            <th className="py-3 pr-4 font-mono text-[10px] font-normal tracking-[0.14em] text-kasi-grey">
-              PLAN
-            </th>
-            {columns.map((c) => (
-              <th
-                key={c.code}
-                className="px-2 py-3 font-mono text-[10px] font-normal tracking-[0.1em] text-kasi-grey"
-              >
-                {c.name.toUpperCase()}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="border-b border-kasi-border/70">
-            <td className="py-3.5 pr-4 text-kasi-grey">Price</td>
-            {columns.map((c) => (
-              <td
-                key={c.code}
-                className={cn(
-                  "px-2 py-3.5 font-mono text-xs",
-                  c.item ? "text-kasi-ivory" : "text-kasi-grey",
-                )}
-              >
-                {c.item ? displayItemPrice(c.item) : "—"}
-              </td>
-            ))}
-          </tr>
-          <tr className="border-b border-kasi-border/70">
-            <td className="py-3.5 pr-4 text-kasi-grey">Billing</td>
-            {columns.map((c) => (
-              <td key={c.code} className="px-2 py-3.5 text-xs text-kasi-grey">
-                {c.item ? billingLabel(c.item.billing) : "—"}
-              </td>
-            ))}
-          </tr>
-          <tr className="border-b border-kasi-border/70">
-            <td className="py-3.5 pr-4 align-top text-kasi-grey">Scope</td>
-            {columns.map((c) => (
-              <td key={c.code} className="px-2 py-3.5 text-xs leading-relaxed text-kasi-ivory/80">
-                {c.item
-                  ? c.item.clientDescription
-                  : "Site can remain live if hosting and required third-party services stay active. No KasiTech care entitlement."}
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-      <p className="mt-4 max-w-2xl text-xs leading-relaxed text-kasi-grey">
-        Support hours, response times, backup frequency, and hosting inclusion
-        are not listed here unless approved in the Price Book. Ask for a formal
-        quotation for operational detail.
+    <div>
+      <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <li className="border border-kasi-border p-5 md:p-6">
+          <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-grey">
+            OPTIONAL
+          </p>
+          <h3 className="mt-3 font-display text-xl tracking-[-0.02em]">
+            No Care Plan
+          </h3>
+          <p className="mt-3 font-mono text-sm text-kasi-grey">—</p>
+          <p className="mt-4 text-sm leading-relaxed text-kasi-grey">
+            Your site can stay live if hosting stays active. Updates and fixes
+            are quoted separately when you need them.
+          </p>
+        </li>
+        {plans.map((plan) => (
+          <li key={plan.code} className="border border-kasi-border p-5 md:p-6">
+            <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-green">
+              {payLabel(plan).toUpperCase()}
+            </p>
+            <h3 className="mt-3 font-display text-xl tracking-[-0.02em]">
+              {plan.name}
+            </h3>
+            <p
+              className={cn(
+                "mt-3 font-mono text-sm",
+                plan.billing === "CUSTOM_QUOTE"
+                  ? "text-kasi-green"
+                  : "text-kasi-ivory",
+              )}
+            >
+              {displayItemPrice(plan)}
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-kasi-ivory/85">
+              {plan.clientDescription}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-6 max-w-2xl text-sm leading-relaxed text-kasi-grey">
+        Exact support hours and response times are confirmed on your quotation —
+        not guessed from this page.
       </p>
     </div>
   );

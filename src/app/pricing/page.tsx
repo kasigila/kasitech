@@ -6,13 +6,13 @@ import { ServiceBrowser } from "@/components/pricing/ServiceBrowser";
 import { BundlesSection } from "@/components/pricing/BundlesSection";
 import { CareComparison } from "@/components/pricing/CareComparison";
 import { PricingStickyNav } from "@/components/pricing/PricingStickyNav";
+import { PricingPathways } from "@/components/pricing/PricingPathways";
 import { loadPriceBook } from "@/commercial/price-book/load";
 import {
   INDUSTRIES,
   PACKAGE_POSITIONING,
   catalogMeta,
   displayItemPrice,
-  billingLabel,
   getBrowsableItems,
   getBundleViews,
   getPackageInclusionCodes,
@@ -24,11 +24,10 @@ import { cn } from "@/lib/cn";
 export const metadata: Metadata = {
   title: "Services & Pricing",
   description:
-    "KasiTech services and pricing catalog powered by KT-PB-2026.1 — websites, features, bundles, care, and custom solutions in Tanzanian Shillings.",
+    "Simple KasiTech pricing in Tanzanian Shillings — website packages, bundles, care, and add-ons. Clear scope before you buy.",
   openGraph: {
-    title: "KasiTech Services & Pricing · KT-PB-2026.1",
-    description:
-      "Clear scope. Clear pricing. Built around your business.",
+    title: "KasiTech Services & Pricing",
+    description: "Clear scope. Clear pricing. Built around your business.",
   },
 };
 
@@ -65,9 +64,8 @@ export default function PricingPage() {
       const ent = book.entitlements.find((e) => e.code === code);
       return ent?.name ?? code;
     });
-    // Always surface baseline entitlement names for packages that have them
     if (!inclusions[p.code].length && PACKAGE_POSITIONING[p.code]) {
-      inclusions[p.code] = ["Website baseline inclusions (see package scope)"];
+      inclusions[p.code] = ["Website basics included with every package"];
     }
   }
 
@@ -84,43 +82,25 @@ export default function PricingPage() {
         />
         <div className="relative mx-auto max-w-[1400px]">
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            SERVICES &amp; PRICING · {PRICE_BOOK_VERSION}
+            SERVICES &amp; PRICING
           </p>
-          <h1 className="mt-6 max-w-[11ch] font-display text-5xl leading-[0.92] tracking-[-0.045em] md:text-7xl">
-            KASITECH
+          <h1 className="mt-6 max-w-[14ch] font-display text-5xl leading-[0.92] tracking-[-0.045em] md:text-7xl">
+            What do you need?
           </h1>
-          <p className="mt-4 max-w-[20ch] font-display text-2xl tracking-[-0.03em] text-kasi-ivory/90 md:text-3xl">
-            From a focused site to a full digital platform.
-          </p>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-kasi-grey">
-            {meta.tagline} {meta.currencyNote}
+            Pick the path that matches your situation. Prices are in Tanzanian
+            Shillings. Nothing starts until you approve a written quotation.
           </p>
 
-          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm">
-            <a href="#websites" className="text-kasi-green hover:underline">
-              Explore website packages →
-            </a>
-            <a href="#browse" className="text-kasi-grey hover:text-kasi-ivory">
-              Browse all services →
-            </a>
-            <a href="#bundles" className="text-kasi-grey hover:text-kasi-ivory">
-              View bundles →
-            </a>
-            <a href="#industries" className="text-kasi-grey hover:text-kasi-ivory">
-              Find by industry →
-            </a>
-            <a href="/demo-studio" className="text-kasi-green hover:underline">
-              Build my project →
-            </a>
-          </div>
+          <PricingPathways />
 
-          <div className="mt-8 flex flex-wrap items-center gap-5">
+          <div className="mt-10 flex flex-wrap items-center gap-5">
             <BuyCtas source="pricing" />
             <a
               href="/api/catalog/pdf"
               className="text-sm text-kasi-grey transition hover:text-kasi-green"
             >
-              Download catalog PDF →
+              Download PDF guide →
             </a>
           </div>
         </div>
@@ -130,21 +110,21 @@ export default function PricingPage() {
         <PricingStickyNav />
       </div>
 
-      {/* Packages */}
+      {/* 01 Websites */}
       <section
         id="websites"
         className="scroll-mt-36 border-t border-kasi-border px-5 py-20 md:px-8 md:py-24"
       >
         <div className="mx-auto max-w-[1400px]">
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            01 · WEBSITE PACKAGES
+            01 · WEBSITES
           </p>
           <h2 className="mt-4 max-w-[16ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
-            Choose the foundation that fits.
+            Start with the right website size.
           </h2>
           <p className="mt-5 max-w-xl text-base text-kasi-grey">
-            Exact prices and inclusions from {PRICE_BOOK_VERSION}. Features
-            already in your package are not charged again.
+            Tap a package to see what it includes and how long it usually takes.
+            Features already in your package are not charged again.
           </p>
           <div className="mt-12">
             <PackageComparison packages={packages} inclusions={inclusions} />
@@ -152,80 +132,21 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Browse */}
-      <section
-        id="browse"
-        className="scroll-mt-36 border-t border-kasi-border bg-[#0c0c0c] px-5 py-20 md:px-8 md:py-24"
-      >
-        <div className="mx-auto max-w-[1400px]">
-          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            02 · ALL SERVICES
-          </p>
-          <h2 className="mt-4 max-w-[18ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
-            Every approved service. Searchable.
-          </h2>
-          <p className="mt-5 max-w-xl text-base text-kasi-grey">
-            Filter by category and billing. Open any row for plain-language
-            detail. Billing labels are intentional — monthly is never shown as
-            one-time.
-          </p>
-          <div className="mt-12">
-            <ServiceBrowser items={browsable} />
-          </div>
-        </div>
-      </section>
-
-      {/* Industries */}
-      <section
-        id="industries"
-        className="scroll-mt-36 border-t border-kasi-border px-5 py-20 md:px-8 md:py-24"
-      >
-        <div className="mx-auto max-w-[1400px]">
-          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            03 · INDUSTRY SOLUTIONS
-          </p>
-          <h2 className="mt-4 max-w-[16ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
-            Start from your sector.
-          </h2>
-          <p className="mt-5 max-w-xl text-base text-kasi-grey">
-            Industry labels surface the same canonical services — never a second
-            price for the same capability.
-          </p>
-          <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {INDUSTRIES.map((ind) => (
-              <li key={ind.id}>
-                <a
-                  href={`#browse`}
-                  className="block border border-kasi-border px-4 py-4 transition hover:border-kasi-green/50"
-                >
-                  <p className="font-display text-lg tracking-[-0.02em]">
-                    {ind.label}
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] tracking-[0.12em] text-kasi-grey">
-                    SEARCH ABOVE · {ind.tags[0]?.toUpperCase()}
-                  </p>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Bundles */}
+      {/* 02 Bundles — natural next step for owners */}
       <section
         id="bundles"
         className="scroll-mt-36 border-t border-kasi-border bg-[#0c0c0c] px-5 py-20 md:px-8 md:py-24"
       >
         <div className="mx-auto max-w-[1400px]">
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            04 · BUNDLES
+            02 · READY-MADE BUNDLES
           </p>
-          <h2 className="mt-4 max-w-[16ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
-            Fixed scope. Honest savings.
+          <h2 className="mt-4 max-w-[18ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
+            Common setups, priced together.
           </h2>
           <p className="mt-5 max-w-xl text-base text-kasi-grey">
-            Savings appear only when the commercial engine can calculate them
-            from approved standalone prices.
+            For salons, restaurants, shops, tours, and more — website plus the
+            tools people usually need, in one clear price.
           </p>
           <div className="mt-12">
             <BundlesSection bundles={bundles} />
@@ -233,21 +154,21 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Care */}
+      {/* 03 Care */}
       <section
         id="care"
         className="scroll-mt-36 border-t border-kasi-border px-5 py-20 md:px-8 md:py-24"
       >
         <div className="mx-auto max-w-[1400px]">
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            05 · CARE &amp; MAINTENANCE
+            03 · AFTER LAUNCH
           </p>
           <h2 className="mt-4 max-w-[16ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
-            Keep it cared for — or not.
+            Keep the site cared for.
           </h2>
           <p className="mt-5 max-w-xl text-base text-kasi-grey">
-            Compare approved care plans. We do not invent hours or SLAs that are
-            not in the Price Book.
+            Optional. Care is for updates and ongoing attention after your site
+            goes live. You can launch without it.
           </p>
           <div className="mt-12">
             <CareComparison plans={carePlans} />
@@ -255,23 +176,23 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* KB */}
+      {/* 04 KB */}
       <section
         id="kasitech-business"
         className="scroll-mt-36 border-t border-kasi-border bg-[#0c0c0c] px-5 py-20 md:px-8 md:py-24"
       >
         <div className="mx-auto max-w-[1400px]">
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            06 · KASITECH BUSINESS
+            04 · RUN THE BUSINESS
           </p>
           <h2 className="mt-4 max-w-[18ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
-            Operate after you launch.
+            Tools after you launch.
           </h2>
           <p className="mt-5 max-w-xl text-base text-kasi-grey">
-            Optional plans that extend a website into tools for running the
-            business. Only explicitly defined modules are listed.{" "}
+            Optional monthly plans for managing content, bookings, customers,
+            and day-to-day operations from one place.{" "}
             <a href="/demo-studio" className="text-kasi-green hover:underline">
-              Preview in Demo Studio →
+              See a live preview →
             </a>
           </p>
           <ul className="mt-12 divide-y divide-kasi-border border-y border-kasi-border">
@@ -284,9 +205,6 @@ export default function PricingPage() {
                   <p className="font-display text-xl tracking-[-0.02em]">{p.name}</p>
                   <p className="mt-2 max-w-xl text-sm text-kasi-grey">
                     {p.clientDescription}
-                  </p>
-                  <p className="mt-2 font-mono text-[10px] tracking-[0.14em] text-kasi-grey">
-                    {billingLabel(p.billing)}
                   </p>
                 </div>
                 <p
@@ -305,18 +223,80 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Custom + delivery + third party */}
+      {/* 05 Industries — now filters browse */}
+      <section
+        id="industries"
+        className="scroll-mt-36 border-t border-kasi-border px-5 py-20 md:px-8 md:py-24"
+      >
+        <div className="mx-auto max-w-[1400px]">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
+            05 · YOUR KIND OF BUSINESS
+          </p>
+          <h2 className="mt-4 max-w-[16ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
+            Start from what you do.
+          </h2>
+          <p className="mt-5 max-w-xl text-base text-kasi-grey">
+            Choose your sector and we jump to matching services below. Same
+            prices — just easier to find.
+          </p>
+          <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {INDUSTRIES.map((ind) => (
+              <li key={ind.id}>
+                <Link
+                  href={`/pricing?industry=${ind.id}&q=${encodeURIComponent(ind.tags[0] ?? ind.label)}#browse`}
+                  className="block border border-kasi-border px-4 py-4 transition hover:border-kasi-green/50"
+                >
+                  <p className="font-display text-lg tracking-[-0.02em]">
+                    {ind.label}
+                  </p>
+                  <p className="mt-1 text-sm text-kasi-grey">
+                    See matching services →
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 06 Browse — full catalog later in the journey */}
+      <section
+        id="browse"
+        className="scroll-mt-36 border-t border-kasi-border bg-[#0c0c0c] px-5 py-20 md:px-8 md:py-24"
+      >
+        <div className="mx-auto max-w-[1400px]">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
+            06 · ALL SERVICES
+          </p>
+          <h2 className="mt-4 max-w-[18ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
+            Search anything we sell.
+          </h2>
+          <p className="mt-5 max-w-xl text-base text-kasi-grey">
+            Type everyday words. Tap a service for a plain explanation and
+            price. You do not need to know product codes.
+          </p>
+          <div className="mt-12">
+            <ServiceBrowser items={browsable} />
+          </div>
+        </div>
+      </section>
+
+      {/* 07 Custom */}
       <section
         id="custom"
         className="scroll-mt-36 border-t border-kasi-border px-5 py-20 md:px-8 md:py-24"
       >
         <div className="mx-auto max-w-[1400px]">
           <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-            07 · CUSTOM SOLUTIONS
+            07 · CUSTOM WORK
           </p>
           <h2 className="mt-4 max-w-[16ch] font-display text-3xl tracking-[-0.03em] md:text-5xl">
-            When the catalog ends, scoping begins.
+            When a standard package is not enough.
           </h2>
+          <p className="mt-5 max-w-xl text-base text-kasi-grey">
+            Portals, dashboards, and complex systems are scoped with you first —
+            then priced in a written quotation.
+          </p>
           <ul className="mt-10 divide-y divide-kasi-border border-t border-kasi-border">
             {custom.map((p) => (
               <li
@@ -327,7 +307,7 @@ export default function PricingPage() {
                   <p className="text-[15px] text-kasi-ivory">{p.name}</p>
                   <p className="mt-1 text-sm text-kasi-grey">{p.clientDescription}</p>
                 </div>
-                <p className="font-mono text-sm text-kasi-green">Custom Quote</p>
+                <p className="font-mono text-sm text-kasi-green">Ask us</p>
               </li>
             ))}
           </ul>
@@ -337,12 +317,11 @@ export default function PricingPage() {
 
           <div id="delivery" className="mt-20 scroll-mt-36">
             <p className="font-mono text-[11px] tracking-[0.16em] text-kasi-green">
-              EXPEDITED DELIVERY
+              FASTER DELIVERY
             </p>
             <p className="mt-3 max-w-xl text-sm text-kasi-grey">
-              Relative acceleration from the approved catalog. Precise completion
-              dates require timeline rules in a later phase — subject to capacity
-              confirmation.
+              Optional speed-ups when you need the project sooner. Final dates
+              depend on capacity and are confirmed before work starts.
             </p>
             <ul className="mt-6 divide-y divide-kasi-border border-t border-kasi-border">
               {delivery.map((d) => (
@@ -361,19 +340,17 @@ export default function PricingPage() {
 
           <div className="mt-16 border border-kasi-border p-6 md:p-8">
             <p className="font-mono text-[11px] tracking-[0.16em] text-kasi-grey">
-              THIRD-PARTY COSTS
+              COSTS PAID TO OTHERS
             </p>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-kasi-grey">
-              Domains, hosting, ad spend, and provider fees are not hidden
-              KasiTech margins. Applicable charges are disclosed before approval.
+              Domain names, hosting, ads, and some payment fees are paid to other
+              companies. We list them before you approve — they are not hidden in
+              our build price.
             </p>
             <ul className="mt-6 space-y-2">
               {thirdParty.map((t) => (
                 <li key={t.code} className="text-sm text-kasi-ivory/85">
-                  {t.name}{" "}
-                  <span className="font-mono text-[10px] text-kasi-grey">
-                    · THIRD-PARTY
-                  </span>
+                  {t.name}
                 </li>
               ))}
             </ul>
@@ -390,9 +367,8 @@ export default function PricingPage() {
             Tell us what you need to achieve.
           </h2>
           <p className="mt-6 max-w-lg text-base text-kasi-grey">
-            We recommend the right package and confirm a complete price before
-            work begins. The formal quotation — not this catalog — is the
-            approved scope.
+            {meta.tagline} We recommend a fit and confirm a complete price before
+            work begins.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-6">
             <BuyCtas source="pricing-footer" />
@@ -402,15 +378,9 @@ export default function PricingPage() {
             >
               Download PDF →
             </a>
-            <Link
-              href="/capabilities"
-              className="text-sm text-kasi-grey hover:text-kasi-ivory"
-            >
-              Capabilities →
-            </Link>
           </div>
           <p className="mt-14 font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
-            PRICING {PRICE_BOOK_VERSION} · KASITECH · DAR ES SALAAM
+            {PRICE_BOOK_VERSION} · KASITECH · DAR ES SALAAM
           </p>
         </div>
       </section>
