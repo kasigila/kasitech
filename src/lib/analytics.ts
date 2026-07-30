@@ -10,7 +10,9 @@ type AnalyticsEvent =
   | "form_complete"
   | "form_delivery_failed"
   | "capability_view"
-  | "card_save_contact";
+  | "card_save_contact"
+  | "card_view_catalog"
+  | "card_download_catalog";
 
 declare global {
   interface Window {

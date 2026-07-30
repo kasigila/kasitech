@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { CardCatalog } from "@/components/card/CardCatalog";
 import { CardMotion, CardMotionLate } from "@/components/card/CardMotion";
 import { CardQr } from "@/components/card/CardQr";
 import { SaveContactButton } from "@/components/card/SaveContactButton";
@@ -9,6 +10,12 @@ import {
   IconLinkedIn,
   IconWhatsApp,
 } from "@/components/site/SocialIcons";
+import {
+  displayItemPrice,
+  getWebsitePackages,
+} from "@/commercial/catalog/presentation";
+import { loadPriceBook } from "@/commercial/price-book/load";
+import { PRICE_BOOK_VERSION } from "@/commercial/types";
 import { founderPhoto } from "@/data/images";
 import { businessCard as c, cardWhatsAppUrl } from "@/lib/card";
 import { hasInstagram, hasLinkedIn } from "@/lib/social";
@@ -19,10 +26,11 @@ const contactPrimaryNote =
 export const metadata: Metadata = {
   title: "Digital Business Card",
   description:
-    "Save KasiTech founder Karen Marie Kasigila to your contacts. Mobile, WhatsApp, email, and website.",
+    "Save KasiTech founder Karen Marie Kasigila to your contacts. Mobile, WhatsApp, email, website, and services pricing catalog.",
   openGraph: {
     title: "KasiTech · Digital Business Card",
-    description: "Save Karen Marie Kasigila, Founder of KasiTech, to your phone.",
+    description:
+      "Save Karen Marie Kasigila, Founder of KasiTech, to your phone — plus services & pricing.",
     url: "/card",
   },
 };
@@ -52,6 +60,12 @@ function ContactRow({
 }
 
 export default function CardPage() {
+  const book = loadPriceBook();
+  const packages = getWebsitePackages(book).map((item) => ({
+    name: item.name,
+    priceLabel: displayItemPrice(item),
+  }));
+
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-kasi-black px-5 py-10 md:px-8 md:py-14">
       <div
@@ -164,7 +178,15 @@ export default function CardPage() {
           <div className="mt-10">
             <SaveContactButton />
           </div>
+        </CardMotionLate>
 
+        <CardMotionLate delay={0.3}>
+          <div className="mt-12 border-t border-kasi-border pt-10">
+            <CardCatalog version={PRICE_BOOK_VERSION} packages={packages} />
+          </div>
+        </CardMotionLate>
+
+        <CardMotionLate delay={0.38}>
           <div className="mt-10 flex items-end justify-between gap-6 border-t border-kasi-border pt-8">
             <div>
               <p className="font-mono text-[10px] tracking-[0.18em] text-kasi-grey">
