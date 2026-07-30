@@ -39,8 +39,20 @@ import { normalizeExclusiveFeatureCodes } from "@/demo-studio/configuration/norm
 import { outcomeForCode } from "@/demo-studio/configuration/outcomes";
 import type { CommercialSnapshot } from "@/commercial";
 import { billingLabel } from "@/commercial/catalog/presentation";
+import type { ProposalInvestment } from "@/proposals/registry";
+import type { FictionalBusiness } from "@/demo-studio/industries/businesses";
 import { DemoWebsite } from "./DemoWebsite";
 import { KbPreview } from "./KbPreview";
+
+type ProposalRecommended = {
+  packageLabel: string;
+  careLabel: string;
+  socialLabel: string;
+  kbPlanLabel: string | null;
+  capabilities: string[];
+  modules: string[];
+  architecture: string[];
+};
 
 type Props = {
   initialIndustry?: DemoIndustryId;
@@ -51,6 +63,16 @@ type Props = {
     frozenSnapshot?: CommercialSnapshot;
     fromCatalog?: boolean;
     catalogViewingLabel?: string;
+    fromProposal?: boolean;
+    proposalId?: string;
+    proposalSlug?: string;
+    proposalDisclaimer?: string;
+    proposalInvestment?: ProposalInvestment;
+    proposalRecommended?: ProposalRecommended;
+    proposalClientName?: string;
+    proposalReturnPath?: string;
+    proposalBrand?: FictionalBusiness;
+    proposalView?: string;
   };
 };
 
@@ -169,8 +191,16 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
   const [catalogLocked, setCatalogLocked] = useState(
     Boolean(initialConfig?.fromCatalog),
   );
+  const [proposalBanner, setProposalBanner] = useState(
+    Boolean(initialConfig?.fromProposal),
+  );
+  const [proposalLocked, setProposalLocked] = useState(
+    Boolean(initialConfig?.fromProposal),
+  );
   const catalogLabel = initialConfig?.catalogViewingLabel ?? "Catalog selection";
-  const readOnly = Boolean(initialConfig?.readOnly) || catalogLocked;
+  const fromProposal = Boolean(initialConfig?.fromProposal);
+  const readOnly =
+    Boolean(initialConfig?.readOnly) || catalogLocked || proposalLocked;
 
   useEffect(() => {
     if (deviceInitialized) return;
@@ -223,7 +253,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
     [activeCommercial],
   );
   const business = commercial.industry
-    ? businessForIndustry(commercial.industry)
+    ? initialConfig?.proposalBrand ?? businessForIndustry(commercial.industry)
     : null;
 
   const bundleHints = useMemo(
@@ -625,6 +655,41 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
         />
       )}
 
+      {proposalBanner && initialConfig?.fromProposal && (
+        <ProposalEntryBanner
+          proposalId={initialConfig.proposalId ?? "Proposal"}
+          clientName={initialConfig.proposalClientName ?? "Client"}
+          disclaimer={
+            initialConfig.proposalDisclaimer ??
+            "This demonstration represents the recommended solution."
+          }
+          investment={initialConfig.proposalInvestment}
+          recommended={initialConfig.proposalRecommended}
+          returnPath={initialConfig.proposalReturnPath}
+          locked={proposalLocked}
+          onExplore={() => {
+            setProposalBanner(true);
+            trackDemo("proposal_explore", {
+              proposal: initialConfig.proposalId,
+            });
+          }}
+          onCustomize={() => {
+            setProposalLocked(false);
+            trackDemo("proposal_customize", {
+              proposal: initialConfig.proposalId,
+            });
+          }}
+          onReturn={() => {
+            if (typeof window !== "undefined") {
+              window.location.href =
+                initialConfig.proposalReturnPath ??
+                "/proposals/credo-energy-group/";
+            }
+          }}
+          onDismiss={() => setProposalBanner(false)}
+        />
+      )}
+
       {statusMsg && (
         <div className="border-b border-kasi-border bg-[#111] px-4 py-1.5 text-[12px] text-kasi-grey">
           {statusMsg}
@@ -793,6 +858,8 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
               onCompare={() => setModals((m) => ({ ...m, compare: true }))}
               readOnly={readOnly}
               book={book}
+              proposalInvestment={initialConfig?.proposalInvestment}
+              proposalLocked={proposalLocked}
             />
           </aside>
         )}
@@ -834,6 +901,8 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
                 onCompare={() => setModals((m) => ({ ...m, compare: true }))}
                 readOnly={readOnly}
                 book={book}
+                proposalInvestment={initialConfig?.proposalInvestment}
+                proposalLocked={proposalLocked}
               />
             ) : (
               <Controls
@@ -1519,14 +1588,15 @@ function BuildSummaryPanel(props: {
   onCompare: () => void;
   readOnly: boolean;
   book: ReturnType<typeof loadPriceBook>;
+  proposalInvestment?: ProposalInvestment;
+  proposalLocked?: boolean;
 }) {
-  const { pricing, commercial, book } = props;
+  const { pricing, commercial, book, proposalInvestment, proposalLocked } = props;
   return (
     <div className="flex h-full flex-col overflow-y-auto p-3">
       <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
-        Your KasiTech build
-      </div>
-      <dl className="mt-3 space-y-1 text-[12px] text-kasi-grey">
+        {proposalInvestment ? "Proposal recommendation" : "Your KasiTech build"}
+      </div>      <dl className="mt-3 space-y-1 text-[12px] text-kasi-grey">
         <Row
           k="Package"
           v={
@@ -1614,29 +1684,63 @@ function BuildSummaryPanel(props: {
       </div>
 
       <div className="mt-4 space-y-1 border-t border-kasi-border pt-3">
-        <div className="flex justify-between text-sm">
-          <span>One-time</span>
-          <span className="font-mono">{formatTsh(pricing.totals.oneTimeTsh)}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span>Monthly</span>
-          <span className="font-mono">
-            {formatTsh(pricing.totals.monthlyTsh)}/mo
-          </span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span>Annual</span>
-          <span className="font-mono">
-            {formatTsh(pricing.totals.annualTsh)}/yr
-          </span>
-        </div>
-        {pricing.totals.estimatedFirst12MonthsTsh != null && (
-          <div className="flex justify-between pt-1 text-sm text-kasi-green">
-            <span>First 12 months</span>
-            <span className="font-mono">
-              {formatTsh(pricing.totals.estimatedFirst12MonthsTsh)}
-            </span>
-          </div>
+        {proposalInvestment && proposalLocked ? (
+          <>
+            <div className="mb-2 text-[10px] uppercase tracking-wider text-kasi-green">
+              Approved proposal investment
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Website</span>
+              <span className="font-mono text-kasi-green">
+                {formatTsh(proposalInvestment.websiteOneTimeTsh)}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Care / month</span>
+              <span className="font-mono">
+                {formatTsh(proposalInvestment.careMonthlyTsh)}/mo
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Social / month</span>
+              <span className="font-mono">
+                {formatTsh(proposalInvestment.socialMonthlyTsh)}/mo
+              </span>
+            </div>
+            <div className="flex justify-between pt-1 text-sm text-kasi-green">
+              <span>Monthly partnership</span>
+              <span className="font-mono">
+                {formatTsh(proposalInvestment.totalMonthlyTsh)}/mo
+              </span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex justify-between text-sm">
+              <span>One-time</span>
+              <span className="font-mono">{formatTsh(pricing.totals.oneTimeTsh)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Monthly</span>
+              <span className="font-mono">
+                {formatTsh(pricing.totals.monthlyTsh)}/mo
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Annual</span>
+              <span className="font-mono">
+                {formatTsh(pricing.totals.annualTsh)}/yr
+              </span>
+            </div>
+            {pricing.totals.estimatedFirst12MonthsTsh != null && (
+              <div className="flex justify-between pt-1 text-sm text-kasi-green">
+                <span>First 12 months</span>
+                <span className="font-mono">
+                  {formatTsh(pricing.totals.estimatedFirst12MonthsTsh)}
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -2078,6 +2182,118 @@ function CatalogEntryBanner({
             onClick={onCustomize}
           >
             Customize this build
+          </button>
+          <button
+            type="button"
+            className="text-[11px] text-kasi-grey underline"
+            onClick={onDismiss}
+          >
+            Dismiss banner
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProposalEntryBanner({
+  proposalId,
+  clientName,
+  disclaimer,
+  investment,
+  recommended,
+  locked,
+  onCustomize,
+  onReturn,
+  onDismiss,
+}: {
+  proposalId: string;
+  clientName: string;
+  disclaimer: string;
+  investment?: ProposalInvestment;
+  recommended?: ProposalRecommended;
+  returnPath?: string;
+  locked: boolean;
+  onExplore: () => void;
+  onCustomize: () => void;
+  onReturn: () => void;
+  onDismiss: () => void;
+}) {
+  return (
+    <div className="border-b border-kasi-green/50 bg-[#0d1a12] px-4 py-4 text-[12px] text-kasi-ivory">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kasi-green">
+            Proposal Mode{locked ? " · Read-only recommendation" : " · Customizing"}
+          </div>
+          <div className="mt-1 font-display text-lg">
+            {clientName} · {proposalId}
+          </div>
+          <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-kasi-grey">
+            {disclaimer}
+          </p>
+          <dl className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {recommended && (
+              <>
+                <div>
+                  <dt className="text-kasi-grey">Recommended package</dt>
+                  <dd>{recommended.packageLabel}</dd>
+                </div>
+                <div>
+                  <dt className="text-kasi-grey">Care</dt>
+                  <dd>{recommended.careLabel}</dd>
+                </div>
+                <div>
+                  <dt className="text-kasi-grey">Social</dt>
+                  <dd>{recommended.socialLabel}</dd>
+                </div>
+              </>
+            )}
+            {investment && (
+              <>
+                <div>
+                  <dt className="text-kasi-grey">Website investment</dt>
+                  <dd className="font-mono text-kasi-green">
+                    {formatTsh(investment.websiteOneTimeTsh)}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-kasi-grey">Monthly partnership</dt>
+                  <dd className="font-mono text-kasi-green">
+                    {formatTsh(investment.totalMonthlyTsh)}
+                  </dd>
+                </div>
+              </>
+            )}
+          </dl>
+          {recommended?.capabilities?.length ? (
+            <p className="mt-3 text-[11px] text-kasi-grey">
+              <span className="text-kasi-ivory">Capabilities · </span>
+              {recommended.capabilities.slice(0, 5).join(" · ")}
+              {recommended.capabilities.length > 5 ? " · …" : ""}
+            </p>
+          ) : null}
+        </div>
+        <div className="flex shrink-0 flex-col gap-2">
+          {locked ? (
+            <button
+              type="button"
+              className="bg-kasi-green px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-kasi-black"
+              onClick={onCustomize}
+            >
+              Customize This Recommendation
+            </button>
+          ) : (
+            <div className="bg-white/10 px-3 py-2 text-center text-[11px] uppercase tracking-wider text-kasi-green">
+              Editing unlocked
+            </div>
+          )}
+          <button
+            type="button"
+            className="border border-white/20 px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-kasi-ivory"
+            onClick={onReturn}
+          >
+            Return to Proposal
           </button>
           <button
             type="button"

@@ -14,4 +14,7 @@ export type DemoStudioEvent =
   | "delivery_selected"
   | "start_mode_selected"
   | "catalog_customize"
-  | "catalog_deep_link_opened";
+  | "catalog_deep_link_opened"
+  | "proposal_explore"
+  | "proposal_customize"
+  | "proposal_mode_opened";

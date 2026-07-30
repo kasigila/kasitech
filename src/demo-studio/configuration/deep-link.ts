@@ -3,6 +3,10 @@ import { emptyCommercialState } from "@/demo-studio/commercial/bridge";
 import { INDUSTRY_PACKAGE_HINTS } from "@/demo-studio/configuration/recommendations";
 import { normalizeExclusiveFeatureCodes } from "@/demo-studio/configuration/normalize";
 import { loadPriceBook } from "@/commercial";
+import {
+  getProposalPreset,
+  type ProposalPreset,
+} from "@/proposals/registry";
 
 /** Public origin used in catalog QR / SEE IT LIVE links. */
 export const DEMO_STUDIO_ORIGIN = "https://www.kasitechinnovations.com";
@@ -134,16 +138,37 @@ function resolveCode(
   return null;
 }
 
+function paramGet(
+  params: URLSearchParams | Record<string, string | string[] | undefined>,
+  k: string,
+): string | undefined {
+  if (params instanceof URLSearchParams) {
+    return params.get(k) ?? undefined;
+  }
+  const v = params[k];
+  return Array.isArray(v) ? v[0] : v;
+}
+
+/** Resolve a proposal deep-link (?proposal=KT-CEG-2026-001 or ?client=credo-energy-group). */
+export function parseProposalSearchParams(
+  params: URLSearchParams | Record<string, string | string[] | undefined>,
+): ProposalPreset | null {
+  const proposal =
+    paramGet(params, "proposal") ??
+    paramGet(params, "client") ??
+    paramGet(params, "ref");
+  return getProposalPreset(proposal);
+}
+
 export function parseDemoStudioSearchParams(
   params: URLSearchParams | Record<string, string | string[] | undefined>,
 ): CatalogDeepLink | null {
-  const get = (k: string): string | undefined => {
-    if (params instanceof URLSearchParams) {
-      return params.get(k) ?? undefined;
-    }
-    const v = params[k];
-    return Array.isArray(v) ? v[0] : v;
-  };
+  const get = (k: string): string | undefined => paramGet(params, k);
+
+  // Proposal Mode takes precedence over catalog deep-links.
+  if (get("proposal") || get("client") || get("ref")) {
+    return null;
+  }
 
   const packageCode = resolveCode(get("package"), PACKAGE_SLUGS);
   const bundleCode = resolveCode(get("bundle"), BUNDLE_SLUGS);
@@ -260,8 +285,14 @@ export function demoStudioUrl(opts: {
   feature?: string;
   care?: string;
   kb?: string;
+  proposal?: string;
 }): string {
   const q = new URLSearchParams();
+  if (opts.proposal) {
+    q.set("proposal", opts.proposal);
+    const qs = q.toString();
+    return `${DEMO_STUDIO_ORIGIN}/demo-studio${qs ? `?${qs}` : ""}`;
+  }
   if (opts.industry) q.set("industry", String(opts.industry));
   if (opts.package) q.set("package", opts.package);
   if (opts.bundle) q.set("bundle", opts.bundle);
@@ -270,6 +301,20 @@ export function demoStudioUrl(opts: {
   if (opts.kb) q.set("kb", opts.kb);
   const qs = q.toString();
   return `${DEMO_STUDIO_ORIGIN}/demo-studio${qs ? `?${qs}` : ""}`;
+}
+
+/** Proposal Mode URL (dedicated route preferred; query fallback supported). */
+export function proposalDemoStudioUrl(
+  preset: ProposalPreset | string,
+  view?: string,
+): string {
+  const slug =
+    typeof preset === "string"
+      ? getProposalPreset(preset)?.slug ?? preset
+      : preset.slug;
+  const base = `${DEMO_STUDIO_ORIGIN}/demo-studio/proposal/${slug}`;
+  if (!view) return base;
+  return `${base}?view=${encodeURIComponent(view)}`;
 }
 
 /** Major catalog products that get their own QR. */

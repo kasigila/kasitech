@@ -1248,3 +1248,783 @@ strong {
 .audit-card--l {
   border-top: 2px solid var(--muted);
 }
+
+/* ==========================================================================
+   PHASE P1 — Executive experience components
+   ========================================================================== */
+
+.photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo--fill {
+  position: relative;
+  overflow: hidden;
+  background: var(--charcoal);
+}
+
+.photo--fill img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cover-hero.photo--fill {
+  padding: 0 !important;
+}
+
+.cover-hero .photo-caption {
+  position: absolute;
+  left: 5mm;
+  bottom: 4mm;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 5.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.client-mark {
+  border: 0.5px solid rgba(255, 255, 255, 0.25);
+  padding: 2.5mm 4mm;
+  min-width: 42mm;
+  text-align: right;
+}
+
+.client-mark .cm-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 5.5pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 1mm;
+}
+
+.client-mark .cm-name {
+  font-family: "Outfit", sans-serif;
+  font-size: 10pt;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.cover-qr {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  margin-top: 4mm;
+}
+
+.cover-qr img {
+  width: 18mm;
+  height: 18mm;
+  background: #fff;
+  padding: 1mm;
+}
+
+.cover-qr .qr-copy {
+  font-size: 7.5pt;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.35;
+}
+
+.cover-qr .qr-copy strong {
+  display: block;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 6pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1mm;
+  font-weight: 500;
+}
+
+/* Executive dashboard */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3.5mm;
+}
+
+.dash-card {
+  border: 0.5px solid var(--rule);
+  padding: 3.5mm;
+  background: var(--soft);
+  min-height: 28mm;
+}
+
+.dash-card--accent {
+  background: var(--black);
+  border-color: var(--black);
+  color: #fff;
+}
+
+.dash-card--accent .label {
+  color: var(--accent);
+}
+
+.dash-card--wide {
+  grid-column: span 2;
+}
+
+.dash-metric {
+  font-family: "Outfit", sans-serif;
+  font-size: 16pt;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 1.5mm 0 1mm;
+  line-height: 1.1;
+}
+
+.dash-card--accent .dash-metric {
+  color: #fff;
+}
+
+.dash-card p {
+  margin: 0;
+  font-size: 7.5pt;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.dash-card--accent p {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.dash-qr-row {
+  display: flex;
+  align-items: center;
+  gap: 4mm;
+  margin-top: 4mm;
+  padding: 3.5mm;
+  border: 0.5px solid var(--rule);
+  background: #fff;
+}
+
+.dash-qr-row img {
+  width: 22mm;
+  height: 22mm;
+}
+
+/* Before / After */
+.ba-spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5mm;
+  height: 100%;
+}
+
+.ba-col h2 {
+  font-family: "Outfit", sans-serif;
+  font-size: 14pt;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 0 0 3mm;
+}
+
+.ba-item {
+  display: flex;
+  gap: 3mm;
+  padding: 2.8mm 0;
+  border-bottom: 0.5px solid var(--rule);
+}
+
+.ba-item:last-child {
+  border-bottom: none;
+}
+
+.ba-item .ba-mark {
+  width: 5mm;
+  height: 5mm;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.5mm;
+}
+
+.ba-item--bad .ba-mark {
+  background: #c45c5c;
+}
+
+.ba-item--good .ba-mark {
+  background: var(--accent-dim);
+}
+
+.ba-item strong {
+  display: block;
+  font-size: 9pt;
+  margin-bottom: 0.5mm;
+}
+
+.ba-visual {
+  height: 55mm;
+  margin-bottom: 4mm;
+  position: relative;
+  overflow: hidden;
+  background: var(--charcoal);
+}
+
+.ba-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ba-arrow-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Outfit", sans-serif;
+  font-size: 28pt;
+  color: var(--accent);
+  letter-spacing: -0.04em;
+}
+
+/* Website concepts */
+.concept-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4mm;
+}
+
+.concept-grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.concept-card {
+  border: 0.5px solid var(--rule);
+  overflow: hidden;
+  background: #fff;
+}
+
+.concept-frame {
+  height: 42mm;
+  background: linear-gradient(145deg, #0c1612 0%, #1a2e24 45%, #0b6e4f 100%);
+  position: relative;
+  color: #fff;
+  padding: 3.5mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.concept-frame--light {
+  background: linear-gradient(160deg, #f3f7f5 0%, #e8efeb 100%);
+  color: var(--ink);
+}
+
+.concept-frame--products {
+  background: linear-gradient(145deg, #0a1628 0%, #12324a 50%, #0b6e4f 100%);
+}
+
+.concept-frame--solutions {
+  background: linear-gradient(145deg, #1a1208 0%, #3d2a12 50%, #8a6a2f 100%);
+}
+
+.concept-frame--about {
+  background: linear-gradient(145deg, #101010 0%, #2a2a2a 100%);
+}
+
+.concept-frame--projects {
+  background: linear-gradient(145deg, #061820 0%, #0d3d4a 60%, #1a6b7a 100%);
+}
+
+.concept-frame--contact {
+  background: linear-gradient(145deg, #0c1612 0%, #163028 100%);
+}
+
+.concept-frame--mobile {
+  width: 28mm;
+  height: 52mm;
+  margin: 0 auto;
+  border-radius: 3mm;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+}
+
+.concept-nav {
+  display: flex;
+  gap: 2.5mm;
+  font-size: 5.5pt;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.concept-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 11pt;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  max-width: 70%;
+}
+
+.concept-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--black);
+  font-size: 6pt;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1.2mm 2.5mm;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.concept-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2.5mm 3mm;
+  border-top: 0.5px solid var(--rule);
+  background: var(--soft);
+}
+
+.concept-meta .cname {
+  font-size: 8pt;
+  font-weight: 500;
+}
+
+.qr-live {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+}
+
+.qr-live img {
+  width: 11mm;
+  height: 11mm;
+  background: #fff;
+}
+
+.qr-live span {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 5pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.qr-live span strong {
+  display: block;
+  color: var(--black);
+  font-weight: 500;
+}
+
+/* Walkthrough */
+.walk-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.walk-step {
+  display: grid;
+  grid-template-columns: 18mm 1fr 55mm;
+  gap: 4mm;
+  align-items: center;
+  padding: 3mm 0;
+  border-bottom: 0.5px solid var(--rule);
+}
+
+.walk-step .w-num {
+  font-family: "Outfit", sans-serif;
+  font-size: 18pt;
+  font-weight: 500;
+  color: var(--faint);
+  letter-spacing: -0.03em;
+}
+
+.walk-step .w-thumb {
+  height: 22mm;
+  background: var(--charcoal);
+  overflow: hidden;
+}
+
+.walk-step .w-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.walk-arrow {
+  text-align: center;
+  font-size: 10pt;
+  color: var(--accent-dim);
+  padding: 0.5mm 0;
+}
+
+/* Journeys */
+.journey-persona {
+  border: 0.5px solid var(--rule);
+  padding: 4mm;
+  margin-bottom: 3.5mm;
+}
+
+.journey-persona .jp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 3mm;
+}
+
+.journey-persona .jp-head strong {
+  font-family: "Outfit", sans-serif;
+  font-size: 12pt;
+  font-weight: 500;
+}
+
+/* Checklist */
+.checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5mm 5mm;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5mm;
+  padding: 2mm 0;
+  border-bottom: 0.5px solid var(--rule);
+  font-size: 8pt;
+}
+
+.check-item .box {
+  width: 3.5mm;
+  height: 3.5mm;
+  border: 1px solid var(--black);
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 0.8mm;
+  position: relative;
+}
+
+.check-item .box::after {
+  content: "";
+  position: absolute;
+  left: 0.8mm;
+  top: 0.2mm;
+  width: 1.2mm;
+  height: 2.2mm;
+  border: solid var(--black);
+  border-width: 0 1.2px 1.2px 0;
+  transform: rotate(45deg);
+}
+
+/* Outcomes */
+.outcome-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3mm;
+}
+
+.outcome-card {
+  padding: 3.5mm;
+  border-left: 2.5px solid var(--accent);
+  background: var(--soft);
+  min-height: 28mm;
+}
+
+.outcome-card strong {
+  display: block;
+  font-size: 9pt;
+  margin-bottom: 1.5mm;
+}
+
+/* Risk / Why now */
+.risk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3mm;
+}
+
+.risk-card {
+  border: 0.5px solid var(--rule);
+  padding: 3.5mm;
+}
+
+.risk-card .rn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 6pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-dim);
+  margin-bottom: 1.5mm;
+}
+
+/* Governance */
+.gov-table td:first-child {
+  font-weight: 500;
+  width: 38mm;
+}
+
+/* Metrics */
+.metric-row {
+  display: grid;
+  grid-template-columns: 42mm 1fr 35mm;
+  gap: 3mm;
+  padding: 2.5mm 0;
+  border-bottom: 0.5px solid var(--rule);
+  align-items: baseline;
+}
+
+.metric-row .m-name {
+  font-weight: 500;
+  font-size: 8.5pt;
+}
+
+.metric-row .m-why {
+  font-size: 7.5pt;
+  color: var(--muted);
+}
+
+.metric-row .m-cadence {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 6pt;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--body);
+}
+
+/* Social mocks */
+.social-mock {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3mm;
+}
+
+.social-post {
+  border: 0.5px solid var(--rule);
+  overflow: hidden;
+  background: #fff;
+}
+
+.social-post .sp-img {
+  height: 28mm;
+  background: var(--charcoal);
+  overflow: hidden;
+}
+
+.social-post .sp-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.social-post .sp-body {
+  padding: 2.5mm;
+}
+
+.social-post .sp-ch {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1mm;
+}
+
+.social-post .sp-title {
+  font-size: 8pt;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* Executive roadmap */
+.exec-roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.exec-rm-step {
+  display: grid;
+  grid-template-columns: 28mm 8mm 1fr;
+  gap: 0;
+  align-items: stretch;
+  min-height: 16mm;
+}
+
+.exec-rm-step .ers-phase {
+  font-family: "Outfit", sans-serif;
+  font-size: 10pt;
+  font-weight: 500;
+  padding: 2.5mm 0;
+  letter-spacing: -0.02em;
+}
+
+.exec-rm-step .ers-rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.exec-rm-step .ers-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule);
+}
+
+.exec-rm-step .ers-dot {
+  width: 4mm;
+  height: 4mm;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 1.5px solid var(--black);
+  z-index: 1;
+  margin-top: 3.5mm;
+  flex-shrink: 0;
+}
+
+.exec-rm-step .ers-body {
+  padding: 2.5mm 0 2.5mm 3mm;
+  border-bottom: 0.5px solid var(--rule);
+}
+
+.exec-rm-step .ers-body .dur {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 5.5pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Ecosystem chain */
+.eco-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5mm;
+  align-items: center;
+}
+
+.eco-chain .ec-node {
+  background: var(--black);
+  color: #fff;
+  font-size: 6.5pt;
+  padding: 1.8mm 2.5mm;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.eco-chain .ec-arrow {
+  color: var(--accent-dim);
+  font-size: 9pt;
+}
+
+.see-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5mm;
+  margin-top: 2mm;
+}
+
+.see-live img {
+  width: 12mm;
+  height: 12mm;
+}
+
+.see-live .sl-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 5.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.see-live .sl-text strong {
+  display: block;
+  color: var(--black);
+  font-size: 7pt;
+  margin-top: 0.5mm;
+  letter-spacing: 0.06em;
+}
+
+.diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3mm;
+}
+
+.diff-card {
+  padding: 3.5mm;
+  background: var(--soft);
+  border-top: 2px solid var(--black);
+  min-height: 32mm;
+}
+
+.diff-card strong {
+  display: block;
+  font-size: 9pt;
+  margin-bottom: 1.5mm;
+}
+
+.future-chain {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2mm;
+  margin-top: 3mm;
+}
+
+.future-node {
+  background: var(--black);
+  color: #fff;
+  padding: 3mm 2.5mm;
+  min-height: 28mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.future-node .fn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 5.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.future-node strong {
+  font-family: "Outfit", sans-serif;
+  font-size: 9pt;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.mega-nav-mock {
+  background: #0c1612;
+  color: #fff;
+  padding: 4mm;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: 3mm;
+  min-height: 38mm;
+}
+
+.mega-nav-mock .mn-col strong {
+  display: block;
+  font-size: 7.5pt;
+  margin-bottom: 2mm;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.mega-nav-mock .mn-col span {
+  display: block;
+  font-size: 7pt;
+  opacity: 0.7;
+  margin-bottom: 1mm;
+}
