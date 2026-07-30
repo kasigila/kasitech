@@ -113,18 +113,26 @@ Includes Phase 3 suite + Phase 3.1: persistence fail-safe, LANG-ENSW mapping, lo
 
 ## U. Production QA results
 
-Re-QA against https://www.kasitechinnovations.com/demo-studio is required **after** deploy with `DATABASE_URL` + migrations. Checklist:
+Re-QA against https://www.kasitechinnovations.com/demo-studio after deploy `c28ff3f` (2026-07-30):
 
-- [ ] Save → KT-CONFIG ID
-- [ ] `/build/[id]` cold retrieval (new context)
-- [ ] Share + estimate PDF 200
-- [ ] Beauty / Restaurant / Tourism / Real Estate flagships
-- [ ] Exclusive tier radios
-- [ ] Bundle recommendation (scratch + qualifying features)
-- [ ] Package cards + overlap banner
-- [ ] KB Launch vs Growth modules
-- [ ] Mobile default device
-- [ ] Commercial totals match engine
+| Check | Result |
+|---|---|
+| `/demo-studio` live | **200** — copy includes “Choose your type of business”; Amani present |
+| Flagship assets `/demo/{amani,jiko,tembea,nuru}/hero.jpg` | **200** |
+| `POST /api/demo-studio/estimate` | **200** `application/pdf` (PDF 1.7; ~2KB+ for sample) |
+| Old pdfkit Helvetica.afm 500 | **Gone** |
+| `POST /api/demo-studio/configurations` (save) | **503** with clear error: production requires `DATABASE_URL` — fail-safe working; **not** silent memory |
+| Cold `/build/[id]` durability | **Blocked until** Vercel `DATABASE_URL` + migrations |
+
+**Operator action required before client meetings that need Save/Share:**
+
+1. Set `DATABASE_URL` on Vercel production (Supabase pooler URL).
+2. Run `npm run db:migrate` against that database (ensure `project_configurations` + `configuration_submissions`).
+3. Redeploy / restart if needed, then re-test save → `/build/[id]` cold retrieval.
+
+Browser UI checklist (interactive): exclusive radios, package cards, overlap banner, KB Growth modules, mobile default — implemented in shipped build; re-spot-check after DB is configured.
+
+Screenshots: capture into `phase3-production-visual-audit/` during admin walkthrough once DB is live.
 
 ## V. Screenshots
 
