@@ -36,7 +36,9 @@ export type PackageGuide = {
   item: CatalogItem;
   valueProp: string;
   whatItDoes: string;
+  /** Package-specific scope (baseline listed once on the packages glance page). */
   included: string[];
+  includesBaseline: boolean;
   idealFor: string;
   commonlyUsedBy: string;
   seeLiveUrl: string;
@@ -147,9 +149,8 @@ export function buildPackageGuides(): PackageGuide[] {
   const packages = getWebsitePackages();
   return packages.map((item) => {
     const pos = PACKAGE_POSITIONING[item.code];
-    const baseline =
-      item.code === "WEB-CUS" ? [] : [...WEB_BASELINE_INCLUDED];
-    const included = [...baseline, ...packageExtras(item.code)];
+    const extras = packageExtras(item.code);
+    const includesBaseline = item.code !== "WEB-CUS";
     const slug = packageSlug(item.code);
     const timeline =
       item.timelineMinDays != null && item.timelineMaxDays != null
@@ -163,7 +164,8 @@ export function buildPackageGuides(): PackageGuide[] {
           item.clientDescription.replace(item.name, "").trim()) ||
         item.clientDescription,
       whatItDoes: item.clientDescription,
-      included,
+      included: extras,
+      includesBaseline,
       idealFor: pos?.bestFor ?? "Businesses that need a clear online presence.",
       commonlyUsedBy: commonlyForPackage(item.code),
       seeLiveUrl: demoStudioUrl({

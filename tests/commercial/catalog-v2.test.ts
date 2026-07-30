@@ -55,14 +55,15 @@ describe("Commercial Catalog V2", () => {
     expect(beauty!.pricingNote).toMatch(/entitlement/i);
   });
 
-  it("catalog V2 PDF is multi-page buying guide", async () => {
+  it("catalog V2 PDF packs two detail cards per page where possible", async () => {
     const pdf = await buildCatalogPdf();
     expect(pdf.byteLength).toBeGreaterThan(20000);
     const { PDFDocument } = await import("pdf-lib");
     const doc = await PDFDocument.load(pdf);
+    // Glance + paired details + Care/KB/FAQ/journey — well under one-page-per-SKU
     expect(doc.getPageCount()).toBeGreaterThanOrEqual(12);
+    expect(doc.getPageCount()).toBeLessThan(36);
     expect(doc.getTitle()).toContain(PRICE_BOOK_VERSION);
-    // No printed calendar-date requirement — subject/title must not invent products
     expect(doc.getSubject()).toMatch(/buying guide/i);
   });
 });

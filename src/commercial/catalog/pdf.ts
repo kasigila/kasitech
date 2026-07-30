@@ -26,15 +26,18 @@ import { DEMO_STUDIO_ORIGIN } from "@/demo-studio/configuration/deep-link";
 
 const PAGE = { w: 595.28, h: 841.89 };
 const M = 48;
-const QR_SIZE = 72;
-const CONTENT_RIGHT = PAGE.w - M - QR_SIZE - 16; // leave room for QR
+/** Side QR — readable on phone while leaving room for two cards per page. */
+const QR_SIZE = 58;
+const TEXT_MAX = PAGE.w - M * 2 - QR_SIZE - 14;
+const FOOT_CLEAR = 52;
+/** Minimum free space below cursor before starting a second card on the same page. */
+const SECOND_CARD_MIN = 290;
 const BLACK = rgb(0.035, 0.035, 0.035);
 const IVORY = rgb(0.957, 0.949, 0.918);
 const LIME = rgb(0.78, 1, 0);
 const GREY = rgb(0.38, 0.38, 0.36);
 const MUTED = rgb(0.55, 0.55, 0.52);
 const RULE = rgb(0.88, 0.86, 0.82);
-const SOFT = rgb(0.97, 0.96, 0.94);
 
 type Ctx = {
   pdf: PDFDocument;
@@ -43,6 +46,8 @@ type Ctx = {
   page: PDFPage;
   y: number;
   section: string;
+  /** Detail cards already drawn on the current page (max 2). */
+  cardsOnPage: number;
 };
 
 type TocEntry = { label: string; page: PDFPage };
@@ -101,15 +106,17 @@ export async function buildCatalogPdf(): Promise<Buffer> {
       8,
     );
     space(ctx, 6);
-    p(ctx, "Full breakdown of each package follows.", 9);
+    p(ctx, "Two packages per page follow - scan the QR beside each name to open Demo Studio.", 9);
     foot(ctx);
 
-    for (const g of packages) {
-      ctx = page(pdf, font, fontBold, "Website packages");
+    ctx = page(pdf, font, fontBold, "Website packages");
+    for (let i = 0; i < packages.length; i++) {
+      const g = packages[i]!;
+      ctx = prepareCardSlot(ctx, i === 0);
       mark(`${g.item.name} package detail`, ctx.page);
       await writePackageDetail(ctx, g, qrCache);
-      foot(ctx);
     }
+    foot(ctx);
   }
 
   // —— Bundles: glance then detail ——
@@ -128,15 +135,17 @@ export async function buildCatalogPdf(): Promise<Buffer> {
       glanceRow(ctx, b.name, b.bundlePriceLabel, b.valueProp);
     }
     space(ctx, 8);
-    p(ctx, "Full breakdown of each bundle follows.", 9);
+    p(ctx, "Two bundles per page follow - each has a Demo Studio QR.", 9);
     foot(ctx);
 
-    for (const b of bundles) {
-      ctx = page(pdf, font, fontBold, "Popular bundles");
+    ctx = page(pdf, font, fontBold, "Popular bundles");
+    for (let i = 0; i < bundles.length; i++) {
+      const b = bundles[i]!;
+      ctx = prepareCardSlot(ctx, i === 0);
       mark(`${b.name} detail`, ctx.page);
       await writeBundleDetail(ctx, b, qrCache);
-      foot(ctx);
     }
+    foot(ctx);
   }
 
   // —— Capabilities: glance then detail ——
@@ -155,15 +164,17 @@ export async function buildCatalogPdf(): Promise<Buffer> {
       glanceRow(ctx, g.item.name, displayItemPrice(g.item), g.valueProp);
     }
     space(ctx, 8);
-    p(ctx, "Full documentation for each capability follows.", 9);
+    p(ctx, "Two capabilities per page follow - each has a Demo Studio QR.", 9);
     foot(ctx);
 
-    for (const g of caps) {
-      ctx = page(pdf, font, fontBold, "Popular capabilities");
+    ctx = page(pdf, font, fontBold, "Popular capabilities");
+    for (let i = 0; i < caps.length; i++) {
+      const g = caps[i]!;
+      ctx = prepareCardSlot(ctx, i === 0);
       mark(`${g.item.name} detail`, ctx.page);
       await writeCapabilityDetail(ctx, g, qrCache);
-      foot(ctx);
     }
+    foot(ctx);
   }
 
   // —— Care: one section (glance + compact detail — no per-tier page) ——
@@ -303,53 +314,77 @@ async function writePackageDetail(
   g: PackageGuide,
   qr: QrCache,
 ) {
-  productHeader(ctx, g.item.name, displayItemPrice(g.item));
-  field(ctx, "VALUE", g.valueProp);
-  field(ctx, "WHAT IT DOES", g.whatItDoes);
-  label(ctx, "WHAT IS INCLUDED");
-  for (const line of g.included) bullet(ctx, line);
-  field(ctx, "IDEAL FOR", g.idealFor);
-  field(ctx, "COMMONLY USED BY", g.commonlyUsedBy);
-  if (g.timeline) field(ctx, "TYPICAL TIMELINE", g.timeline);
-  await seeLive(ctx, g.seeLiveUrl, qr);
-  if (g.notes) field(ctx, "NOTES", g.notes);
+  const block = await openDetailCard(
+    ctx,
+    g.item.name,
+    displayItemPrice(g.item),
+    g.seeLiveUrl,
+    qr,
+  );
+  compactField(ctx, "VALUE", g.valueProp, block.textWidth);
+  label(ctx, "THIS PACKAGE ADDS");
+  for (const line of g.included) compactBullet(ctx, line, block.textWidth);
+  if (g.includesBaseline) {
+    compactBullet(
+      ctx,
+      "Plus the full website baseline listed on the packages at-a-glance page",
+      block.textWidth,
+    );
+  }
+  compactField(ctx, "IDEAL FOR", g.idealFor, block.textWidth);
+  if (g.timeline) compactField(ctx, "TIMELINE", g.timeline, block.textWidth);
+  if (g.notes) compactField(ctx, "NOTES", g.notes, block.textWidth);
+  closeDetailCard(ctx, block);
 }
 
 async function writeBundleDetail(ctx: Ctx, b: BundleGuide, qr: QrCache) {
-  productHeader(ctx, b.name, b.bundlePriceLabel);
-  field(ctx, "WHAT THIS BUNDLE IS", b.valueProp);
-  field(ctx, "WHY THESE SERVICES BELONG TOGETHER", b.whyTogether);
+  const block = await openDetailCard(
+    ctx,
+    b.name,
+    b.bundlePriceLabel,
+    b.seeLiveUrl,
+    qr,
+  );
+  compactField(ctx, "WHAT THIS BUNDLE IS", b.valueProp, block.textWidth);
+  compactField(ctx, "WHY TOGETHER", b.whyTogether, block.textWidth);
   label(
     ctx,
     b.showSavings
-      ? "WHAT IS INCLUDED (WITH STANDALONE PRICES)"
-      : "WHAT IS INCLUDED",
+      ? "INCLUDED (STANDALONE PRICES)"
+      : "INCLUDED",
   );
   for (const c of b.components) {
-    bullet(
+    compactBullet(
       ctx,
       b.showSavings
-        ? `${c.name}  -  normally ${c.priceLabel}`
-        : `${c.name}  -  ${c.priceLabel} as a standalone service`,
+        ? `${c.name} - normally ${c.priceLabel}`
+        : `${c.name} - ${c.priceLabel} standalone`,
+      block.textWidth,
     );
   }
   for (const e of b.entitlements) {
-    bullet(ctx, `${e} (included in this bundle - not a separate catalog charge)`);
+    compactBullet(
+      ctx,
+      `${e} (bundle entitlement - not a separate catalog charge)`,
+      block.textWidth,
+    );
   }
-  space(ctx, 6);
-  field(ctx, "BUNDLE PRICE", b.bundlePriceLabel);
   if (
     b.showSavings &&
     b.standaloneTotalTsh != null &&
     b.savingsTsh != null &&
     b.savingsTsh > 0
   ) {
-    field(ctx, "TOTAL IF PURCHASED SEPARATELY", formatMoney(b.standaloneTotalTsh));
-    field(ctx, "YOU SAVE", formatMoney(b.savingsTsh));
+    compactField(
+      ctx,
+      "IF BOUGHT SEPARATELY",
+      `${formatMoney(b.standaloneTotalTsh)}  ·  You save ${formatMoney(b.savingsTsh)}`,
+      block.textWidth,
+    );
   } else if (b.pricingNote) {
-    field(ctx, "PRICING NOTE", b.pricingNote);
+    compactField(ctx, "PRICING NOTE", b.pricingNote, block.textWidth);
   }
-  await seeLive(ctx, b.seeLiveUrl, qr);
+  closeDetailCard(ctx, block);
 }
 
 async function writeCapabilityDetail(
@@ -357,17 +392,92 @@ async function writeCapabilityDetail(
   g: CapabilityGuide,
   qr: QrCache,
 ) {
-  productHeader(ctx, g.item.name, displayItemPrice(g.item));
-  field(ctx, "PURPOSE", g.valueProp);
-  field(ctx, "WHAT IT DOES", g.whatItDoes);
-  label(ctx, "INCLUDED FUNCTIONALITY");
-  for (const line of g.included) bullet(ctx, line);
-  field(ctx, "IDEAL FOR", g.idealFor);
-  field(ctx, "COMMONLY USED BY", g.commonlyUsedBy);
-  field(ctx, "RELATED CAPABILITIES", g.related.join(" | "));
-  field(ctx, "EXAMPLE WORKFLOW", g.workflow);
-  await seeLive(ctx, g.seeLiveUrl, qr);
-  if (g.notes) field(ctx, "NOTES", g.notes);
+  const block = await openDetailCard(
+    ctx,
+    g.item.name,
+    displayItemPrice(g.item),
+    g.seeLiveUrl,
+    qr,
+  );
+  compactField(ctx, "PURPOSE", g.valueProp, block.textWidth);
+  label(ctx, "INCLUDED");
+  for (const line of g.included) compactBullet(ctx, line, block.textWidth);
+  compactField(ctx, "IDEAL FOR", g.idealFor, block.textWidth);
+  compactField(ctx, "WORKFLOW", g.workflow, block.textWidth);
+  if (g.notes) compactField(ctx, "NOTES", g.notes, block.textWidth);
+  closeDetailCard(ctx, block);
+}
+
+type DetailBlock = {
+  qrBottom: number;
+  textWidth: number;
+};
+
+/** Start a new page when two cards are already on this page, or space is tight. */
+function prepareCardSlot(ctx: Ctx, isFirstInSection: boolean): Ctx {
+  if (isFirstInSection) {
+    ctx.cardsOnPage = 0;
+    return ctx;
+  }
+  if (ctx.cardsOnPage >= 2 || ctx.y < FOOT_CLEAR + SECOND_CARD_MIN) {
+    foot(ctx);
+    const next = page(ctx.pdf, ctx.font, ctx.fontBold, ctx.section);
+    next.cardsOnPage = 0;
+    return next;
+  }
+  space(ctx, 8);
+  ctx.page.drawLine({
+    start: { x: M, y: ctx.y },
+    end: { x: PAGE.w - M, y: ctx.y },
+    thickness: 0.7,
+    color: RULE,
+  });
+  space(ctx, 14);
+  return ctx;
+}
+
+/** Title + price on the left, scannable QR on the right. */
+async function openDetailCard(
+  ctx: Ctx,
+  name: string,
+  price: string,
+  url: string,
+  qr: QrCache,
+): Promise<DetailBlock> {
+  ensure(ctx, QR_SIZE + 20);
+  const top = ctx.y;
+  const img = await embedQr(ctx.pdf, qr, url);
+  const qrX = PAGE.w - M - QR_SIZE;
+  const qrY = top - QR_SIZE;
+
+  ctx.page.drawRectangle({
+    x: qrX - 3,
+    y: qrY - 3,
+    width: QR_SIZE + 6,
+    height: QR_SIZE + 6,
+    color: rgb(1, 1, 1),
+    borderColor: RULE,
+    borderWidth: 0.6,
+  });
+  ctx.page.drawImage(img, {
+    x: qrX,
+    y: qrY,
+    width: QR_SIZE,
+    height: QR_SIZE,
+  });
+
+  draw(ctx.page, name, ctx.fontBold, 12, M, top, BLACK);
+  const pw = ctx.fontBold.widthOfTextAtSize(sanitize(price), 10);
+  draw(ctx.page, price, ctx.fontBold, 10, M + TEXT_MAX - pw, top, BLACK);
+  ctx.y = top - 16;
+  draw(ctx.page, "Scan QR for Demo Studio", ctx.font, 7, M, ctx.y, MUTED);
+  ctx.y -= 12;
+  return { qrBottom: qrY - 6, textWidth: TEXT_MAX };
+}
+
+function closeDetailCard(ctx: Ctx, block: DetailBlock) {
+  ctx.y = Math.min(ctx.y - 4, block.qrBottom - 8);
+  ctx.cardsOnPage += 1;
 }
 
 function cover(pdf: PDFDocument, font: PDFFont, fontBold: PDFFont) {
@@ -424,7 +534,7 @@ function fillHowToAndToc(
   y -= 12;
   for (const line of [
     "1. At a glance - all items with prices on one page",
-    "2. Detail pages - inclusions, who it is for, and a Demo Studio QR",
+    "2. Detail pages - two products per page, with a Demo Studio QR beside each name",
     "Scan prices first. When something stands out, flip to its detail page.",
   ]) {
     draw(tocPage, `- ${line}`, font, 8, M, y, GREY);
@@ -526,7 +636,7 @@ async function embedQr(
   const dataUrl = await QRCode.toDataURL(url, {
     width: 256,
     margin: 2,
-    errorCorrectionLevel: "M",
+    errorCorrectionLevel: "H",
     color: { dark: "#090909", light: "#FFFFFF" },
   });
   const raw = Buffer.from(dataUrl.split(",")[1]!, "base64");
@@ -543,15 +653,16 @@ function page(
 ): Ctx {
   const pg = pdf.addPage([PAGE.w, PAGE.h]);
   paintHeader(pg, font, fontBold, section);
-  return { pdf, font, fontBold, page: pg, y: PAGE.h - 58, section };
+  return { pdf, font, fontBold, page: pg, y: PAGE.h - 58, section, cardsOnPage: 0 };
 }
 
 function ensure(ctx: Ctx, need: number): Ctx {
-  if (ctx.y - need >= 56) return ctx;
+  if (ctx.y - need >= FOOT_CLEAR) return ctx;
   foot(ctx);
   const next = page(ctx.pdf, ctx.font, ctx.fontBold, ctx.section);
   ctx.page = next.page;
   ctx.y = next.y;
+  ctx.cardsOnPage = 0;
   return ctx;
 }
 
@@ -616,27 +727,32 @@ function bullet(ctx: Ctx, text: string) {
   }
 }
 
-function field(ctx: Ctx, labelText: string, value: string) {
-  ensure(ctx, 28);
-  draw(ctx.page, labelText, ctx.fontBold, 7, M, ctx.y, MUTED);
-  ctx.y -= 11;
-  p(ctx, value, 9, CONTENT_RIGHT - M);
-  space(ctx, 4);
+function compactField(
+  ctx: Ctx,
+  labelText: string,
+  value: string,
+  maxWidth: number,
+) {
+  ensure(ctx, 22);
+  draw(ctx.page, labelText, ctx.fontBold, 6.5, M, ctx.y, MUTED);
+  ctx.y -= 10;
+  const lines = wrap(value, ctx.font, 8, maxWidth);
+  for (const line of lines) {
+    ensure(ctx, 11);
+    draw(ctx.page, line, ctx.font, 8, M, ctx.y, GREY);
+    ctx.y -= 10;
+  }
+  space(ctx, 3);
 }
 
-function productHeader(ctx: Ctx, name: string, price: string) {
-  ensure(ctx, 40);
-  ctx.page.drawRectangle({
-    x: M,
-    y: ctx.y - 8,
-    width: PAGE.w - M * 2,
-    height: 28,
-    color: SOFT,
-  });
-  draw(ctx.page, name, ctx.fontBold, 12, M + 8, ctx.y, BLACK);
-  const pw = ctx.fontBold.widthOfTextAtSize(sanitize(price), 10);
-  draw(ctx.page, price, ctx.fontBold, 10, PAGE.w - M - 8 - pw, ctx.y, BLACK);
-  ctx.y -= 28;
+function compactBullet(ctx: Ctx, text: string, maxWidth: number) {
+  const lines = wrap(text, ctx.font, 8, maxWidth - 10);
+  ensure(ctx, 11 * Math.max(lines.length, 1));
+  draw(ctx.page, "-", ctx.font, 8, M, ctx.y, LIME);
+  for (const line of lines) {
+    draw(ctx.page, line, ctx.font, 8, M + 10, ctx.y, GREY);
+    ctx.y -= 10;
+  }
 }
 
 function glanceRow(ctx: Ctx, name: string, price: string, blurb: string) {
@@ -655,42 +771,6 @@ function glanceRow(ctx: Ctx, name: string, price: string, blurb: string) {
     color: RULE,
   });
   ctx.y -= 10;
-}
-
-async function seeLive(ctx: Ctx, url: string, qr: QrCache) {
-  ensure(ctx, QR_SIZE + 36);
-  const img = await embedQr(ctx.pdf, qr, url);
-  const qrX = PAGE.w - M - QR_SIZE;
-  const qrY = ctx.y - QR_SIZE;
-
-  // White square pad so the code stays crisp and unstretched
-  ctx.page.drawRectangle({
-    x: qrX - 3,
-    y: qrY - 3,
-    width: QR_SIZE + 6,
-    height: QR_SIZE + 6,
-    color: rgb(1, 1, 1),
-    borderColor: RULE,
-    borderWidth: 0.6,
-  });
-  ctx.page.drawImage(img, {
-    x: qrX,
-    y: qrY,
-    width: QR_SIZE,
-    height: QR_SIZE,
-  });
-
-  draw(ctx.page, "SEE IT LIVE", ctx.fontBold, 7, M, ctx.y, MUTED);
-  ctx.y -= 12;
-  const short = url.replace(DEMO_STUDIO_ORIGIN, "kasitechinnovations.com");
-  const lines = wrap(short, ctx.font, 8, CONTENT_RIGHT - M - 8);
-  for (const line of lines.slice(0, 3)) {
-    draw(ctx.page, line, ctx.font, 8, M, ctx.y, GREY);
-    ctx.y -= 11;
-  }
-  draw(ctx.page, "Scan the QR code to open this build in Demo Studio.", ctx.font, 7, M, ctx.y, MUTED);
-  // Move below QR block
-  ctx.y = Math.min(ctx.y - 8, qrY - 14);
 }
 
 function foot(ctx: Ctx) {
