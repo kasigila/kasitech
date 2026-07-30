@@ -42,7 +42,7 @@ describe("Phase 3 Demo Studio", () => {
     assertFullCoverage();
     const { rows, missing } = demoCoverageReport();
     expect(missing).toEqual([]);
-    expect(rows.length).toBeGreaterThanOrEqual(144);
+    expect(rows.length).toBeGreaterThanOrEqual(146);
     const treatments = new Set(rows.map((r) => r.treatment));
     expect(treatments.size).toBeGreaterThan(5);
   });

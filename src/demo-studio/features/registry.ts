@@ -126,7 +126,7 @@ export const FEATURE_REGISTRY: FeatureRegistryEntry[] = [
     previewFlag: "multilingual",
     dependencies: [],
     previewLocation: "language selector",
-    shortExplanation: "Let visitors switch between English and Swahili.",
+    shortExplanation: "Let visitors switch between any two languages.",
   },
   {
     featureCode: "LOC-GBP",

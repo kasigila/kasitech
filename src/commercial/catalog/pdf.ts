@@ -257,20 +257,23 @@ function writeCare(doc: Doc) {
       page = newPage(doc, "Website Care");
       y = CONTENT_TOP;
     }
-    const blockH = 88;
+    const blockH = 110;
     drawCardShell(page, M, y - blockH, PAGE.w - M * 2, blockH);
     drawIcon(page, "shield", M + 12, y - 10, 14, C.ink);
     drawText(page, g.item.name, doc.fonts.bold, 11, M + 32, y - 20, C.black);
     drawPrice(page, doc.fonts, displayItemPrice(g.item), PAGE.w - M - 12, y - 20, 12);
-    drawChips(page, doc.fonts, chipLabels(g.whoFor), M + 12, y - 38, PAGE.w - M * 2 - 24);
-    let ty = y - 56;
+    let cy = y - 36;
+    drawSectionLabel(page, doc.fonts, "Ideal for", M + 12, cy);
+    cy -= 12;
+    cy = drawChips(page, doc.fonts, chipLabels(g.whoFor), M + 12, cy, PAGE.w - M * 2 - 24);
+    cy -= 10;
     for (const line of wrap(g.valueProp, doc.fonts.regular, 7.5, PAGE.w - M * 2 - 24).slice(0, 2)) {
-      drawText(page, line, doc.fonts.regular, 7.5, M + 12, ty, C.grey);
-      ty -= 10;
+      drawText(page, line, doc.fonts.regular, 7.5, M + 12, cy, C.grey);
+      cy -= 10;
     }
-    drawSectionLabel(page, doc.fonts, "When to upgrade", M + 12, ty - 2);
+    drawSectionLabel(page, doc.fonts, "When to upgrade", M + 12, cy - 2);
     const up = wrap(g.whenUpgrade, doc.fonts.regular, 6.5, PAGE.w - M * 2 - 24)[0] ?? "";
-    drawText(page, up, doc.fonts.regular, 6.5, M + 12, ty - 14, C.muted);
+    drawText(page, up, doc.fonts.regular, 6.5, M + 12, cy - 14, C.muted);
     y -= blockH + 10;
   }
 
@@ -488,8 +491,10 @@ async function paintPackageCard(
   });
 
   if (g.timeline) {
-    drawChips(page, doc.fonts, [g.timeline], innerX, y, innerW);
-    y -= 18;
+    drawSectionLabel(page, doc.fonts, "Timeline", innerX, y);
+    y -= 12;
+    y = drawChips(page, doc.fonts, [g.timeline], innerX, y, innerW);
+    y -= 10;
   }
 
   drawSectionLabel(page, doc.fonts, "Value", innerX, y);
@@ -501,44 +506,47 @@ async function paintPackageCard(
   y -= 4;
 
   const demoH = 72;
-  const bodyBottom = yBottom + demoH + 10;
   const colGap = 12;
   const colW = (innerW - colGap) / 2;
 
   drawSectionLabel(page, doc.fonts, "This package adds", innerX, y);
-  y -= 10;
+  const inclY = y - 12;
   const included = [
     ...g.included,
     ...(g.includesBaseline
       ? ["Plus the full website baseline listed on the packages at-a-glance page"]
       : []),
   ];
-  drawChecklist(page, doc.fonts, included, innerX, y, colW, 7);
+  drawChecklist(page, doc.fonts, included, innerX, inclY, colW, 7);
 
-  drawSectionLabel(page, doc.fonts, "Ideal for", innerX + colW + colGap, y + 10);
-  drawChips(
+  let rightY = y;
+  drawSectionLabel(page, doc.fonts, "Ideal for", innerX + colW + colGap, rightY);
+  rightY -= 12;
+  rightY = drawChips(
     page,
     doc.fonts,
     chipLabels(g.idealFor),
     innerX + colW + colGap,
-    y,
+    rightY,
     colW,
   );
-  const commonY = y - 36;
-  drawSectionLabel(page, doc.fonts, "Commonly used by", innerX + colW + colGap, commonY);
+  rightY -= 12;
+  drawSectionLabel(page, doc.fonts, "Commonly used by", innerX + colW + colGap, rightY);
+  rightY -= 12;
   drawChips(
     page,
     doc.fonts,
     chipLabels(g.commonlyUsedBy),
     innerX + colW + colGap,
-    commonY - 12,
+    rightY,
     colW,
   );
 
   if (g.notes) {
-    drawSectionLabel(page, doc.fonts, "Notes", innerX, bodyBottom + 14);
+    const noteY = yBottom + demoH + 16;
+    drawSectionLabel(page, doc.fonts, "Notes", innerX, noteY + 10);
     for (const line of wrap(g.notes, doc.fonts.regular, 6.5, innerW).slice(0, 2)) {
-      drawText(page, line, doc.fonts.regular, 6.5, innerX, bodyBottom + 4, C.muted);
+      drawText(page, line, doc.fonts.regular, 6.5, innerX, noteY, C.muted);
     }
   }
 
@@ -735,22 +743,26 @@ async function paintCapabilityCard(
       colW,
     );
   } else {
-    drawSectionLabel(page, doc.fonts, "Ideal for", innerX + colW + colGap, y);
-    drawChips(
+    let rightY = y;
+    drawSectionLabel(page, doc.fonts, "Ideal for", innerX + colW + colGap, rightY);
+    rightY -= 12;
+    rightY = drawChips(
       page,
       doc.fonts,
       chipLabels(g.idealFor),
       innerX + colW + colGap,
-      y - 12,
+      rightY,
       colW,
     );
-    drawSectionLabel(page, doc.fonts, "Related", innerX + colW + colGap, y - 42);
+    rightY -= 12;
+    drawSectionLabel(page, doc.fonts, "Related", innerX + colW + colGap, rightY);
+    rightY -= 12;
     drawChips(
       page,
       doc.fonts,
       g.related.slice(0, 4),
       innerX + colW + colGap,
-      y - 54,
+      rightY,
       colW,
     );
   }

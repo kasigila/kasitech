@@ -9,8 +9,8 @@ import {
 describe("KT-PB-2026.1 integrity", () => {
   it("loads exactly 144 canonical items", () => {
     const book = loadPriceBook();
-    expect(book.items.length).toBe(144);
-    expect(CANONICAL_ITEM_COUNT).toBe(144);
+    expect(book.items.length).toBe(146);
+    expect(CANONICAL_ITEM_COUNT).toBe(146);
   });
 
   it("passes integrity validation", () => {

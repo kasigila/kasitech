@@ -154,7 +154,7 @@ export function buildPackageGuides(): PackageGuide[] {
     const slug = packageSlug(item.code);
     const timeline =
       item.timelineMinDays != null && item.timelineMaxDays != null
-        ? `${item.timelineMinDays}–${item.timelineMaxDays} business days (standard delivery)`
+        ? `${item.timelineMinDays}–${item.timelineMaxDays} days`
         : null;
 
     return {
@@ -423,14 +423,50 @@ const CAPABILITY_DOCS: Record<
     notes: null,
   },
   "LANG-ENSW": {
-    valueProp: "Let visitors switch between English and Swahili on your site.",
-    whatItDoes: "English + Swahili functionality for bilingual audiences.",
-    included: ["Language switching between English and Swahili (as scoped)"],
-    idealFor: "Businesses serving both English and Kiswahili speakers",
-    commonlyUsedBy: "Tourism, NGOs, national brands",
-    related: ["ADD-MULTI"],
-    workflow: "Visitor taps language control -> content presents in EN or SW.",
-    notes: "Multi-location Directory (ADD-MULTI) is a different product - locations, not language.",
+    valueProp:
+      "Let visitors switch between any two languages on your site - English and Swahili, or any other pair you need.",
+    whatItDoes:
+      "Two-language website functionality for bilingual audiences (any language pair, as scoped).",
+    included: [
+      "Language switching between two agreed languages",
+      "Shared navigation and content structure across both languages",
+    ],
+    idealFor: "Businesses serving audiences in more than one language",
+    commonlyUsedBy: "Tourism, NGOs, national brands, export businesses",
+    related: ["LANG-ADD", "LANG-TRANS"],
+    workflow:
+      "Visitor taps language control -> content presents in the selected language.",
+    notes:
+      "Each further language is LANG-ADD. Three- and four-language packs are available below list price of buying languages separately.",
+  },
+  "LANG-ADD": {
+    valueProp: "Add one more language to a bilingual site.",
+    whatItDoes:
+      "Each additional language beyond the bilingual base (LANG-ENSW / two-language functionality).",
+    included: [
+      "One additional language wired into the same language-switch experience",
+      "Content structure aligned with the existing bilingual build",
+    ],
+    idealFor: "Sites that already have two languages and need a third or fourth",
+    commonlyUsedBy: "Regional brands, tourism operators, NGOs",
+    related: ["LANG-ENSW", "LANG-TRANS", "BND-LANG3"],
+    workflow:
+      "Visitor chooses among the available languages -> content presents in the selected language.",
+    notes:
+      "Priced per additional language. Prefer a Three- or Four-Language Pack when adding more than one.",
+  },
+  "LANG-TRANS": {
+    valueProp: "Professional translation scoped and quoted for your content volume.",
+    whatItDoes: "Professional translation services - custom quotation.",
+    included: [
+      "Translation scope confirmed in writing",
+      "Delivery timeline confirmed on quotation",
+    ],
+    idealFor: "Teams that need translated copy, not only a language switcher",
+    commonlyUsedBy: "Brands publishing polished multilingual content",
+    related: ["LANG-ENSW", "LANG-ADD"],
+    workflow: "We scope content volume -> quote translation -> deliver approved copy.",
+    notes: "Custom quote - not a fixed catalog fee.",
   },
 };
 
@@ -457,6 +493,7 @@ export function buildCapabilityGuides(): CapabilityGuide[] {
           "SEO-FND": "seo-foundation",
           "SEO-PRO": "seo-professional",
           "LANG-ENSW": "multilingual",
+          "LANG-ADD": "multilingual",
           "TOUR-CAT": "tour-catalog",
           "BKG-EXT": "appointment-booking",
         };
@@ -467,9 +504,7 @@ export function buildCapabilityGuides(): CapabilityGuide[] {
         ...doc,
         related: doc.related.map((c) => {
           const it = book.itemByCode.get(c);
-          return it
-            ? `${it.name} (${displayItemPrice(it)})`
-            : c;
+          return it ? it.name : c;
         }),
         seeLiveUrl: demoStudioUrl({
           industry: industryForFeature(code),
@@ -542,6 +577,8 @@ function bundleSlug(code: string): string {
     "BND-RE": "real-estate",
     "BND-PRES": "presence",
     "BND-GROW": "growth",
+    "BND-LANG3": "lang3",
+    "BND-LANG4": "lang4",
   };
   return map[code] ?? code.toLowerCase();
 }
@@ -556,6 +593,8 @@ function industryForBundle(code: string): string {
     "BND-PRES": "professional",
     "BND-LAUNCH": "general",
     "BND-GROW": "general",
+    "BND-LANG3": "general",
+    "BND-LANG4": "general",
   };
   return map[code] ?? "general";
 }
@@ -578,6 +617,10 @@ function bundleValueProp(code: string, fallback: string): string {
       "A professional website with stronger SEO and Google Business Profile for firms that sell on trust.",
     "BND-GROW":
       "Monthly growth operations combining professional social and SEO growth (content care benefit as included entitlement).",
+    "BND-LANG3":
+      "Three languages on one site - bilingual base plus one additional language, priced below buying them separately.",
+    "BND-LANG4":
+      "Four languages on one site - bilingual base plus two additional languages, priced below buying them separately.",
   };
   return map[code] ?? fallback;
 }
@@ -600,6 +643,10 @@ function bundleWhy(code: string): string {
       "Professional firms win on credibility: stronger site architecture, SEO setup, and local profile.",
     "BND-GROW":
       "Ongoing visibility needs coordinated social and SEO work - sold as a monthly growth bundle.",
+    "BND-LANG3":
+      "Once you need a third language, buying bilingual functionality plus one add-on language separately costs more than this pack.",
+    "BND-LANG4":
+      "Four-language sites usually buy bilingual functionality plus two add-on languages - this pack keeps that cheaper as one outcome.",
   };
   return map[code] ?? "Grouped so customers get a complete outcome instead of assembling parts.";
 }

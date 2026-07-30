@@ -57,4 +57,11 @@ export const BUNDLE_COMPONENTS: BundleComponent[] = [
     componentCode: "ENT-GROWTH-WEBSITE-CONTENT",
     role: "ENTITLEMENT",
   },
+
+  // Language packs (save vs LANG-ENSW + LANG-ADD units)
+  { bundleCode: "BND-LANG3", componentCode: "LANG-ENSW", role: "CHARGE" },
+  { bundleCode: "BND-LANG3", componentCode: "LANG-ADD", role: "CHARGE" },
+  { bundleCode: "BND-LANG4", componentCode: "LANG-ENSW", role: "CHARGE" },
+  { bundleCode: "BND-LANG4", componentCode: "LANG-ADD", role: "CHARGE" },
+  { bundleCode: "BND-LANG4", componentCode: "LANG-ADD", role: "CHARGE" },
 ];

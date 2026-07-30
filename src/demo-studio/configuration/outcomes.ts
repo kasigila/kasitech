@@ -37,7 +37,7 @@ export function outcomeForCode(code: string): string {
     "LOC-GBP": "Get found on Google Maps and local Search",
     "LOC-OPT": "Strengthen how you show up in local search",
     "LOC-REV": "Guide customers to leave and find reviews",
-    "LANG-ENSW": "Visitors can switch between English and Swahili",
+    "LANG-ENSW": "Visitors can switch between two languages (any pair you choose)",
     "ADD-MULTI": "List multiple locations with directions",
     "ADD-INQ": "Make it easy for customers to contact you",
     "ADD-TEAM": "Introduce the people behind your business",

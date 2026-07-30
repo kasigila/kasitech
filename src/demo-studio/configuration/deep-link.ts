@@ -41,6 +41,12 @@ const BUNDLE_SLUGS: Record<string, string> = {
   presence: "BND-PRES",
   growth: "BND-GROW",
   "digital-growth": "BND-GROW",
+  lang3: "BND-LANG3",
+  "three-language": "BND-LANG3",
+  "three-languages": "BND-LANG3",
+  lang4: "BND-LANG4",
+  "four-language": "BND-LANG4",
+  "four-languages": "BND-LANG4",
 };
 
 const FEATURE_SLUGS: Record<string, string> = {

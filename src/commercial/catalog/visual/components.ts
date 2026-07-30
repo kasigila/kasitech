@@ -57,11 +57,30 @@ export function workflowSteps(workflow: string): string[] {
 }
 
 export function chipLabels(text: string): string[] {
-  return sanitize(text)
-    .split(/,|\/|;/)
+  let t = sanitize(text).trim();
+  if (!t) return [];
+
+  // Prefer the list after an em/en dash or colon ("… — a, b, or c")
+  const parts = t.split(/\s+[—–]\s+|\s+-\s+|:\s+/);
+  if (parts.length > 1) {
+    const tail = parts[parts.length - 1]!;
+    if (tail.includes(",") || /\bor\b/i.test(tail)) t = tail;
+  }
+
+  return t
+    .split(/,/)
     .map((s) => s.trim())
-    .filter(Boolean)
-    .slice(0, 5);
+    .map((s) =>
+      s
+        .replace(/^(and|or)\s+/i, "")
+        .replace(/\s+(and|or)$/i, "")
+        .replace(/\s+\bor\b\s+/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim(),
+    )
+    .map((s) => s.replace(/^[,.\s]+|[,.\s]+$/g, ""))
+    .filter((s) => s.length > 1 && !/^(and|or)$/i.test(s))
+    .slice(0, 6);
 }
 
 export type Fonts = { regular: PDFFont; bold: PDFFont };
@@ -248,7 +267,10 @@ export function drawWorkflowDiagram(
   return y;
 }
 
-/** Ideal-for / industry chips. */
+/**
+ * Chips that never clip text. Long labels wrap inside a taller pill;
+ * pills wrap to the next row when the row is full.
+ */
 export function drawChips(
   page: PDFPage,
   fonts: Fonts,
@@ -259,28 +281,58 @@ export function drawChips(
 ): number {
   let cx = x;
   let cy = y;
-  const h = 13;
-  for (const chip of chips) {
-    const label = chip.length > 26 ? `${chip.slice(0, 24)}…` : chip;
-    const tw = fonts.regular.widthOfTextAtSize(sanitize(label), 6.5);
-    const w = tw + 12;
-    if (cx + w > x + maxW) {
+  let rowH = 0;
+  const gapX = 6;
+  const gapY = 5;
+  const padX = 8;
+  const padY = 4;
+  const fontSize = 6.5;
+  const lineH = 9;
+
+  for (const raw of chips) {
+    const label = sanitize(raw);
+    if (!label) continue;
+
+    const lines = wrap(
+      label,
+      fonts.regular,
+      fontSize,
+      Math.max(40, maxW - padX * 2),
+    );
+    const textW = Math.max(
+      ...lines.map((l) => fonts.regular.widthOfTextAtSize(l, fontSize)),
+      0,
+    );
+    const w = Math.min(maxW, Math.ceil(textW + padX * 2));
+    const h = lines.length * lineH + padY * 2;
+
+    if (cx > x && cx + w > x + maxW) {
       cx = x;
-      cy -= h + 4;
+      cy -= rowH + gapY;
+      rowH = 0;
     }
+
     page.drawRectangle({
       x: cx,
-      y: cy - 2,
+      y: cy - h + 4,
       width: w,
       height: h,
       borderColor: C.rule,
       borderWidth: 0.6,
       color: C.white,
     });
-    drawText(page, label, fonts.regular, 6.5, cx + 6, cy + 2, C.grey);
-    cx += w + 5;
+
+    let ty = cy;
+    for (const line of lines) {
+      drawText(page, line, fonts.regular, fontSize, cx + padX, ty, C.grey);
+      ty -= lineH;
+    }
+
+    cx += w + gapX;
+    rowH = Math.max(rowH, h);
   }
-  return cy - 2;
+
+  return cy - rowH + 2;
 }
 
 /** Premium Demo Studio panel with QR. */
