@@ -33,7 +33,7 @@ export function BundlesSection({ bundles }: { bundles: BundleView[] }) {
                 <li key={e.code} className="text-sm text-kasi-grey">
                   {e.name}{" "}
                   <span className="font-mono text-[10px] tracking-[0.1em]">
-                    · INCLUDED BENEFIT
+                    · INCLUDED
                   </span>
                 </li>
               ))}
@@ -71,9 +71,8 @@ export function BundlesSection({ bundles }: { bundles: BundleView[] }) {
               )}
             {b.savings && !b.savings.showSavings && (
               <p className="mt-4 text-xs text-kasi-grey">
-                Bundle price includes listed services and benefits. Individual
-                savings are shown only when every comparable item has an
-                approved standalone catalog price.
+                This bundle price covers the listed services. Savings vs buying
+                items separately appear when each item has its own listed price.
               </p>
             )}
           </div>

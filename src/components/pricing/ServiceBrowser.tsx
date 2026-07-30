@@ -1,9 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import type { CatalogNavId, CatalogServiceView } from "@/commercial/catalog/presentation";
-import { CATALOG_NAV, searchCatalog } from "@/commercial/catalog/presentation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import type {
+  CatalogNavId,
+  CatalogServiceView,
+} from "@/commercial/catalog/presentation";
+import {
+  CATALOG_NAV,
+  INDUSTRIES,
+  searchCatalog,
+} from "@/commercial/catalog/presentation";
 import { cn } from "@/lib/cn";
 
 type Props = {
@@ -11,18 +19,78 @@ type Props = {
   initialCategory?: CatalogNavId | "all";
 };
 
-export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
-  const [q, setQ] = useState("");
+const PRIMARY_CATEGORIES: (CatalogNavId | "all")[] = [
+  "all",
+  "websites",
+  "features",
+  "booking",
+  "payments",
+  "ecommerce",
+  "seo",
+  "care",
+  "bundles",
+];
+
+const BILLING_OPTIONS = [
+  { id: "all", label: "Any price type" },
+  { id: "ONE-TIME", label: "Pay once" },
+  { id: "PER MONTH", label: "Monthly" },
+  { id: "PER YEAR", label: "Yearly" },
+  { id: "CUSTOM QUOTE", label: "Ask us" },
+] as const;
+
+const PAGE_SIZE = 12;
+
+function friendlyBilling(label: string): string {
+  switch (label) {
+    case "ONE-TIME":
+      return "Pay once";
+    case "PER MONTH":
+      return "Monthly";
+    case "PER YEAR":
+      return "Yearly";
+    case "CUSTOM QUOTE":
+      return "Ask us";
+    case "THIRD-PARTY":
+      return "Paid to others";
+    default:
+      return label;
+  }
+}
+
+function categoryLabel(id: CatalogNavId | "all"): string {
+  if (id === "all") return "All";
+  return CATALOG_NAV.find((n) => n.id === id)?.label ?? id;
+}
+
+function ServiceBrowserInner({
+  items,
+  initialCategory = "all",
+  seededQuery,
+  industryId,
+}: Props & { seededQuery: string; industryId: string | null }) {
+  const industry = INDUSTRIES.find((i) => i.id === industryId);
+
+  const [q, setQ] = useState(seededQuery);
   const [category, setCategory] = useState<CatalogNavId | "all">(initialCategory);
-  const [billing, setBilling] = useState<"all" | "ONE-TIME" | "PER MONTH" | "PER YEAR" | "CUSTOM QUOTE" | "THIRD-PARTY">("all");
+  const [billing, setBilling] =
+    useState<(typeof BILLING_OPTIONS)[number]["id"]>("all");
+  const [showMoreCategories, setShowMoreCategories] = useState(false);
+  const [pages, setPages] = useState(1);
   const [active, setActive] = useState<CatalogServiceView | null>(null);
 
   const filtered = useMemo(() => {
     let list = searchCatalog(q, items);
     if (category !== "all") list = list.filter((i) => i.navId === category);
     if (billing !== "all") list = list.filter((i) => i.billingLabel === billing);
+    if (industry && !q) {
+      const needle = industry.label.toLowerCase();
+      list = list.filter((i) =>
+        i.industries.some((name) => name.toLowerCase() === needle),
+      );
+    }
     return list;
-  }, [q, category, billing, items]);
+  }, [q, category, billing, items, industry]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -32,62 +100,91 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const categories = showMoreCategories
+    ? (["all", ...CATALOG_NAV.map((n) => n.id)] as (CatalogNavId | "all")[])
+    : PRIMARY_CATEGORIES;
+
+  const visibleCount = pages * PAGE_SIZE;
+  const visible = filtered.slice(0, visibleCount);
+
+  function updateQuery(next: string) {
+    setQ(next);
+    setPages(1);
+  }
+
+  function updateCategory(next: CatalogNavId | "all") {
+    setCategory(next);
+    setPages(1);
+  }
+
+  function updateBilling(next: (typeof BILLING_OPTIONS)[number]["id"]) {
+    setBilling(next);
+    setPages(1);
+  }
+
   return (
     <div>
-      <div className="flex flex-col gap-4 border border-kasi-border bg-[#0c0c0c] p-4 md:p-5">
+      <div className="border border-kasi-border bg-[#0c0c0c] p-4 md:p-5">
         <label className="block">
           <span className="font-mono text-[10px] tracking-[0.16em] text-kasi-grey">
-            SEARCH
+            SEARCH IN PLAIN WORDS
           </span>
           <input
             type="search"
             value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Try appointments, restaurant, school, Instagram…"
+            onChange={(e) => updateQuery(e.target.value)}
+            placeholder="Try salon, booking, restaurant, school…"
             className="mt-2 w-full border border-kasi-border bg-kasi-black px-3 py-2.5 text-sm text-kasi-ivory placeholder:text-kasi-grey/60 focus:border-kasi-green focus:outline-none"
           />
         </label>
-        <div className="flex flex-wrap gap-2">
-          <FilterChip
-            active={category === "all"}
-            onClick={() => setCategory("all")}
-            label="All"
-          />
-          {CATALOG_NAV.map((n) => (
+
+        {industry && (
+          <p className="mt-3 text-sm text-kasi-grey">
+            Showing results for{" "}
+            <span className="text-kasi-ivory">{industry.label}</span>
+            .{" "}
+            <Link href="/pricing#browse" className="text-kasi-green hover:underline">
+              Clear
+            </Link>
+          </p>
+        )}
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {categories.map((id) => (
             <FilterChip
-              key={n.id}
-              active={category === n.id}
-              onClick={() => setCategory(n.id)}
-              label={n.label}
+              key={id}
+              active={category === id}
+              onClick={() => updateCategory(id)}
+              label={categoryLabel(id)}
+            />
+          ))}
+          {!showMoreCategories && (
+            <FilterChip
+              active={false}
+              onClick={() => setShowMoreCategories(true)}
+              label="More"
+            />
+          )}
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          {BILLING_OPTIONS.map((b) => (
+            <FilterChip
+              key={b.id}
+              active={billing === b.id}
+              onClick={() => updateBilling(b.id)}
+              label={b.label}
             />
           ))}
         </div>
-        <div className="flex flex-wrap gap-2">
-          {(
-            [
-              "all",
-              "ONE-TIME",
-              "PER MONTH",
-              "PER YEAR",
-              "CUSTOM QUOTE",
-              "THIRD-PARTY",
-            ] as const
-          ).map((b) => (
-            <FilterChip
-              key={b}
-              active={billing === b}
-              onClick={() => setBilling(b)}
-              label={b === "all" ? "Any billing" : b}
-            />
-          ))}
-        </div>
-        <p className="font-mono text-[11px] text-kasi-grey">
-          {filtered.length} services · prices from KT-PB-2026.1
+
+        <p className="mt-4 font-mono text-[11px] text-kasi-grey">
+          {filtered.length} service{filtered.length === 1 ? "" : "s"}
         </p>
       </div>
 
       <ul className="mt-6 divide-y divide-kasi-border border-t border-kasi-border">
-        {filtered.map((v) => (
+        {visible.map((v) => (
           <li key={v.item.code}>
             <button
               type="button"
@@ -100,9 +197,8 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
                   {v.item.clientDescription}
                 </p>
                 <p className="mt-2 font-mono text-[10px] tracking-[0.14em] text-kasi-grey/80">
-                  {v.billingLabel}
+                  {friendlyBilling(v.billingLabel)}
                   {v.industries[0] ? ` · ${v.industries[0].toUpperCase()}` : ""}
-                  {v.upgradeIncludes ? ` · ${v.upgradeIncludes.toUpperCase()}` : ""}
                 </p>
               </div>
               <p
@@ -122,8 +218,19 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
 
       {filtered.length === 0 && (
         <p className="mt-8 text-sm text-kasi-grey">
-          No services match. Try another word or clear filters.
+          Nothing matched. Try a simpler word — like booking, shop, or salon —
+          or clear the search.
         </p>
+      )}
+
+      {visibleCount < filtered.length && (
+        <button
+          type="button"
+          onClick={() => setPages((n) => n + 1)}
+          className="mt-8 border border-kasi-border px-5 py-3 text-sm text-kasi-ivory transition hover:border-kasi-green hover:text-kasi-green"
+        >
+          Show more ({filtered.length - visibleCount} left)
+        </button>
       )}
 
       {active && (
@@ -139,7 +246,7 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
             onClick={(e) => e.stopPropagation()}
           >
             <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-grey">
-              {active.billingLabel} · {active.item.category.toUpperCase()}
+              {friendlyBilling(active.billingLabel)}
             </p>
             <h3
               id="service-detail-title"
@@ -162,7 +269,7 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
             </p>
             <div className="mt-6 border-t border-kasi-border pt-5">
               <p className="font-mono text-[10px] tracking-[0.16em] text-kasi-green">
-                WHAT THIS MEANS
+                IN SIMPLE TERMS
               </p>
               <p className="mt-2 text-sm leading-relaxed text-kasi-grey">
                 {active.whatThisMeans}
@@ -173,18 +280,18 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
             )}
             {active.includedInPackages.length > 0 && (
               <p className="mt-4 text-sm text-kasi-grey">
-                Included in package(s): {active.includedInPackages.join(", ")}
+                Already included in: {active.includedInPackages.join(", ")}
               </p>
             )}
             {active.includedInBundles.length > 0 && (
               <p className="mt-2 text-sm text-kasi-grey">
-                Included in bundle(s): {active.includedInBundles.join(", ")}
+                Also in bundle(s): {active.includedInBundles.join(", ")}
               </p>
             )}
             {active.billingLabel === "THIRD-PARTY" && (
               <p className="mt-4 text-sm text-kasi-grey">
-                Third-party cost — disclosed and approved before purchase. Not
-                KasiTech service revenue.
+                Paid to another company (for example domain or hosting). We tell
+                you before you approve.
               </p>
             )}
             <div className="mt-8 flex flex-wrap gap-4">
@@ -193,12 +300,6 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
                 className="border border-kasi-green bg-kasi-green px-4 py-2.5 text-sm text-kasi-black"
               >
                 Ask about this →
-              </Link>
-              <Link
-                href="/demo-studio"
-                className="border border-kasi-border px-4 py-2.5 text-sm text-kasi-ivory hover:border-kasi-green/50"
-              >
-                See in Demo Studio →
               </Link>
               <button
                 type="button"
@@ -212,6 +313,40 @@ export function ServiceBrowser({ items, initialCategory = "all" }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+function ServiceBrowserFromUrl(props: Props) {
+  const searchParams = useSearchParams();
+  const urlQ = searchParams.get("q") ?? "";
+  const industryId = searchParams.get("industry");
+  const industry = INDUSTRIES.find((i) => i.id === industryId);
+  const seededQuery =
+    urlQ ||
+    (industry ? industry.tags[0] ?? industry.label.split(" / ")[0] : "");
+  const remountKey = `${industryId ?? ""}::${seededQuery}`;
+
+  return (
+    <ServiceBrowserInner
+      key={remountKey}
+      {...props}
+      seededQuery={seededQuery}
+      industryId={industryId}
+    />
+  );
+}
+
+export function ServiceBrowser(props: Props) {
+  return (
+    <Suspense
+      fallback={
+        <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
+          Loading services…
+        </p>
+      }
+    >
+      <ServiceBrowserFromUrl {...props} />
+    </Suspense>
   );
 }
 

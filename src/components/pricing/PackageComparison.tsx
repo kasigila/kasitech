@@ -5,7 +5,6 @@ import type { CatalogItem } from "@/commercial/types";
 import {
   PACKAGE_POSITIONING,
   displayItemPrice,
-  billingLabel,
 } from "@/commercial/catalog/presentation";
 import { cn } from "@/lib/cn";
 
@@ -50,7 +49,13 @@ export function PackageComparison({ packages, inclusions }: Props) {
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <div>
           <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-green">
-            {billingLabel(current.billing)}
+            {current.billing === "CUSTOM_QUOTE"
+              ? "ASK US"
+              : current.billing === "MONTHLY"
+                ? "MONTHLY"
+                : current.billing === "ANNUAL"
+                  ? "YEARLY"
+                  : "PAY ONCE"}
           </p>
           <h3 className="mt-3 font-display text-3xl tracking-[-0.03em] md:text-4xl">
             {current.name}
