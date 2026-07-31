@@ -21,8 +21,8 @@ export default function HomePage() {
               THAT WORK.
             </h1>
             <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-grey md:text-lg">
-              A Dar es Salaam studio building websites, commerce, and systems
-              for businesses that need customers to act.
+              A Dar es Salaam studio that builds websites, commerce, and systems
+              so customers can book, buy, and enquire.
             </p>
             <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
               <Link
