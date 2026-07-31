@@ -105,17 +105,17 @@ export function DemoChrome({ slug, className }: Props) {
           href="/"
           className="flex min-h-11 min-w-0 shrink items-center text-[13px] tracking-wide hover:opacity-80"
         >
-          <span className="truncate sm:hidden">← KasiTech concept</span>
+          <span className="truncate sm:hidden">← KasiTech</span>
           <span className="hidden sm:inline">← KasiTech</span>
         </Link>
         <div className="flex min-w-0 items-center gap-2 sm:gap-4">
           {hasWhatsApp() && (
             <a
               href={whatsappUrl(
-                `Hi KasiTech: I tried the ${project.name} demo and want something similar.`,
+                `Hi KasiTech: I explored the ${project.name} experience and want something similar.`,
               )}
               onClick={() =>
-                track("whatsapp_click", { source: `demo_bar_${slug}` })
+                track("whatsapp_click", { source: `experience_bar_${slug}` })
               }
               className="hidden min-h-11 items-center text-[12px] tracking-wide text-white/85 hover:text-white sm:inline-flex"
             >
@@ -125,7 +125,7 @@ export function DemoChrome({ slug, className }: Props) {
           <Link
             href={`/start?need=${needForSlug(slug)}`}
             onClick={() =>
-              track("start_project_click", { source: `demo_bar_${slug}` })
+              track("start_project_click", { source: `experience_bar_${slug}` })
             }
             className="inline-flex min-h-11 shrink-0 items-center border border-kasi-green bg-kasi-green px-3 text-[11px] font-medium tracking-[0.08em] text-kasi-black hover:brightness-95 sm:border-0 sm:bg-transparent sm:px-0 sm:text-[12px] sm:font-normal sm:tracking-wide sm:text-[#C7FF00] sm:hover:opacity-90"
           >
@@ -169,7 +169,7 @@ export function DemoChrome({ slug, className }: Props) {
               Close
             </button>
             <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-green">
-              KASI CONCEPT / {project.number}
+              BUSINESS EXAMPLE / {project.number}
             </p>
             <h2
               id="demo-about-title"
@@ -181,14 +181,15 @@ export function DemoChrome({ slug, className }: Props) {
               {project.description}
             </p>
             <p className="mt-2 text-sm text-kasi-grey">
-              What it demonstrates: {project.tags.join(" · ")}
+              Built around: {project.tags.join(" · ")}
             </p>
             <div className="mt-8 space-y-3 text-sm">
               <p className="text-kasi-ivory/90">
                 Customer View: browse as an end user.
               </p>
               <p className="text-kasi-ivory/90">
-                Business View: look for the ops / admin toggle inside the demo.
+                Business View: look for the ops / admin toggle inside the
+                experience.
               </p>
               <Link
                 href={project.caseStudyPath}
@@ -204,7 +205,9 @@ export function DemoChrome({ slug, className }: Props) {
                 href={`/start?need=${needForSlug(slug)}`}
                 className="inline-flex min-h-11 items-center border border-kasi-green bg-kasi-green px-5 text-sm text-kasi-black"
                 onClick={() =>
-                  track("start_project_click", { source: `demo_${slug}` })
+                  track("start_project_click", {
+                    source: `experience_${slug}`,
+                  })
                 }
               >
                 START MY PROJECT ↗
@@ -213,11 +216,13 @@ export function DemoChrome({ slug, className }: Props) {
                 <div>
                   <a
                     href={whatsappUrl(
-                      `Hi KasiTech: I tried the ${project.name} demo and want something similar.`,
+                      `Hi KasiTech: I explored the ${project.name} experience and want something similar.`,
                     )}
                     className="inline-flex min-h-11 items-center text-sm text-kasi-green hover:underline"
                     onClick={() =>
-                      track("whatsapp_click", { source: `demo_panel_${slug}` })
+                      track("whatsapp_click", {
+                        source: `experience_panel_${slug}`,
+                      })
                     }
                   >
                     Or WhatsApp us →
@@ -226,7 +231,7 @@ export function DemoChrome({ slug, className }: Props) {
               )}
             </div>
             <p className="mt-10 font-mono text-[10px] tracking-[0.16em] text-kasi-grey">
-              DEMO DATA · FICTIONAL CONCEPT
+              EXAMPLE DATA · ILLUSTRATIVE EXPERIENCE
             </p>
           </aside>
         </div>
