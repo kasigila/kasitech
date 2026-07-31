@@ -3,6 +3,8 @@
  * "Find Your Business" experience and Business Showcase.
  */
 
+import { cover } from "@/data/images";
+
 export type BusinessIndustryId =
   | "restaurant"
   | "hotel"
@@ -33,8 +35,8 @@ export type BusinessIndustry = {
 /** Homepage static preview cards (visual only — not links). */
 export const homepagePreviewIndustries: BusinessIndustryId[] = [
   "restaurant",
-  "hotel",
-  "clinic",
+  "retail",
+  "beauty",
 ];
 
 export const businessIndustries: BusinessIndustry[] = [
@@ -47,6 +49,25 @@ export const businessIndustries: BusinessIndustry[] = [
     href: "/demo/moto",
     cover: "/demos/screenshots/moto.png",
     projectSlug: "moto",
+  },
+  {
+    id: "retail",
+    name: "Retail",
+    capabilities: "Online Store · Inventory · Payments",
+    description:
+      "Browse, checkout, and M-Pesa-ready payments for modern shops.",
+    href: "/demo/soko",
+    cover: "/demos/screenshots/soko.png",
+    projectSlug: "soko",
+  },
+  {
+    id: "beauty",
+    name: "Beauty & Salon",
+    capabilities: "Bookings · Client Management",
+    description:
+      "Appointment booking and client care for salons and wellness.",
+    href: "/showcase?industry=beauty",
+    cover: cover.spa,
   },
   {
     id: "hotel",
@@ -67,24 +88,6 @@ export const businessIndustries: BusinessIndustry[] = [
     href: "/demo/afya",
     cover: "/demos/screenshots/afya.png",
     projectSlug: "afya",
-  },
-  {
-    id: "beauty",
-    name: "Beauty & Salon",
-    capabilities: "Bookings · Client Management",
-    description:
-      "Appointment booking and client care for salons and wellness.",
-    href: "/showcase?industry=beauty",
-  },
-  {
-    id: "retail",
-    name: "Retail",
-    capabilities: "Online Store · Inventory · Payments",
-    description:
-      "Browse, checkout, and local payments for modern retail.",
-    href: "/demo/soko",
-    cover: "/demos/screenshots/soko.png",
-    projectSlug: "soko",
   },
   {
     id: "construction",
