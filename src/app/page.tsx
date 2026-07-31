@@ -18,11 +18,12 @@ export default function HomePage() {
               <br />
               DIGITAL PRODUCTS
               <br />
-              THAT WORK.
+              THAT HELP BUSINESSES GROW.
             </h1>
             <p className="mt-8 max-w-md text-base leading-relaxed text-kasi-grey md:text-lg">
-              A Dar es Salaam studio that builds websites, commerce, and systems
-              so customers can book, buy, and enquire.
+              From professional websites and online stores to booking systems,
+              business software, automation and AI, we design technology around
+              the way your business works.
             </p>
             <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
               <Link
