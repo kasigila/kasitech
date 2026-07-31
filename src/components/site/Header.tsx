@@ -17,7 +17,11 @@ import {
 
 const nav = [
   { href: "/work", label: "Work", panel: "work" as const },
-  { href: "/capabilities", label: "Capabilities", panel: "capabilities" as const },
+  {
+    href: "/capabilities",
+    label: "Capabilities",
+    panel: "capabilities" as const,
+  },
   { href: "/pricing", label: "Pricing", panel: null },
   { href: "/company", label: "Company", panel: "company" as const },
 ];

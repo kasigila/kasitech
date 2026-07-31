@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { track } from "@/lib/analytics";
+import { PRICING_PDF_HREF } from "@/lib/site";
 
 type PackageRow = {
   name: string;
@@ -55,7 +56,9 @@ export function CardCatalog({
           VIEW FULL CATALOG
         </Link>
         <a
-          href="/api/catalog/pdf"
+          href={PRICING_PDF_HREF}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={() => track("card_download_catalog")}
           className="flex w-full items-center justify-center border border-kasi-border px-6 py-4 text-sm font-medium tracking-[0.06em] text-kasi-ivory transition hover:border-kasi-green hover:text-kasi-green"
         >

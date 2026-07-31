@@ -7,6 +7,9 @@ export const SITE_DESCRIPTION =
   "Premium digital technology studio in Dar es Salaam. Websites, booking, ecommerce, software, and AI systems built to work.";
 export const SITE_LAST_MODIFIED = "2026-07-01";
 
+/** Client pricing catalog PDF (opens in browser). */
+export const PRICING_PDF_HREF = "/api/catalog/pdf";
+
 export const OG_IMAGE_PATH = "/opengraph-image";
 export const TWITTER_IMAGE_PATH = "/twitter-image";
 export const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
