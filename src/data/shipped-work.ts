@@ -34,7 +34,7 @@ export const shippedWork: ShippedWork[] = [
     summary:
       "A live institutional site for climate finance in Tanzania: services, impact, partners, and a clear call to collaborate.",
     outcome:
-      "Gave an institutional climate-finance organisation a credible digital presence that explains services, impact, and how partners engage.",
+      "Designed a modern digital platform that helps partners explore climate finance initiatives, understand the organisation’s work, and connect with its team.",
     challenge:
       "Institutional organisations often need digital presence that communicates credibility, clarifies services, and invites the right partners - without looking generic or underbuilt.",
     capabilities: [
@@ -61,7 +61,7 @@ export const shippedWork: ShippedWork[] = [
     summary:
       "A nightlife and events site for Dar es Salaam: event series, table reservations, lineups, gallery, and artist bookings.",
     outcome:
-      "Gave BYZ a live digital home for Groove Series, Tempo, and APT. Session - so guests can discover nights, reserve tables, and connect with the brand.",
+      "Built a digital home for nightlife and events where guests can discover nights, reserve tables, and connect with the brand.",
     challenge:
       "Nightlife brands need more than a static page. Guests want upcoming events, reservations, lineups, and a way to connect - fast, on mobile, without losing the energy of the brand.",
     capabilities: [
