@@ -87,6 +87,7 @@ export const projectCovers: Record<string, string> = {
   impact: "/demos/screenshots/impact.png",
   "kasi-flow": "/demos/screenshots/kasi-flow.png",
   "kasi-intelligence": "/demos/screenshots/kasi-intelligence.png",
+  glow: "/demos/screenshots/glow.png",
   "000": "/demos/screenshots/amani.png",
 };
 

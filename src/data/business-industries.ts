@@ -3,8 +3,6 @@
  * "Find Your Business" experience and Business Showcase.
  */
 
-import { cover } from "@/data/images";
-
 export type BusinessIndustryId =
   | "restaurant"
   | "hotel"
@@ -66,8 +64,9 @@ export const businessIndustries: BusinessIndustry[] = [
     capabilities: "Bookings · Client Management",
     description:
       "Appointment booking and client care for salons and wellness.",
-    href: "/showcase?industry=beauty",
-    cover: cover.spa,
+    href: "/demo/glow",
+    cover: "/demos/screenshots/glow.png",
+    projectSlug: "glow",
   },
   {
     id: "hotel",

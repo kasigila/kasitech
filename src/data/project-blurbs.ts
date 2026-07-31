@@ -12,6 +12,7 @@ export const projectBlurbs: Record<string, string> = {
   impact: "A nonprofit: stories, impact, donations.",
   "kasi-flow": "Internal software: CRM, inventory, finance, daily ops.",
   "kasi-intelligence": "AI for the business: ask questions, approve automations.",
+  glow: "A beauty salon: services, stylist booking, packages, and client care.",
 };
 
 export function getProjectBlurb(slug: string, fallback?: string) {
