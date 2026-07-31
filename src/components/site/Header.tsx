@@ -14,28 +14,16 @@ import {
   IconLinkedIn,
   IconWhatsApp,
 } from "@/components/site/SocialIcons";
-import { PRICING_PDF_HREF } from "@/lib/site";
 
 const nav = [
-  { href: "/work", label: "Work", panel: "work" as const, external: false },
+  { href: "/work", label: "Work", panel: "work" as const },
   {
     href: "/capabilities",
     label: "Capabilities",
     panel: "capabilities" as const,
-    external: false,
   },
-  {
-    href: PRICING_PDF_HREF,
-    label: "Pricing",
-    panel: null,
-    external: true,
-  },
-  {
-    href: "/company",
-    label: "Company",
-    panel: "company" as const,
-    external: false,
-  },
+  { href: "/pricing", label: "Pricing", panel: null },
+  { href: "/company", label: "Company", panel: "company" as const },
 ];
 
 type Panel = "work" | "capabilities" | "company";
@@ -180,43 +168,28 @@ export function Header() {
                   else setPanel(null);
                 }}
               >
-                {item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[13px] tracking-[0.04em] text-kasi-ivory/75 transition hover:text-kasi-ivory"
-                    onClick={() => setPanel(null)}
-                    onFocus={() => setPanel(null)}
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "text-[13px] tracking-[0.04em] transition",
-                      isActive(item.href)
-                        ? "text-kasi-ivory"
-                        : "text-kasi-ivory/75 hover:text-kasi-ivory",
-                    )}
-                    onClick={() => setPanel(null)}
-                    onFocus={() => {
-                      if (item.panel) openPanel(item.panel);
-                      else setPanel(null);
-                    }}
-                    aria-expanded={
-                      item.panel ? panel === item.panel : undefined
-                    }
-                    aria-haspopup={item.panel ? "true" : undefined}
-                    aria-current={isActive(item.href) ? "page" : undefined}
-                  >
-                    {item.label}
-                    {isActive(item.href) && (
-                      <span className="ml-1.5 inline-block h-1 w-1 rounded-full bg-kasi-green align-middle" />
-                    )}
-                  </Link>
-                )}
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "text-[13px] tracking-[0.04em] transition",
+                    isActive(item.href)
+                      ? "text-kasi-ivory"
+                      : "text-kasi-ivory/75 hover:text-kasi-ivory",
+                  )}
+                  onClick={() => setPanel(null)}
+                  onFocus={() => {
+                    if (item.panel) openPanel(item.panel);
+                    else setPanel(null);
+                  }}
+                  aria-expanded={item.panel ? panel === item.panel : undefined}
+                  aria-haspopup={item.panel ? "true" : undefined}
+                  aria-current={isActive(item.href) ? "page" : undefined}
+                >
+                  {item.label}
+                  {isActive(item.href) && (
+                    <span className="ml-1.5 inline-block h-1 w-1 rounded-full bg-kasi-green align-middle" />
+                  )}
+                </Link>
               </div>
             ))}
             <Link
@@ -335,48 +308,26 @@ export function Header() {
                     {
                       t: "SERVICES & PRICING",
                       d: "2026 client catalog — clear TSh scope.",
-                      href: PRICING_PDF_HREF,
-                      external: true,
+                      href: "/pricing",
                     },
-                  ].map((c) =>
-                    c.external ? (
-                      <a
-                        key={c.t}
-                        href={c.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group block"
-                        onClick={() => {
-                          setPanel(null);
-                          track("capability_view", { id: c.t });
-                        }}
-                      >
-                        <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-green">
-                          {c.t}
-                        </p>
-                        <p className="mt-2 text-sm text-kasi-grey group-hover:text-kasi-ivory">
-                          {c.d}
-                        </p>
-                      </a>
-                    ) : (
-                      <Link
-                        key={c.t}
-                        href={c.href}
-                        className="group block"
-                        onClick={() => {
-                          setPanel(null);
-                          track("capability_view", { id: c.t });
-                        }}
-                      >
-                        <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-green">
-                          {c.t}
-                        </p>
-                        <p className="mt-2 text-sm text-kasi-grey group-hover:text-kasi-ivory">
-                          {c.d}
-                        </p>
-                      </Link>
-                    ),
-                  )}
+                  ].map((c) => (
+                    <Link
+                      key={c.t}
+                      href={c.href}
+                      className="group block"
+                      onClick={() => {
+                        setPanel(null);
+                        track("capability_view", { id: c.t });
+                      }}
+                    >
+                      <p className="font-mono text-[11px] tracking-[0.14em] text-kasi-green">
+                        {c.t}
+                      </p>
+                      <p className="mt-2 text-sm text-kasi-grey group-hover:text-kasi-ivory">
+                        {c.d}
+                      </p>
+                    </Link>
+                  ))}
                 </div>
               )}
               {panel === "company" && (
@@ -421,29 +372,16 @@ export function Header() {
           Site menu
         </p>
         <nav className="flex flex-1 flex-col justify-center gap-2" aria-label="Mobile">
-          {nav.map((item) =>
-            item.external ? (
-              <a
-                key={item.href}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-display text-[clamp(2.5rem,12vw,4rem)] leading-[1.05] tracking-[-0.03em]"
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </a>
-            ) : (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="font-display text-[clamp(2.5rem,12vw,4rem)] leading-[1.05] tracking-[-0.03em]"
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ),
-          )}
+          {nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="font-display text-[clamp(2.5rem,12vw,4rem)] leading-[1.05] tracking-[-0.03em]"
+              onClick={() => setOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
           <Link
             href="/founder"
             className="font-display text-[clamp(2.5rem,12vw,4rem)] leading-[1.05] tracking-[-0.03em]"

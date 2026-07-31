@@ -1074,13 +1074,8 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
 function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-[100dvh] bg-kasi-black px-5 py-10 text-kasi-ivory md:px-10">
-      <a
-        href="/api/catalog/pdf"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-mono text-[10px] text-kasi-green"
-      >
-        ← Services & Pricing PDF
+      <a href="/pricing" className="font-mono text-[10px] text-kasi-green">
+        ← Services & Pricing
       </a>
       {children}
     </div>
@@ -1458,12 +1453,10 @@ function Controls(props: {
                 );
               })}
               <a
-                href="/api/catalog/pdf"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/pricing"
                 className="inline-block text-[10px] text-kasi-green underline"
               >
-                Open pricing PDF →
+                Compare packages on Pricing →
               </a>
             </div>
           </Section>

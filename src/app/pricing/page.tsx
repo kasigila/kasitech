@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { PRICING_PDF_HREF } from "@/lib/site";
+import { DigitalCatalog } from "@/components/pricing/DigitalCatalog";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Services & Pricing",
   description:
-    "KasiTech services and pricing in Tanzanian Shillings — download the clear PDF catalog.",
-};
+    "KasiTech commercial buying guide in Tanzanian Shillings — website packages, bundles, care, and capabilities. Clear scope before you buy.",
+  path: "/pricing",
+  openGraphTitle: "KasiTech Services & Pricing",
+});
 
-/**
- * Interactive pricing page is paused for now — the catalog PDF is clearer
- * for clients. Keep /pricing as a stable URL that opens the guide.
- */
 export default function PricingPage() {
-  redirect(PRICING_PDF_HREF);
+  return <DigitalCatalog />;
 }
