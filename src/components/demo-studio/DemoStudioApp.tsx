@@ -617,7 +617,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
       <header className="flex shrink-0 items-center justify-between gap-3 border-b border-kasi-border px-3 py-2 md:px-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <a href="/pricing" className="font-mono text-[10px] text-kasi-green">
+            <a href="/" className="font-mono text-[10px] text-kasi-green">
               KasiTech
             </a>
             <span className="text-kasi-grey">/</span>
@@ -1074,8 +1074,13 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
 function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-[100dvh] bg-kasi-black px-5 py-10 text-kasi-ivory md:px-10">
-      <a href="/pricing" className="font-mono text-[10px] text-kasi-green">
-        ← Services & Pricing
+      <a
+        href="/api/catalog/pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-mono text-[10px] text-kasi-green"
+      >
+        ← Services & Pricing PDF
       </a>
       {children}
     </div>
@@ -1453,10 +1458,12 @@ function Controls(props: {
                 );
               })}
               <a
-                href="/pricing"
+                href="/api/catalog/pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-block text-[10px] text-kasi-green underline"
               >
-                Compare packages on Pricing →
+                Open pricing PDF →
               </a>
             </div>
           </Section>

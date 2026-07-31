@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { track } from "@/lib/analytics";
+import { PRICING_PDF_HREF } from "@/lib/site";
 
 type PackageRow = {
   name: string;
@@ -46,20 +46,15 @@ export function CardCatalog({
         ))}
       </div>
 
-      <div className="mt-6 space-y-3">
-        <Link
-          href="/pricing"
-          onClick={() => track("card_view_catalog")}
+      <div className="mt-6">
+        <a
+          href={PRICING_PDF_HREF}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => track("card_download_catalog")}
           className="flex w-full items-center justify-center border border-kasi-green px-6 py-4 text-sm font-medium tracking-[0.06em] text-kasi-green transition hover:bg-kasi-green hover:text-kasi-black"
         >
-          VIEW FULL CATALOG
-        </Link>
-        <a
-          href="/api/catalog/pdf"
-          onClick={() => track("card_download_catalog")}
-          className="flex w-full items-center justify-center border border-kasi-border px-6 py-4 text-sm font-medium tracking-[0.06em] text-kasi-ivory transition hover:border-kasi-green hover:text-kasi-green"
-        >
-          DOWNLOAD PDF
+          VIEW PRICING PDF
         </a>
       </div>
     </div>

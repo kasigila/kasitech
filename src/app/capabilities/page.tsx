@@ -4,7 +4,7 @@ import { BuyCtas } from "@/components/site/BuyCtas";
 import { capabilityDemoScreens } from "@/data/images";
 import { getProject } from "@/data/projects";
 import { cn } from "@/lib/cn";
-import { pageMetadata } from "@/lib/site";
+import { pageMetadata, PRICING_PDF_HREF } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Capabilities",
@@ -244,9 +244,14 @@ export default function CapabilitiesPage() {
             Tell us what you need to attract, transact, operate, or decide. We
             reply within 24 hours on business days. For package scope and TSh
             pricing, see the{" "}
-            <Link href="/pricing" className="text-kasi-green hover:underline">
+            <a
+              href={PRICING_PDF_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-kasi-green hover:underline"
+            >
               2026 catalog
-            </Link>
+            </a>
             .
           </p>
           <div className="mt-10">

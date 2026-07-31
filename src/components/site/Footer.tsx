@@ -16,9 +16,26 @@ import {
   IconLinkedIn,
   IconWhatsApp,
 } from "@/components/site/SocialIcons";
+import { PRICING_PDF_HREF } from "@/lib/site";
 
 const contactPrimaryNote =
   "Project chat: WhatsApp. Tanzania mobile is for calls/SMS.";
+
+const footerLinks: {
+  href: string;
+  label: string;
+  external?: boolean;
+}[] = [
+  { href: "/work", label: "Work" },
+  { href: "/capabilities", label: "Capabilities" },
+  { href: PRICING_PDF_HREF, label: "Pricing", external: true },
+  { href: "/company", label: "Company" },
+  { href: "/founder", label: "Founder" },
+  { href: "/start", label: "Start a Project" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/lab", label: "Lab" },
+  { href: "/card", label: "Digital Card" },
+];
 
 export function Footer() {
   const [time, setTime] = useState("--:--");
@@ -54,25 +71,27 @@ export function Footer() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 text-sm">
-          {[
-            ["/work", "Work"],
-            ["/capabilities", "Capabilities"],
-            ["/pricing", "Pricing"],
-            ["/company", "Company"],
-            ["/founder", "Founder"],
-            ["/start", "Start a Project"],
-            ["/faq", "FAQ"],
-            ["/lab", "Lab"],
-            ["/card", "Digital Card"],
-          ].map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-kasi-ivory/80 transition hover:text-kasi-green"
-            >
-              {label}
-            </Link>
-          ))}
+          {footerLinks.map((item) =>
+            item.external ? (
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-kasi-ivory/80 transition hover:text-kasi-green"
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-kasi-ivory/80 transition hover:text-kasi-green"
+              >
+                {item.label}
+              </Link>
+            ),
+          )}
         </div>
 
         <div className="flex flex-col gap-5">

@@ -6,7 +6,7 @@ import {
   MOBILE_DISPLAY,
   WHATSAPP_DISPLAY,
 } from "@/lib/contact";
-import { pageMetadata } from "@/lib/site";
+import { pageMetadata, PRICING_PDF_HREF } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   title: "FAQ",
@@ -104,12 +104,14 @@ export default function FaqPage() {
         </div>
 
         <div className="mt-16 flex flex-wrap gap-6">
-          <Link
-            href="/pricing"
+          <a
+            href={PRICING_PDF_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-kasi-green hover:underline"
           >
             Services &amp; Pricing catalog →
-          </Link>
+          </a>
           <Link
             href="/start"
             className="border border-kasi-green bg-kasi-green px-6 py-3 text-sm text-kasi-black"
