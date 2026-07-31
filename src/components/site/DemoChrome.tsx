@@ -242,7 +242,7 @@ export function DemoChrome({ slug, className }: Props) {
 
 function needForSlug(slug: string) {
   if (
-    ["zuri", "moto", "noir", "soko", "nest"].includes(slug)
+    ["zuri", "moto", "noir", "soko", "nest", "glow"].includes(slug)
   ) {
     return "sell";
   }

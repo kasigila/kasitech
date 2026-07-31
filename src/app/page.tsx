@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { FindYourBusiness } from "@/components/home/FindYourBusiness";
 import { ShippedCaseStudy } from "@/components/home/ShippedCaseStudy";
-import { CapabilitySystem } from "@/components/home/CapabilitySystem";
 import { FounderTeaser } from "@/components/home/FounderTeaser";
 import { FinalCTA } from "@/components/home/FinalCTA";
 
@@ -34,7 +33,7 @@ export default function HomePage() {
               href="/showcase"
               className="text-kasi-green transition hover:text-kasi-ivory"
             >
-              12 BUSINESS EXAMPLES
+              13 BUSINESS EXAMPLES
             </Link>
           </p>
           <div className="mt-10">
@@ -51,8 +50,6 @@ export default function HomePage() {
       </section>
 
       <ShippedCaseStudy />
-
-      <CapabilitySystem />
 
       <FounderTeaser />
 
