@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FindYourBusiness } from "@/components/home/FindYourBusiness";
+import { HeroCTAs } from "@/components/home/HeroCTAs";
 import { ShippedCaseStudy } from "@/components/home/ShippedCaseStudy";
 import { FounderTeaser } from "@/components/home/FounderTeaser";
 import { FinalCTA } from "@/components/home/FinalCTA";
@@ -36,14 +37,8 @@ export default function HomePage() {
               13 BUSINESS EXAMPLES
             </Link>
           </p>
-          <div className="mt-10">
-            <Link
-              href="/start"
-              className="inline-flex min-h-12 items-center border border-kasi-green bg-kasi-green px-6 py-3.5 text-sm tracking-wide text-kasi-black transition hover:bg-transparent hover:text-kasi-green"
-            >
-              START A PROJECT →
-            </Link>
-          </div>
+
+          <HeroCTAs />
 
           <FindYourBusiness />
         </div>
