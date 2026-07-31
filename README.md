@@ -20,10 +20,11 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Routes
 
 - `/` - Homepage
+- `/showcase` - Business Showcase (industry examples)
 - `/work` - Portfolio router & search
 - `/work/all` - All 12 projects
 - `/work/[slug]` - Case studies
-- `/demo/[slug]` - Live interactive demos
+- `/demo/[slug]` - Live interactive business experiences
 - `/capabilities` - What we do
 - `/about` · `/company` · `/founder`
 - `/start` - Start a Project

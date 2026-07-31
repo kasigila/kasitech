@@ -254,7 +254,7 @@ export function Header() {
                   </div>
                   <div>
                     <p className="mb-3 font-mono text-[10px] tracking-[0.14em] text-kasi-grey">
-                      CONCEPTS
+                      BUSINESS EXAMPLES
                     </p>
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
                       {featuredProjects.map((p) => (
@@ -269,11 +269,11 @@ export function Header() {
                       ))}
                     </div>
                     <Link
-                      href="/work#concepts"
+                      href="/showcase"
                       className="mt-6 inline-block text-[13px] text-kasi-grey hover:text-kasi-ivory"
                       onClick={() => setPanel(null)}
                     >
-                      View all concepts →
+                      Business Showcase →
                     </Link>
                   </div>
                 </div>
