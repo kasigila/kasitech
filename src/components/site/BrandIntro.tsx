@@ -30,9 +30,13 @@ export function BrandIntro() {
       return () => window.clearTimeout(hide);
     }
 
-    const start = window.setTimeout(() => setShow(true), 20);
-    const toTech = window.setTimeout(() => setPhase("tech"), 420);
-    const hide = window.setTimeout(() => setShow(false), 900);
+    // First visit in this browser tab only:
+    // 1) "Kasi" + meaning (~2.4s so the phonetic is readable)
+    // 2) "KasiTech" hold (~1.6s)
+    // 3) fade out
+    const start = window.setTimeout(() => setShow(true), 40);
+    const toTech = window.setTimeout(() => setPhase("tech"), 2400);
+    const hide = window.setTimeout(() => setShow(false), 4200);
 
     return () => {
       window.clearTimeout(start);
@@ -48,7 +52,7 @@ export function BrandIntro() {
           className="pointer-events-none fixed inset-0 z-[100] flex flex-col items-center justify-center bg-kasi-black"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.16 }}
+          transition={{ duration: 0.45 }}
           aria-hidden
         >
           <motion.p
@@ -56,7 +60,7 @@ export function BrandIntro() {
             key={phase}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18 }}
+            transition={{ duration: 0.45 }}
           >
             {phase === "kasi" ? "Kasi" : "KasiTech"}
           </motion.p>
@@ -65,7 +69,7 @@ export function BrandIntro() {
               className="mt-4 font-mono text-[10px] tracking-[0.22em] text-kasi-grey md:text-[11px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.08, duration: 0.16 }}
+              transition={{ delay: 0.25, duration: 0.4 }}
             >
               /ˈkɑːsi/ n. speed, pace, momentum
             </motion.p>
