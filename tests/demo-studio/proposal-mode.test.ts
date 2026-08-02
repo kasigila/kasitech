@@ -18,10 +18,10 @@ describe("Credo proposal registry KT-CEG-2026-001", () => {
     const p = CREDO_ENERGY_PROPOSAL;
     expect(p.id).toBe("KT-CEG-2026-001");
     expect(p.slug).toBe("credo-energy-group");
-    expect(p.investment.websiteOneTimeTsh).toBe(7_500_000);
-    expect(p.investment.careMonthlyTsh).toBe(800_000);
-    expect(p.investment.socialMonthlyTsh).toBe(1_200_000);
-    expect(p.investment.totalMonthlyTsh).toBe(2_000_000);
+    expect(p.investment.websiteOneTimeTsh).toBe(4_800_000);
+    expect(p.investment.careMonthlyTsh).toBe(150_000);
+    expect(p.investment.socialMonthlyTsh).toBe(1_000_000);
+    expect(p.investment.totalMonthlyTsh).toBe(150_000);
     expect(p.investment.paymentSchedule).toEqual({
       acceptancePct: 40,
       designApprovalPct: 40,
@@ -41,9 +41,9 @@ describe("Credo proposal registry KT-CEG-2026-001", () => {
   it("maps commercial selections for Demo Studio preview", () => {
     const c = CREDO_ENERGY_PROPOSAL.commercial;
     expect(c.industry).toBe("professional");
-    expect(c.packageCode).toBe("WEB-SIG");
-    expect(c.carePlan).toBe("CARE-PRI");
-    expect(c.socialPlan).toBe("SOC-PRO");
+    expect(c.bundleCode).toBe("BND-PRES");
+    expect(c.carePlan).toBe("CARE-PRO");
+    expect(c.featureCodes).toContain("ADD-QUOTE");
     expect(CREDO_ENERGY_PROPOSAL.brand.name).toBe("Credo Energy Group");
   });
 });

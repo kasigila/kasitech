@@ -42,23 +42,22 @@ export const CREDO_ENERGY_PROPOSAL: ProposalPreset = {
   commercial: {
     ...emptyCommercialState(),
     industry: "professional",
-    startMode: "package",
-    packageCode: "WEB-SIG",
-    bundleCode: null,
-    featureCodes: ["SEO-FND", "LOC-GBP"],
-    carePlan: "CARE-PRI",
+    startMode: "bundle",
+    packageCode: null,
+    bundleCode: "BND-PRES",
+    featureCodes: ["ADD-QUOTE", "LOC-REV"],
+    carePlan: "CARE-PRO",
     kbPlan: null,
-    seoSetup: "SEO-PRO",
+    seoSetup: null,
     seoRecurring: null,
-    socialPlan: "SOC-PRO",
+    socialPlan: null,
     delivery: "STANDARD",
   },
   recommended: {
-    packageLabel: "Premium corporate website (Signature-grade)",
-    careLabel: "Website Care Plan — TZS 800,000 / month",
-    socialLabel: "Social Media Management — TZS 1,200,000 / month",
-    kbPlanLabel: null,
-    capabilities: [
+    packageLabel: "Professional Presence bundle (BND-PRES)",
+    careLabel: "Professional Care — TSh 150,000 / month",
+    socialLabel: "Social proposed separately · SOC-PRO TSh 1,000,000 / month",
+    kbPlanLabel: null,    capabilities: [
       "Executive-grade corporate presence",
       "Multi-vertical product catalogue",
       "Project / proof library",
@@ -89,10 +88,12 @@ export const CREDO_ENERGY_PROPOSAL: ProposalPreset = {
     ],
   },
   investment: {
-    websiteOneTimeTsh: 7_500_000,
-    careMonthlyTsh: 800_000,
-    socialMonthlyTsh: 1_200_000,
-    totalMonthlyTsh: 2_000_000,
+    /** KT-CEG-WEB-2026-001 — catalog-valid website quote */
+    websiteOneTimeTsh: 4_800_000,
+    careMonthlyTsh: 150_000,
+    /** Social proposed separately (KT-CEG-SOC-2026-001 · SOC-PRO) */
+    socialMonthlyTsh: 1_000_000,
+    totalMonthlyTsh: 150_000,
     currency: "TZS",
     paymentSchedule: {
       acceptancePct: 40,
