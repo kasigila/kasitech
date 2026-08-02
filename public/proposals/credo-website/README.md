@@ -17,7 +17,9 @@
 | Editable HTML source | `proposals/credo-website/index.html` |
 | Stylesheet | `proposals/credo-website/styles.css` |
 | Photos | `proposals/credo-website/assets/photos/` → symlink to `credo-energy-group/assets/photos` |
+| Credo brand assets | `proposals/credo-website/assets/brand/` (logos, hero, Solar AC product shots) |
 | Preview QR | `proposals/credo-website/assets/qr/preview.png` |
+| Live mockup | Demo Studio `FlagshipCredo` at `/demo-studio/proposal/credo-energy-group` |
 
 ## Approved investment (catalog-valid)
 

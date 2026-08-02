@@ -46,6 +46,11 @@ describe("Credo proposal registry KT-CEG-2026-001", () => {
     expect(c.featureCodes).toContain("ADD-QUOTE");
     expect(CREDO_ENERGY_PROPOSAL.brand.name).toBe("Credo Energy Group");
   });
+
+  it("uses a Credo-specific brand key for the flagship site mockup", () => {
+    expect(CREDO_ENERGY_PROPOSAL.brand.key).toBe("credo-energy-group");
+    expect(CREDO_ENERGY_PROPOSAL.brand.accent).toBe("#0b6e4f");
+  });
 });
 
 describe("Proposal Companion sections", () => {
