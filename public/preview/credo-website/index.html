@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Credo Energy Group · Website Preview | KasiTech</title>
+  <style>
+    :root {
+      --ink: #0c1612;
+      --accent: #0b6e4f;
+      --surface: #f3f7f5;
+      --muted: rgba(12, 22, 18, 0.65);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--ink);
+      background: var(--surface);
+      line-height: 1.5;
+    }
+    button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    .bar {
+      background: #0c1612;
+      color: rgba(255,255,255,0.7);
+      padding: 10px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .bar strong { color: #8fd4b5; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 10px; }
+
+    header.site {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(243,247,245,0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(12,22,18,0.1);
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 14px 0;
+    }
+    .nav img.logo { height: 36px; width: auto; display: block; }
+    .nav-links { display: none; gap: 22px; }
+    .nav-links button {
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      opacity: 0.65;
+    }
+    .nav-links button:hover, .nav-links button.active { opacity: 1; color: var(--accent); }
+    .cta {
+      background: var(--accent); color: #fff;
+      padding: 10px 14px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    @media (min-width: 800px) { .nav-links { display: flex; } }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .hero {
+      position: relative; min-height: 72vh;
+      color: #fff; overflow: hidden;
+    }
+    .hero img.bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .hero .shade {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(12,22,18,0.9), rgba(12,22,18,0.35));
+    }
+    .hero .content {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 72px 18px 48px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      min-height: 72vh;
+    }
+    .hero .mark { height: 48px; width: auto; margin-bottom: 18px; }
+    .eyebrow {
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: #8fd4b5; margin: 0 0 12px;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.1; letter-spacing: -0.03em;
+      margin: 0 0 14px; max-width: 14ch; font-weight: 650;
+    }
+    .lede { max-width: 36rem; color: rgba(255,255,255,0.78); margin: 0 0 22px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn-ghost {
+      border: 1px solid rgba(255,255,255,0.4); color: #fff;
+      padding: 10px 14px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    section.block { padding: 48px 0; }
+    section.block h2 { margin: 0 0 8px; font-size: 1.7rem; letter-spacing: -0.02em; }
+    section.block .sub { margin: 0 0 24px; color: var(--muted); max-width: 40rem; }
+    .label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+
+    .grid3 { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    @media (min-width: 700px) { .grid3 { grid-template-columns: repeat(3, 1fr); } }
+    .card {
+      background: #fff; border: 1px solid rgba(12,22,18,0.1);
+      padding: 18px; text-align: left;
+    }
+    .card img.icon { height: 28px; width: auto; }
+    .card h3 { margin: 12px 0 6px; font-size: 1rem; }
+    .card p { margin: 0; font-size: 13px; color: var(--muted); }
+
+    .flagship { background: #fff; border-top: 1px solid rgba(12,22,18,0.08); border-bottom: 1px solid rgba(12,22,18,0.08); }
+    .product {
+      border: 1px solid rgba(12,22,18,0.08); background: var(--surface); padding: 16px;
+    }
+    .product .shot {
+      height: 180px; background: #fff; display: flex; align-items: center; justify-content: center;
+    }
+    .product .shot img { height: 150px; width: auto; object-fit: contain; }
+    .product h3 { margin: 12px 0 6px; font-size: 0.95rem; }
+    .product p { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+    .linkish { color: var(--accent); font-size: 11px; font-weight: 650; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .split { display: grid; gap: 24px; }
+    @media (min-width: 800px) { .split { grid-template-columns: 1.2fr 1fr; align-items: center; } }
+    .split .photo { min-height: 220px; position: relative; overflow: hidden; }
+    .split .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+    form.quote {
+      background: #fff; border: 1px solid rgba(12,22,18,0.1);
+      padding: 22px; display: grid; gap: 12px; max-width: 640px;
+    }
+    label { display: grid; gap: 6px; font-size: 11px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    input, select, textarea {
+      font: inherit; padding: 10px 12px; border: 1px solid rgba(12,22,18,0.15);
+      background: var(--surface); color: var(--ink); text-transform: none; font-weight: 400; letter-spacing: 0;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .done {
+      border: 1px solid rgba(11,110,79,0.35); background: #fff; padding: 22px; max-width: 640px;
+    }
+    .done h3 { margin: 0 0 8px; color: var(--accent); }
+
+    footer.site {
+      background: #0c1612; color: rgba(255,255,255,0.55);
+      padding: 36px 0; margin-top: 24px;
+    }
+    footer.site .wrap { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: center; }
+    footer.site img { height: 48px; width: auto; }
+    footer.site .tiny { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <div><strong>Conceptual website preview</strong> · KT-CEG-WEB-2026-001 · Credo Energy Group</div>
+    <div>Not the final build · Prepared by KasiTech</div>
+  </div>
+
+  <header class="site">
+    <div class="wrap nav">
+      <button type="button" data-go="home" aria-label="Credo home">
+        <img class="logo" src="assets/credo-logo-dark.png" alt="Credo Energy Group" />
+      </button>
+      <nav class="nav-links">
+        <button type="button" data-go="products">Products</button>
+        <button type="button" data-go="solutions">Solutions</button>
+        <button type="button" data-go="projects">Projects</button>
+        <button type="button" data-go="about">About</button>
+      </nav>
+      <button type="button" class="cta" data-go="enquiry">Request a quote</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="home" class="page active">
+      <section class="hero">
+        <img class="bg" src="assets/credo-hero-1.jpg" alt="" />
+        <div class="shade"></div>
+        <div class="content">
+          <img class="mark" src="assets/credo-logo-footer.png" alt="" />
+          <p class="eyebrow">Credo Energy Group</p>
+          <h1>Energy systems for Africa’s next decade.</h1>
+          <p class="lede">Solar cooling, smart utilities, renewables, EV, drones, and digital infrastructure — one institutional presence.</p>
+          <div class="actions">
+            <button type="button" class="cta" data-go="enquiry">Request consultation</button>
+            <button type="button" class="btn-ghost" data-go="products">Explore products</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap">
+          <p class="label">Portfolio</p>
+          <h2>Six verticals. One group.</h2>
+          <p class="sub">Buyers should understand Credo’s full portfolio in one scroll, then enter the right catalogue path.</p>
+          <div class="grid3">
+            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Smart Solar AC</h3><p>CREDO™ Solar Breeze, Tower, and Force for homes and commercial spaces.</p></button>
+            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-utilities.png" alt="" /><h3>Smart Utilities</h3><p>Prepaid water and electricity meters with software and analytics.</p></button>
+            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Solar &amp; Renewables</h3><p>Streetlights, benches, shelters, home kits, and solar infrastructure.</p></button>
+            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-ev.png" alt="" /><h3>EV Solutions</h3><p>Smart charging stations, portable chargers, and roadside power kits.</p></button>
+            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-drones.png" alt="" /><h3>Drone Technology</h3><p>Agricultural, surveillance, law enforcement, and civilian systems.</p></button>
+            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-telecom.png" alt="" /><h3>Digital &amp; Telecom</h3><p>CREDO™ TELECOM (upcoming ISP), satellite, AI, and smart city.</p></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="block flagship">
+        <div class="wrap">
+          <p class="label">Flagship</p>
+          <h2>CREDO™ Smart Solar AC</h2>
+          <p class="sub">Efficient. Elegant. Eco-powered. Three models staged clearly so buyers can choose without digging through a generic catalogue.</p>
+          <div class="grid3">
+            <div class="product"><div class="shot"><img src="assets/credo-ac-1.png" alt="Solar Breeze" /></div><h3>CREDO™ Solar Breeze</h3><p>Compact solar cooling for homes, offices, and small spaces.</p><button type="button" class="linkish" data-go="enquiry">Request a quote →</button></div>
+            <div class="product"><div class="shot"><img src="assets/credo-ac-2.png" alt="Solar Tower" /></div><h3>CREDO™ Solar Tower</h3><p>Hybrid solar cooling for larger living rooms and open-plan spaces.</p><button type="button" class="linkish" data-go="enquiry">Request a quote →</button></div>
+            <div class="product"><div class="shot"><img src="assets/credo-ac-3.png" alt="Solar Force" /></div><h3>CREDO™ Solar Force</h3><p>Industrial-grade solar cooling for halls and commercial rooms.</p><button type="button" class="linkish" data-go="enquiry">Request a quote →</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="wrap split">
+          <div>
+            <p class="label">Proof</p>
+            <h2>Projects that earn confidence</h2>
+            <p class="sub">A structured proof library. Real deployments appear when Credo supplies them. We do not invent claims.</p>
+            <button type="button" class="linkish" data-go="projects">View projects →</button>
+          </div>
+          <div class="photo"><img src="assets/credo-hero-2.jpg" alt="" /></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="products" class="page">
+      <section class="block">
+        <div class="wrap">
+          <p class="label">Products</p>
+          <h2>Catalogue by vertical</h2>
+          <p class="sub">Buyers land in the right family first. Specs and quote paths sit next to each product.</p>
+          <div class="grid3" style="margin-bottom:32px;">
+            <div class="card"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Smart Solar AC</h3><p>Residential and commercial solar cooling line.</p></div>
+            <div class="card"><img class="icon" src="assets/credo-icon-utilities.png" alt="" /><h3>Smart Utilities</h3><p>Metering and utility technology.</p></div>
+            <div class="card"><img class="icon" src="assets/credo-icon-ev.png" alt="" /><h3>EV Solutions</h3><p>Charging and mobility infrastructure.</p></div>
+            <div class="card"><img class="icon" src="assets/credo-icon-drones.png" alt="" /><h3>Drone Technology</h3><p>Aerial systems for agri, security, inspection.</p></div>
+            <div class="card"><img class="icon" src="assets/credo-icon-telecom.png" alt="" /><h3>Digital &amp; Telecom</h3><p>Connectivity and smart-city services.</p></div>
+            <div class="card"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Solar &amp; Renewables</h3><p>Infrastructure and solar products at scale.</p></div>
+          </div>
+          <h2 style="font-size:1.3rem;">CREDO™ Smart Solar AC line</h2>
+          <div class="grid3" style="margin-top:16px;">
+            <div class="product"><div class="shot"><img src="assets/credo-ac-1.png" alt="" /></div><h3>Solar Breeze</h3><p>Compact solar cooling.</p></div>
+            <div class="product"><div class="shot"><img src="assets/credo-ac-2.png" alt="" /></div><h3>Solar Tower</h3><p>Hybrid solar for larger spaces.</p></div>
+            <div class="product"><div class="shot"><img src="assets/credo-ac-3.png" alt="" /></div><h3>Solar Force</h3><p>Commercial-grade solar cooling.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="solutions" class="page">
+      <section class="block">
+        <div class="wrap">
+          <p class="label">Solutions</p>
+          <h2>Built for how Credo sells</h2>
+          <div class="grid3" style="margin-top:20px;">
+            <div class="card"><h3>Residential &amp; SME</h3><p>Solar AC, home kits, and clear quote paths for homeowners and small businesses.</p></div>
+            <div class="card"><h3>Municipal &amp; utility</h3><p>Metering, street infrastructure, and institutional buying journeys.</p></div>
+            <div class="card"><h3>Partners &amp; distributors</h3><p>Catalogue clarity and segmented intake for B2B buyers.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="projects" class="page">
+      <section class="block">
+        <div class="wrap">
+          <p class="label">Projects</p>
+          <h2>Proof library</h2>
+          <p class="sub">Structure is ready. Case content is added from Credo-supplied deployments only.</p>
+          <div class="grid3">
+            <div class="card"><p class="label">Smart Utilities</p><h3>Municipal metering rollout</h3><p>Template ready for Credo-supplied deployment details.</p></div>
+            <div class="card"><p class="label">Solar AC</p><h3>Commercial solar cooling</h3><p>Structure prepared. Real case content added when Credo provides it.</p></div>
+            <div class="card"><p class="label">EV Solutions</p><h3>EV charging pilot</h3><p>Proof library slot for institutional and roadside installs.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="about" class="page">
+      <section class="block">
+        <div class="wrap split">
+          <div>
+            <img src="assets/credo-logo-dark.png" alt="Credo Energy Group" style="height:40px;width:auto;margin-bottom:20px;" />
+            <p class="label">About</p>
+            <h2>A Tanzanian group building Africa’s energy future.</h2>
+            <p class="sub">Credo Energy Group works across sustainable development, innovation, and industrial projects: solar cooling, smart utilities, renewables, EV, drones, and an emerging digital and telecom agenda.</p>
+            <p class="sub">This About page replaces placeholder copy with a clear group narrative and verified contact facts.</p>
+          </div>
+          <div class="photo"><img src="assets/credo-hero-2.jpg" alt="" /></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="enquiry" class="page">
+      <section class="block">
+        <div class="wrap">
+          <p class="label">Request a quote</p>
+          <h2>The right enquiry path, first time.</h2>
+          <p class="sub">Segmented intake for energy buyers. No web-design or branding form options.</p>
+          <form class="quote" id="quote-form">
+            <label>Buyer type
+              <select name="audience">
+                <option>Residential / homeowner</option>
+                <option>Commercial / SME</option>
+                <option>Municipal / utility</option>
+                <option>Distributor / partner</option>
+              </select>
+            </label>
+            <label>Interest
+              <select name="interest">
+                <option>Smart Solar AC</option>
+                <option>Smart Utilities</option>
+                <option>Solar &amp; Renewables</option>
+                <option>EV Solutions</option>
+                <option>Drone Technology</option>
+                <option>Digital &amp; Telecom</option>
+              </select>
+            </label>
+            <label>Name<input required name="name" placeholder="Your name" /></label>
+            <label>Email or phone<input required name="contact" placeholder="How should Credo reach you?" /></label>
+            <label>Project notes<textarea name="notes" placeholder="Site location, quantity, timeline…"></textarea></label>
+            <button type="submit" class="cta" style="justify-self:start;">Submit quote request</button>
+          </form>
+          <div class="done" id="quote-done" hidden>
+            <h3>Request received</h3>
+            <p>Demo confirmation only. In production, this routes to Credo’s sales desk with audience and vertical attached.</p>
+            <button type="button" class="linkish" id="quote-again">Send another</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <img src="assets/credo-logo-footer.png" alt="Credo Energy Group" />
+      <div>
+        <div>Dar es Salaam</div>
+        <div>enquiries@credogroupllc.com</div>
+        <div class="tiny">Conceptual preview · Proposal KT-CEG-WEB-2026-001</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function go(id) {
+      document.querySelectorAll('.page').forEach((el) => el.classList.toggle('active', el.id === id));
+      document.querySelectorAll('.nav-links button').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-go') === id);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.querySelectorAll('[data-go]').forEach((btn) => {
+      btn.addEventListener('click', () => go(btn.getAttribute('data-go')));
+    });
+    const form = document.getElementById('quote-form');
+    const done = document.getElementById('quote-done');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      form.hidden = true;
+      done.hidden = false;
+    });
+    document.getElementById('quote-again').addEventListener('click', () => {
+      form.reset();
+      form.hidden = false;
+      done.hidden = true;
+    });
+  </script>
+</body>
+</html>
