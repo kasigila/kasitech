@@ -14,7 +14,11 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "npx tsx src/commercial/scripts/seed-price-book.ts",
     "catalog:pdf": "npx tsx src/commercial/scripts/export-client-catalog.ts",
-    "proposal:credo": "npx tsx src/proposals/credo-energy/export-pdf.ts"
+    "proposal:credo": "npx tsx src/proposals/credo-energy/export-pdf.ts",
+    "proposal:credo-website": "npx tsx src/proposals/credo-website/export-pdf.ts",
+    "proposal:credo-social": "npx tsx src/proposals/credo-social/export-pdf.ts",
+    "proposal:credo-website-contract": "npx tsx src/proposals/credo-website-contract/export-pdf.ts",
+    "proposal:credo-social-contract": "npx tsx src/proposals/credo-social-contract/export-pdf.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

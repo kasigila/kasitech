@@ -7,6 +7,7 @@ import { FlagshipAmani } from "./previews/FlagshipAmani";
 import { FlagshipJiko } from "./previews/FlagshipJiko";
 import { FlagshipTembea } from "./previews/FlagshipTembea";
 import { FlagshipNuru } from "./previews/FlagshipNuru";
+import { FlagshipCredo } from "./previews/FlagshipCredo";
 
 type Props = {
   business: FictionalBusiness;
@@ -55,8 +56,11 @@ export function DemoWebsite(props: Props) {
 }
 
 function DemoWebsiteInner(props: Props) {
-  const { business: b, caps, language, onLanguage } = props;
+  const { business: b, caps, language, onLanguage, initialPath } = props;
   const flagship = { business: b, caps, language, onLanguage };
+  if (b.key === "credo-energy-group") {
+    return <FlagshipCredo {...flagship} initialPath={initialPath} />;
+  }
   if (b.industry === "beauty") return <FlagshipAmani {...flagship} />;
   if (b.industry === "restaurant") return <FlagshipJiko {...flagship} />;
   if (b.industry === "tourism") return <FlagshipTembea {...flagship} />;

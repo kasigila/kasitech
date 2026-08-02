@@ -836,19 +836,19 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
                   {companionHighlight === "care" && (
                     <CompanionOverlay
                       title="Website Care"
-                      body="TZS 800,000 / month — updates, monitoring, security hygiene, performance watch, and a monthly health note."
+                      body="TSh 150,000 / month Professional Care — updates, monitoring, security hygiene, performance watch, and a monthly health note."
                     />
                   )}
                   {companionHighlight === "social" && (
                     <CompanionOverlay
                       title="Social Media Management"
-                      body="TZS 1,200,000 / month — 16 posts · 8 stories · 2 reels · strategy, community, scheduling, and reporting."
+                      body="Proposed separately (KT-CEG-SOC-2026-001) · Social Pro TSh 1,000,000 / month."
                     />
                   )}
                   {companionHighlight === "investment" && (
                     <CompanionOverlay
                       title="Recommended investment"
-                      body="Website TZS 7,500,000 one-time · Monthly partnership TZS 2,000,000 (Care + Social). Payment 40% / 40% / 20%."
+                      body="Website TSh 4,800,000 one-time · Professional Care TSh 150,000 / month. Payment 40% / 40% / 20%. Social is a separate proposal."
                     />
                   )}
                   {companionHighlight === "nav" && (
