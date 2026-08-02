@@ -7,7 +7,7 @@ exportProposalPdf({
   publicFolderName: "credo-website",
   manifestName: "credo-website-manifest.json",
   meta: {
-    title: "Website Proposal — Credo Energy Group | KasiTech",
+    title: "Website Proposal · Credo Energy Group | KasiTech",
     ref: "KT-CEG-WEB-2026-001",
     date: "2026-08-03",
     oneTimeTsh: 4_800_000,
