@@ -17,7 +17,7 @@ export default function AllWorkPage() {
     <div className="px-5 pb-24 pt-32 md:px-8">
       <div className="mx-auto max-w-[1400px]">
         <p className="font-mono text-[11px] tracking-[0.18em] text-kasi-grey">
-          ALL 12 DEMOS
+          ALL BUSINESS EXAMPLES
         </p>
         <h1 className="mt-6 font-display text-4xl tracking-[-0.04em] md:text-6xl">
           EVERYTHING.

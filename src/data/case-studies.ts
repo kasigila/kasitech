@@ -247,6 +247,40 @@ export const caseStudies: Record<string, CaseStudyContent> = {
     built: ["Query engine UI", "Evidence charts", "Automation builder"],
     liveNote: "Ask a business question and approve a suggested automation.",
   },
+  glow: {
+    slug: "glow",
+    conceptCode: "013",
+    name: "GLOW",
+    strategic:
+      "Beauty booking that feels premium to clients and practical for the salon floor.",
+    challenge:
+      "Salons often rely on DMs, WhatsApp, paper calendars, and memory. Clients cannot see services clearly, staff availability is messy, and repeat-care opportunities get lost.",
+    user:
+      "Clients booking hair, nails, skin, makeup, and wellness services with a preferred stylist.",
+    businessGoal:
+      "Increase direct bookings, reduce scheduling back-and-forth, keep client history visible, and give owners a simple view of services, staff, and demand.",
+    thinking:
+      "Lead with services and atmosphere, then make booking fast. Treat stylist selection, deposits, packages, reminders, and client notes as the operating system behind the beauty experience.",
+    experience:
+      "Service menu, stylist profiles, appointment booking, confirmation, client visits portal, packages, and salon operations view.",
+    system:
+      "Services, staff schedules, bookings, client records, package balances, and utilisation signals.",
+    mobile:
+      "Thumb-ready service cards, simple date/time selection, and a portal clients can reopen before their appointment.",
+    interactions: [
+      "Choose a service and preferred stylist",
+      "Book an appointment with confirmation ID",
+      "Open client visits for packages and care notes",
+      "Switch to Salon view for calendar and analytics",
+    ],
+    built: [
+      "Salon website",
+      "Appointment booking",
+      "Client visits portal",
+      "Owner operations view",
+    ],
+    liveNote: "Book a salon appointment and inspect the salon calendar.",
+  },
   "000": {
     slug: "000",
     conceptCode: "000",

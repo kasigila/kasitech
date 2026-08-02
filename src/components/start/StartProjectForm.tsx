@@ -74,12 +74,13 @@ const goalsByNeed: Record<Need, string[]> = {
   ],
 };
 
+/** Aligned to KT-PB-2026.1 catalog tiers (TSh). */
 const budgets = [
   "Exploring / not sure yet",
-  "Under $2,000",
-  "$2,000 - $5,000",
-  "$5,000 - $10,000",
-  "$10,000+",
+  "Under TSh 1,000,000",
+  "TSh 1,000,000 – 2,500,000",
+  "TSh 2,500,000 – 4,500,000",
+  "TSh 4,500,000+ / custom systems",
 ];
 
 const timelines = [

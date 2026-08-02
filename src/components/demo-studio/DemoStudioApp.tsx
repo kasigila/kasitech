@@ -617,7 +617,7 @@ export function DemoStudioApp({ initialIndustry, initialConfig }: Props) {
       <header className="flex shrink-0 items-center justify-between gap-3 border-b border-kasi-border px-3 py-2 md:px-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <a href="/pricing" className="font-mono text-[10px] text-kasi-green">
+            <a href="/" className="font-mono text-[10px] text-kasi-green">
               KasiTech
             </a>
             <span className="text-kasi-grey">/</span>

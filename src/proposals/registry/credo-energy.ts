@@ -57,14 +57,15 @@ export const CREDO_ENERGY_PROPOSAL: ProposalPreset = {
     packageLabel: "Professional Presence bundle (BND-PRES)",
     careLabel: "Professional Care — TSh 150,000 / month",
     socialLabel: "Social proposed separately · SOC-PRO TSh 1,000,000 / month",
-    kbPlanLabel: null,    capabilities: [
+    kbPlanLabel: null,
+    capabilities: [
       "Executive-grade corporate presence",
       "Multi-vertical product catalogue",
       "Project / proof library",
       "Segmented enquiry architecture",
       "CMS for products, projects & insights",
       "SEO foundations & analytics",
-      "Professional email & hosting setup",
+      "Quote request system & review strategy",
       "Operator training & documentation",
     ],
     modules: [
