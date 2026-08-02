@@ -11,6 +11,8 @@ import {
   readdirSync,
   readFileSync,
   lstatSync,
+  realpathSync,
+  rmSync,
 } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
@@ -69,16 +71,20 @@ export async function exportProposalPdf(opts: ExportOpts) {
   }
   const assetsSrc = resolve(SRC_DIR, "assets");
   if (existsSync(assetsSrc)) {
-    // Resolve symlinks by copying real trees
+    // Dereference symlinks so public/ does not point back at proposals/
     mkdirSync(resolve(publicSrc, "assets"), { recursive: true });
     for (const entry of readdirSync(assetsSrc)) {
       const from = resolve(assetsSrc, entry);
       const to = resolve(publicSrc, "assets", entry);
-      const st = lstatSync(from);
-      if (st.isSymbolicLink() || st.isDirectory()) {
-        cpSync(from, to, { recursive: true });
+      const real = realpathSync(from);
+      if (existsSync(to)) {
+        rmSync(to, { recursive: true, force: true });
+      }
+      const st = lstatSync(real);
+      if (st.isDirectory()) {
+        cpSync(real, to, { recursive: true });
       } else {
-        copyFileSync(from, to);
+        copyFileSync(real, to);
       }
     }
   }

@@ -9,7 +9,7 @@ exportProposalPdf({
   meta: {
     title: "Website Proposal — Credo Energy Group | KasiTech",
     ref: "KT-CEG-WEB-2026-001",
-    date: "2026-08-02",
+    date: "2026-08-03",
     oneTimeTsh: 4_800_000,
     careMonthlyTsh: 150_000,
     demoStudio:

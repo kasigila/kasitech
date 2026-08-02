@@ -1,11 +1,12 @@
-# Credo Energy Group — Website Proposal
+# Credo Energy Group · Website Proposal
 
 **Prepared by:** KasiTech (Karen Marie Kasigila)  
 **Prepared for:** Credo Energy Group  
 **Reference:** KT-CEG-WEB-2026-001  
-**Date:** 2 August 2026  
-**Format:** A4 portrait · 16 pages · print-ready HTML  
-**Scope:** Website only — social media is proposed separately  
+**Date:** 3 August 2026  
+**Format:** A4 portrait · 17 pages · print-ready HTML  
+**Scope:** Website only. Social media is proposed separately.  
+**Timeline:** 14 days (prompt Credo feedback required)
 
 **Demo Studio:** `/demo-studio/proposal/credo-energy-group?section=recommended-website`
 
@@ -16,7 +17,7 @@
 | Editable HTML source | `proposals/credo-website/index.html` |
 | Stylesheet | `proposals/credo-website/styles.css` |
 | Photos | `proposals/credo-website/assets/photos/` → symlink to `credo-energy-group/assets/photos` |
-| Preview QR | `proposals/credo-website/assets/qr/preview.png` (symlink / generate for Demo Studio URL) |
+| Preview QR | `proposals/credo-website/assets/qr/preview.png` |
 
 ## Approved investment (catalog-valid)
 
@@ -32,7 +33,9 @@
 **Bundle note:** Standalone WEB-PRO + SEO-PRO + LOC-GBP = TSh 4,150,000 → BND-PRES saves TSh 400,000.
 
 **Payment:** 40% acceptance · 40% design approval · 20% launch readiness  
-**Validity:** 30 days from 2 August 2026
+**Validity:** 30 days from 3 August 2026
+
+Optional add-ons (ADD-STEP, ADD-FILE, ADD-SRCH, ADD-LAND, LANG-ENSW, ADD-BOT, CARE-PRI upgrade) are listed in the proposal and are **not** included in the base TSh 4,800,000.
 
 ## Page map
 
@@ -47,10 +50,11 @@
 10. Information architecture & features  
 11. Investment breakdown  
 12. Care plan  
-13. Timeline & deliverables  
-14. Why KasiTech + next steps  
-15. Acceptance  
-16. Interactive Preview (QR · Proposal Companion)
+13. Timeline & deliverables (14 days)  
+14. Optional add-ons (not in base price)  
+15. Why KasiTech + next steps  
+16. Acceptance  
+17. Interactive Preview (QR · Proposal Companion)
 
 ## Assets
 
