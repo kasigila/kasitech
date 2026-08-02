@@ -8,7 +8,7 @@
 **Scope:** Website only. Social media is proposed separately.  
 **Timeline:** 14 days (prompt Credo feedback required)
 
-**Demo Studio:** `/demo-studio/proposal/credo-energy-group?section=recommended-website`
+**Interactive preview:** `/preview/credo-website`
 
 ## Deliverables
 
@@ -19,7 +19,7 @@
 | Photos | `proposals/credo-website/assets/photos/` → symlink to `credo-energy-group/assets/photos` |
 | Credo brand assets | `proposals/credo-website/assets/brand/` (logos, hero, Solar AC product shots) |
 | Preview QR | `proposals/credo-website/assets/qr/preview.png` |
-| Live mockup | Demo Studio `FlagshipCredo` at `/demo-studio/proposal/credo-energy-group` |
+| Live mockup | `/preview/credo-website` (Credo-branded `FlagshipCredo`) |
 
 ## Approved investment (catalog-valid)
 
@@ -61,9 +61,9 @@ Optional add-ons (ADD-STEP, ADD-FILE, ADD-SRCH, ADD-LAND, LANG-ENSW, ADD-BOT, CA
 ## Assets
 
 Photos are symlinked from `../credo-energy-group/assets/photos/`.  
-`assets/qr/preview.png` currently links to the shared `section-recommended-website.png` QR; regenerate if a dedicated Companion QR is required for:
+`assets/qr/preview.png` encodes:
 
-`https://www.kasitechinnovations.com/demo-studio/proposal/credo-energy-group?section=recommended-website`
+`https://www.kasitechinnovations.com/preview/credo-website`
 
 ## Design system
 

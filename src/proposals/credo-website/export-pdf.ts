@@ -12,8 +12,7 @@ exportProposalPdf({
     date: "2026-08-03",
     oneTimeTsh: 4_800_000,
     careMonthlyTsh: 150_000,
-    demoStudio:
-      "https://www.kasitechinnovations.com/demo-studio/proposal/credo-energy-group?section=recommended-website",
+    demoStudio: "https://www.kasitechinnovations.com/preview/credo-website",
     editableSource: "proposals/credo-website/",
   },
 }).catch((err) => {
