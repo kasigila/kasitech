@@ -650,30 +650,104 @@
     }
     .demo-dock.collapsed .demo-dock-toggle .chev { transform: rotate(180deg); }
     .demo-dock-body { padding: 12px 12px 14px; display: grid; gap: 8px; }
-    .demo-dock-body p {
+    .demo-dock-body > p {
       margin: 0 0 4px; font-size: 12px; color: var(--muted); line-height: 1.4;
     }
-    .demo-dock-body button {
-      width: 100%; text-align: left;
-      padding: 11px 12px;
+    .demo-actions {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px;
+    }
+    .demo-actions button {
+      padding: 9px 10px;
       border: 1px solid var(--line-soft);
       background: #121212;
-      display: grid; gap: 2px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .demo-actions button:hover { border-color: var(--gold); color: var(--gold); }
+    .addon-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 11px;
+      border: 1px solid var(--line-soft);
+      background: #121212;
+      cursor: pointer;
+      text-align: left;
       transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
     }
-    .demo-dock-body button:hover {
+    .addon-row:hover { border-color: rgba(252,168,60,0.35); }
+    .addon-row.on {
       border-color: rgba(252,168,60,0.45);
       background: rgba(252,168,60,0.08);
     }
-    .demo-dock-body button b {
-      font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text);
+    .addon-row input {
+      appearance: none;
+      width: 18px; height: 18px; margin: 0;
+      border: 1px solid rgba(252,168,60,0.45);
+      background: #0a0a0a;
+      display: grid; place-items: center;
+      flex-shrink: 0;
     }
-    .demo-dock-body button small {
+    .addon-row input:checked {
+      background: var(--grad);
+      border-color: transparent;
+    }
+    .addon-row input:checked::after {
+      content: "";
+      width: 8px; height: 5px;
+      border-left: 2px solid #120e09;
+      border-bottom: 2px solid #120e09;
+      transform: rotate(-45deg) translate(1px, -1px);
+    }
+    .addon-row .copy b {
+      display: block;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text);
+    }
+    .addon-row .copy small {
+      display: block; margin-top: 2px;
       font-size: 11px; color: var(--muted); letter-spacing: 0; text-transform: none; font-weight: 500;
     }
+    .addon-row .state {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .addon-row.on .state { color: var(--gold); }
+    .addon-preview {
+      border: 0;
+      background: transparent;
+      color: var(--gold);
+      font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 4px 0;
+      justify-self: start;
+      grid-column: 2 / -1;
+      margin-top: -4px;
+      margin-bottom: 2px;
+    }
+    .addon-preview:disabled { opacity: 0.35; cursor: not-allowed; color: var(--muted); }
+
+    /* Optional add-ons: hidden unless enabled on body */
+    body:not(.addon-search) #search-open,
+    body:not(.addon-search) #search-overlay { display: none !important; }
+    body:not(.addon-lang) .lang-toggle { display: none !important; }
+    body:not(.addon-chat) #chat-fab,
+    body:not(.addon-chat) #chat-panel { display: none !important; }
+    body:not(.addon-landing) [data-addon="landing"] { display: none !important; }
+    body:not(.addon-step) [data-addon="step"] { display: none !important; }
+    body:not(.addon-file) [data-addon="file"] { display: none !important; }
+    body:not(.addon-care) [data-addon="care"] { display: none !important; }
+    body:not(.addon-step) #quote-step-2,
+    body:not(.addon-step) #quote-step-3 { display: none !important; }
+    body:not(.addon-step) #quote-simple-actions { display: flex !important; }
+    body.addon-step #quote-simple-actions { display: none !important; }
+    body:not(.addon-step) #quote-step-1 .form-actions:not(#quote-simple-actions) { display: none !important; }
+    body.addon-step #quote-simple-fields { display: none !important; }
+    body:not(.addon-step) #quote-simple-fields { display: grid; gap: 14px; }
+    #quote-simple-actions { display: none; }
+
     @media (max-width: 720px) {
       .demo-dock { left: 10px; right: 78px; width: auto; bottom: 12px; }
-      .demo-dock-body button b { font-size: 11px; }
+      .addon-row .copy b { font-size: 10px; }
     }
 
     .chat-fab {
@@ -748,10 +822,10 @@
     html[lang="sw"] p[data-i18n-sw] { display: block !important; }
   </style>
 </head>
-<body>
+<body class="addon-search addon-lang addon-step addon-file addon-landing addon-chat addon-care">
   <div class="proposed">
     <div><strong>Credo Energy Group</strong> · Website preview</div>
-    <div>Use the “Try optional extras” panel to demo add-ons · Not in base price</div>
+    <div>Toggle optional extras on/off to compare base vs upgraded site</div>
   </div>
 
   <header class="site">
@@ -788,7 +862,7 @@
             <button type="button" data-go="about" data-scroll="leadership">Leadership</button>
             <button type="button" data-go="news">News</button>
             <button type="button" data-go="careers">Careers</button>
-            <button type="button" data-go="landing-telecom">TELECOM Landing <small>Optional campaign page</small></button>
+            <button type="button" data-go="landing-telecom" data-addon="landing">TELECOM Landing <small>Optional campaign page</small></button>
           </div>
         </div>
       </nav>
@@ -828,7 +902,7 @@
       <button type="button" class="nav-link" data-go="about">About</button>
       <button type="button" class="nav-link" data-go="news">News</button>
       <button type="button" class="nav-link" data-go="careers">Careers</button>
-      <button type="button" class="nav-link" data-go="landing-telecom">TELECOM Landing</button>
+      <button type="button" class="nav-link" data-go="landing-telecom" data-addon="landing">TELECOM Landing</button>
       <button type="button" class="cta" style="margin-top:16px;" data-go="enquiry">Request a quote</button>
     </div>
   </div>
@@ -981,7 +1055,7 @@
 
     <div id="product-telecom" class="page">
       <div class="page-hero"><div class="wrap"><p class="label">Digital &amp; Telecom</p><h1>CREDO™ TELECOM and the smart-city horizon.</h1><p class="sub" style="margin-bottom:0;">Upcoming ISP, satellite, AI, and smart-city services.</p></div></div>
-      <section class="block"><div class="wrap split"><div class="copy"><h2>Connectivity as an energy-group chapter.</h2><p class="sub">Digital and telecom sit alongside physical energy systems so partners see the full Credo horizon.</p><div style="display:flex; flex-wrap:wrap; gap:10px;"><button type="button" class="cta" data-go="enquiry" data-interest="Digital &amp; Telecom">Talk to Credo</button><button type="button" class="btn-ghost" data-go="landing-telecom">Open TELECOM landing</button></div></div><div class="media"><img src="/preview/credo-website/assets/city-dusk.jpg" alt="" /></div></div></section>
+      <section class="block"><div class="wrap split"><div class="copy"><h2>Connectivity as an energy-group chapter.</h2><p class="sub">Digital and telecom sit alongside physical energy systems so partners see the full Credo horizon.</p><div style="display:flex; flex-wrap:wrap; gap:10px;"><button type="button" class="cta" data-go="enquiry" data-interest="Digital &amp; Telecom">Talk to Credo</button><button type="button" class="btn-ghost" data-go="landing-telecom" data-addon="landing">Open TELECOM landing</button></div></div><div class="media"><img src="/preview/credo-website/assets/city-dusk.jpg" alt="" /></div></div></section>
     </div>
 
     <!-- TELECOM LANDING (ADD-LAND) -->
@@ -990,7 +1064,7 @@
         <img class="bg" src="/preview/credo-website/assets/credo-hero-3.jpg" alt="" />
         <div class="shade"></div>
         <div class="content">
-          <span class="opt-chip" style="margin-bottom:16px;"><span class="opt-dot"></span>Optional · ADD-LAND · Custom landing page</span>
+          <span class="opt-chip" style="margin-bottom:16px;" data-addon="landing"><span class="opt-dot"></span>Optional · ADD-LAND · Custom landing page</span>
           <p class="label">Campaign landing</p>
           <h1 style="font-family:var(--font-display); font-size:clamp(2.4rem,6vw,4.4rem); text-transform:uppercase; letter-spacing:0.02em; margin:0 0 14px; max-width:14ch;">CREDO™ TELECOM is coming online.</h1>
           <p class="lede" style="max-width:34rem; color:var(--muted); margin:0 0 24px;">A focused launch surface for ISP, satellite, and smart-city messaging. Keeps campaign traffic out of homepage clutter.</p>
@@ -1068,8 +1142,8 @@
     <div id="enquiry" class="page">
       <div class="page-hero"><div class="wrap">
         <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
-          <span class="opt-chip"><span class="opt-dot"></span>Optional · ADD-STEP · Multi-step form</span>
-          <span class="opt-chip"><span class="opt-dot"></span>Optional · ADD-FILE · File uploads</span>
+          <span class="opt-chip" data-addon="step"><span class="opt-dot"></span>Optional · ADD-STEP · Multi-step form</span>
+          <span class="opt-chip" data-addon="file"><span class="opt-dot"></span>Optional · ADD-FILE · File uploads</span>
         </div>
         <p class="label">Contact · Request a quote</p>
         <h1>The right enquiry path, first time.</h1>
@@ -1081,13 +1155,13 @@
           <div><dt>Phone</dt><dd><a href="tel:+255686882769">+255 686 882 769</a></dd></div>
           <div><dt>Email</dt><dd><a href="mailto:info@credogroupllc.com">info@credogroupllc.com</a></dd></div>
           <div><dt>Local presence</dt><dd>Google Business Profile aligned to verified Dar es Salaam facts.</dd></div>
-          <div><dt>Care path</dt><dd>Professional Care after launch. Priority Care available as an upgrade if Credo wants faster response.</dd></div>
+          <div data-addon="care"><dt>Care path</dt><dd>Professional Care after launch. Priority Care available as an upgrade if Credo wants faster response.</dd></div>
           <button type="button" class="btn-line" data-go="products">Browse products</button>
         </aside>
         <div>
           <form class="quote" id="quote-form">
-            <div class="steps" aria-hidden="true"><span class="on" id="step-bar-1"></span><span id="step-bar-2"></span><span id="step-bar-3"></span></div>
-            <div class="step-label" id="step-label">Step 1 of 3 · Who is buying</div>
+            <div class="steps" data-addon="step" aria-hidden="true"><span class="on" id="step-bar-1"></span><span id="step-bar-2"></span><span id="step-bar-3"></span></div>
+            <div class="step-label" id="step-label" data-addon="step">Step 1 of 3 · Who is buying</div>
             <div id="quote-step-1">
               <label>Buyer type
                 <select name="audience" id="audience">
@@ -1107,26 +1181,41 @@
                   <option>Digital &amp; Telecom</option>
                 </select>
               </label>
-              <div class="form-actions"><button type="button" class="cta" id="to-step-2">Continue</button></div>
+              <div class="simple-only" id="quote-simple-fields">
+                <label>Name<input required name="name" id="q-name" placeholder="Your name" /></label>
+                <label>Email or phone<input required name="contact" id="q-contact" placeholder="How should Credo reach you?" /></label>
+                <label>Project notes<textarea name="notes" id="q-notes" placeholder="Site location, quantity, timeline…"></textarea></label>
+                <div class="file-box" data-addon="file">
+                  <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                    <strong style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);">Attach files</strong>
+                    <span class="opt-chip">ADD-FILE</span>
+                  </div>
+                  <p style="margin:0; font-size:13px; color:var(--muted);">Specs, RFPs, or site photos for tender and B2B buyers.</p>
+                  <input type="file" id="q-file" multiple accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
+                  <div id="file-list" style="font-size:12px; color:var(--muted);"></div>
+                </div>
+              </div>
+              <div class="form-actions" data-addon="step"><button type="button" class="cta" id="to-step-2">Continue</button></div>
+              <div class="form-actions" id="quote-simple-actions"><button type="submit" class="cta">Submit quote request</button></div>
             </div>
             <div id="quote-step-2" hidden>
-              <label>Name<input required name="name" id="q-name" placeholder="Your name" /></label>
-              <label>Email or phone<input required name="contact" id="q-contact" placeholder="How should Credo reach you?" /></label>
+              <label>Name<input name="name_step" id="q-name-step" placeholder="Your name" /></label>
+              <label>Email or phone<input name="contact_step" id="q-contact-step" placeholder="How should Credo reach you?" /></label>
               <div class="form-actions">
                 <button type="button" class="btn-line" id="back-step-1">Back</button>
                 <button type="button" class="cta" id="to-step-3">Continue</button>
               </div>
             </div>
             <div id="quote-step-3" hidden>
-              <label>Project notes<textarea name="notes" id="q-notes" placeholder="Site location, quantity, timeline…"></textarea></label>
-              <div class="file-box">
+              <label>Project notes<textarea name="notes_step" id="q-notes-step" placeholder="Site location, quantity, timeline…"></textarea></label>
+              <div class="file-box" data-addon="file" id="file-box-step">
                 <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
                   <strong style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);">Attach files</strong>
                   <span class="opt-chip">ADD-FILE</span>
                 </div>
                 <p style="margin:0; font-size:13px; color:var(--muted);">Specs, RFPs, or site photos for tender and B2B buyers.</p>
-                <input type="file" id="q-file" multiple accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
-                <div id="file-list" style="font-size:12px; color:var(--muted);"></div>
+                <input type="file" id="q-file-step" multiple accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
+                <div id="file-list-step" style="font-size:12px; color:var(--muted);"></div>
               </div>
               <div class="form-actions">
                 <button type="button" class="btn-line" id="back-step-2">Back</button>
@@ -1167,7 +1256,7 @@
           <button type="button" data-go="resources">Resources</button>
           <button type="button" data-go="news">News</button>
           <button type="button" data-go="careers">Careers</button>
-          <button type="button" data-go="landing-telecom">TELECOM Landing</button>
+          <button type="button" data-go="landing-telecom" data-addon="landing">TELECOM Landing</button>
         </div>
         <div>
           <h4>Contact</h4>
@@ -1184,22 +1273,69 @@
     </div>
   </footer>
 
-  <aside class="demo-dock" id="demo-dock" aria-label="Optional add-ons demo">
+  <aside class="demo-dock" id="demo-dock" aria-label="Optional add-ons">
     <button type="button" class="demo-dock-toggle" id="demo-dock-toggle" aria-expanded="true">
       <span>
-        <strong>Try optional extras</strong>
-        <span>One tap each · not in base price</span>
+        <strong>Optional add-ons</strong>
+        <span>Select to add · deselect to remove</span>
       </span>
       <span class="chev" aria-hidden="true">▾</span>
     </button>
     <div class="demo-dock-body" id="demo-dock-body">
-      <p>Tap any item to see how that optional add-on would look and feel on the Credo site.</p>
-      <button type="button" data-demo="search"><b>ADD-SRCH · Site search</b><small>Find Solar AC, meters, EV, telecom…</small></button>
-      <button type="button" data-demo="lang"><b>LANG-ENSW · English / Swahili</b><small>Switch the homepage language instantly</small></button>
-      <button type="button" data-demo="quote"><b>ADD-STEP + ADD-FILE · Quote flow</b><small>Multi-step form with file uploads</small></button>
-      <button type="button" data-demo="landing"><b>ADD-LAND · TELECOM landing</b><small>Campaign page for CREDO™ TELECOM</small></button>
-      <button type="button" data-demo="chat"><b>ADD-BOT · Website chatbot</b><small>Quick product triage before sales</small></button>
-      <button type="button" data-demo="care"><b>CARE-PRI · Priority Care note</b><small>See the upgrade path on Contact</small></button>
+      <p>Turn extras on or off to compare the base website with upgraded options. Not included in the base price.</p>
+      <div class="demo-actions">
+        <button type="button" id="addons-all-on">Select all</button>
+        <button type="button" id="addons-all-off">Deselect all</button>
+      </div>
+
+      <label class="addon-row on" data-addon-row="search">
+        <input type="checkbox" data-addon-toggle="search" checked />
+        <span class="copy"><b>ADD-SRCH · Site search</b><small>Header search across products</small></span>
+        <span class="state">On</span>
+      </label>
+      <button type="button" class="addon-preview" data-preview="search">Preview search</button>
+
+      <label class="addon-row on" data-addon-row="lang">
+        <input type="checkbox" data-addon-toggle="lang" checked />
+        <span class="copy"><b>LANG-ENSW · English / Swahili</b><small>Language toggle in the header</small></span>
+        <span class="state">On</span>
+      </label>
+      <button type="button" class="addon-preview" data-preview="lang">Preview language</button>
+
+      <label class="addon-row on" data-addon-row="step">
+        <input type="checkbox" data-addon-toggle="step" checked />
+        <span class="copy"><b>ADD-STEP · Multi-step quote</b><small>Guided 3-step enquiry form</small></span>
+        <span class="state">On</span>
+      </label>
+      <button type="button" class="addon-preview" data-preview="step">Preview quote</button>
+
+      <label class="addon-row on" data-addon-row="file">
+        <input type="checkbox" data-addon-toggle="file" checked />
+        <span class="copy"><b>ADD-FILE · File uploads</b><small>Attach specs, RFPs, site photos</small></span>
+        <span class="state">On</span>
+      </label>
+      <button type="button" class="addon-preview" data-preview="file">Preview uploads</button>
+
+      <label class="addon-row on" data-addon-row="landing">
+        <input type="checkbox" data-addon-toggle="landing" checked />
+        <span class="copy"><b>ADD-LAND · TELECOM landing</b><small>Campaign page for CREDO™ TELECOM</small></span>
+        <span class="state">On</span>
+      </label>
+      <button type="button" class="addon-preview" data-preview="landing">Preview landing</button>
+
+      <label class="addon-row on" data-addon-row="chat">
+        <input type="checkbox" data-addon-toggle="chat" checked />
+        <span class="copy"><b>ADD-BOT · Website chatbot</b><small>Chat button and assistant panel</small></span>
+        <span class="state">On</span>
+      </label>
+      <button type="button" class="addon-preview" data-preview="chat">Preview chat</button>
+
+      <label class="addon-row on" data-addon-row="care">
+        <input type="checkbox" data-addon-toggle="care" checked />
+        <span class="copy"><b>CARE-PRI · Priority Care note</b><small>Upgrade path shown on Contact</small></span>
+        <span class="state">On</span>
+      </label>
+      <button type="button" class="addon-preview" data-preview="care">Preview care note</button>
     </div>
   </aside>
 
@@ -1233,6 +1369,11 @@
     const interestEl = document.getElementById("interest");
     const audienceEl = document.getElementById("audience");
     const notesEl = document.getElementById("q-notes");
+    const nameEl = document.getElementById("q-name");
+    const contactEl = document.getElementById("q-contact");
+    const nameStepEl = document.getElementById("q-name-step");
+    const contactStepEl = document.getElementById("q-contact-step");
+    const notesStepEl = document.getElementById("q-notes-step");
     const step1 = document.getElementById("quote-step-1");
     const step2 = document.getElementById("quote-step-2");
     const step3 = document.getElementById("quote-step-3");
@@ -1248,6 +1389,9 @@
     const chatPanel = document.getElementById("chat-panel");
     const chatBody = document.getElementById("chat-body");
 
+    const ADDON_KEYS = ["search", "lang", "step", "file", "landing", "chat", "care"];
+    const addonState = Object.fromEntries(ADDON_KEYS.map((k) => [k, true]));
+
     const catalog = [
       { title: "Smart Solar AC", blurb: "Breeze, Tower, Force solar cooling", go: "product-solar-ac", keys: "solar ac breeze tower force cooling" },
       { title: "Smart Utilities", blurb: "Prepaid water and electricity meters", go: "product-utilities", keys: "utilities meters prepaid municipal water electricity" },
@@ -1255,23 +1399,87 @@
       { title: "EV Solutions", blurb: "Charging and mobility infrastructure", go: "product-ev", keys: "ev charging mobility" },
       { title: "Drone Technology", blurb: "Agri, security, inspection systems", go: "product-drones", keys: "drone agri surveillance" },
       { title: "Digital & Telecom", blurb: "CREDO TELECOM, satellite, smart city", go: "product-telecom", keys: "telecom digital isp satellite smart city" },
-      { title: "CREDO TELECOM Landing", blurb: "Optional campaign landing page", go: "landing-telecom", keys: "landing campaign telecom isp" },
+      { title: "CREDO TELECOM Landing", blurb: "Optional campaign landing page", go: "landing-telecom", keys: "landing campaign telecom isp", addon: "landing" },
       { title: "Projects", blurb: "Proof library and case studies", go: "projects", keys: "projects cases proof deployments" },
       { title: "Request a quote", blurb: "Segmented energy buyer intake", go: "enquiry", keys: "quote enquiry contact form" },
       { title: "About Credo", blurb: "Group narrative and leadership", go: "about", keys: "about company leadership team" },
       { title: "Resource Centre", blurb: "Specs and buyer guides", go: "resources", keys: "resources specs sheets documents" },
     ];
 
+    function hasAddon(key) {
+      return !!addonState[key];
+    }
+
+    function applyAddons() {
+      ADDON_KEYS.forEach((key) => {
+        document.body.classList.toggle("addon-" + key, addonState[key]);
+        const row = document.querySelector('[data-addon-row="' + key + '"]');
+        const input = document.querySelector('[data-addon-toggle="' + key + '"]');
+        const preview = document.querySelector('[data-preview="' + key + '"]');
+        if (row) row.classList.toggle("on", addonState[key]);
+        if (input) input.checked = addonState[key];
+        if (row) {
+          const state = row.querySelector(".state");
+          if (state) state.textContent = addonState[key] ? "On" : "Off";
+        }
+        if (preview) preview.disabled = !addonState[key];
+      });
+
+      if (!addonState.lang) setLang("en");
+      if (!addonState.chat) closeChat();
+      if (!addonState.search) closeSearch();
+      if (!addonState.landing) {
+        const active = document.querySelector(".page.active");
+        if (active && active.id === "landing-telecom") go("product-telecom");
+      }
+      configureQuoteMode();
+    }
+
+    function setAddon(key, on) {
+      if (!ADDON_KEYS.includes(key)) return;
+      addonState[key] = !!on;
+      applyAddons();
+    }
+
+    function configureQuoteMode() {
+      const stepped = hasAddon("step");
+      if (!stepped) {
+        step1.hidden = false;
+        step2.hidden = true;
+        step3.hidden = true;
+        nameEl.required = true;
+        contactEl.required = true;
+        nameStepEl.required = false;
+        contactStepEl.required = false;
+      } else {
+        nameEl.required = false;
+        contactEl.required = false;
+        setQuoteStep(1);
+      }
+    }
+
     function setQuoteStep(n) {
+      if (!hasAddon("step")) {
+        configureQuoteMode();
+        return;
+      }
       step1.hidden = n !== 1;
       step2.hidden = n !== 2;
       step3.hidden = n !== 3;
       bars.forEach((b, i) => b.classList.toggle("on", i < n));
+      const fileLabel = hasAddon("file") ? "Project notes & files" : "Project notes";
       stepLabel.textContent = [
         "Step 1 of 3 · Who is buying",
         "Step 2 of 3 · How to reach you",
-        "Step 3 of 3 · Project notes & files",
+        "Step 3 of 3 · " + fileLabel,
       ][n - 1];
+      if (n === 2) {
+        nameStepEl.required = true;
+        contactStepEl.required = true;
+      } else {
+        nameStepEl.required = false;
+        contactStepEl.required = false;
+      }
     }
 
     function closeDrawer() {
@@ -1312,6 +1520,7 @@
 
     function go(id, opts = {}) {
       if (!id) return;
+      if (id === "landing-telecom" && !hasAddon("landing")) id = "product-telecom";
       const page = document.getElementById(id);
       if (!page) return;
       pages.forEach((el) => el.classList.toggle("active", el.id === id));
@@ -1330,11 +1539,15 @@
         if (match) interestEl.value = match.value;
       }
       if (opts.audience && audienceEl) audienceEl.value = opts.audience;
-      if (opts.notes && notesEl && !notesEl.value) notesEl.value = opts.notes;
+      if (opts.notes) {
+        if (notesEl && !notesEl.value) notesEl.value = opts.notes;
+        if (notesStepEl && !notesStepEl.value) notesStepEl.value = opts.notes;
+      }
       if (id === "enquiry") {
         form.hidden = false;
         done.hidden = true;
-        setQuoteStep(1);
+        configureQuoteMode();
+        if (hasAddon("step")) setQuoteStep(1);
       }
       closeDrawer();
       closeSearch();
@@ -1355,6 +1568,7 @@
     function renderSearch(q) {
       const query = (q || "").trim().toLowerCase();
       const hits = catalog.filter((item) => {
+        if (item.addon && !hasAddon(item.addon)) return false;
         if (!query) return true;
         return (item.title + " " + item.blurb + " " + item.keys).toLowerCase().includes(query);
       }).slice(0, 8);
@@ -1367,6 +1581,7 @@
     }
 
     function openSearch() {
+      if (!hasAddon("search")) return;
       searchOverlay.classList.add("open");
       searchOverlay.setAttribute("aria-hidden", "false");
       document.body.classList.add("search-open");
@@ -1399,7 +1614,10 @@
     drawer.addEventListener("click", (e) => { if (e.target === drawer) closeDrawer(); });
 
     document.querySelectorAll("[data-lang]").forEach((btn) => {
-      btn.addEventListener("click", () => setLang(btn.getAttribute("data-lang")));
+      btn.addEventListener("click", () => {
+        if (!hasAddon("lang")) return;
+        setLang(btn.getAttribute("data-lang"));
+      });
     });
 
     document.getElementById("search-open").addEventListener("click", openSearch);
@@ -1409,34 +1627,59 @@
 
     document.getElementById("to-step-2").addEventListener("click", () => setQuoteStep(2));
     document.getElementById("to-step-3").addEventListener("click", () => {
-      if (!document.getElementById("q-name").value.trim() || !document.getElementById("q-contact").value.trim()) {
-        document.getElementById("q-name").reportValidity();
-        document.getElementById("q-contact").reportValidity();
+      if (!nameStepEl.value.trim() || !contactStepEl.value.trim()) {
+        nameStepEl.reportValidity();
+        contactStepEl.reportValidity();
         return;
       }
+      nameEl.value = nameStepEl.value;
+      contactEl.value = contactStepEl.value;
       setQuoteStep(3);
     });
     document.getElementById("back-step-1").addEventListener("click", () => setQuoteStep(1));
     document.getElementById("back-step-2").addEventListener("click", () => setQuoteStep(2));
 
-    document.getElementById("q-file").addEventListener("change", (e) => {
-      const files = Array.from(e.target.files || []);
-      document.getElementById("file-list").textContent = files.length
-        ? files.map((f) => f.name).join(" · ")
-        : "";
-    });
+    function wireFiles(inputId, listId) {
+      const input = document.getElementById(inputId);
+      const list = document.getElementById(listId);
+      if (!input || !list) return;
+      input.addEventListener("change", (e) => {
+        const files = Array.from(e.target.files || []);
+        list.textContent = files.length ? files.map((f) => f.name).join(" · ") : "";
+      });
+    }
+    wireFiles("q-file", "file-list");
+    wireFiles("q-file-step", "file-list-step");
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      if (hasAddon("step")) {
+        if (notesStepEl) notesEl.value = notesStepEl.value;
+        if (nameStepEl.value) nameEl.value = nameStepEl.value;
+        if (contactStepEl.value) contactEl.value = contactStepEl.value;
+      }
+      if (!nameEl.value.trim() || !contactEl.value.trim()) {
+        if (hasAddon("step")) {
+          setQuoteStep(2);
+          nameStepEl.reportValidity();
+          contactStepEl.reportValidity();
+        } else {
+          nameEl.reportValidity();
+          contactEl.reportValidity();
+        }
+        return;
+      }
       form.hidden = true;
       done.hidden = false;
     });
     document.getElementById("quote-again").addEventListener("click", () => {
       form.reset();
       document.getElementById("file-list").textContent = "";
+      document.getElementById("file-list-step").textContent = "";
       form.hidden = false;
       done.hidden = true;
-      setQuoteStep(1);
+      configureQuoteMode();
+      if (hasAddon("step")) setQuoteStep(1);
     });
 
     const chatReplies = {
@@ -1445,6 +1688,7 @@
       quote: "Opening the quote request. Choose residential, commercial, municipal, or distributor and we will route it correctly.",
     };
     function openChat() {
+      if (!hasAddon("chat")) return;
       chatPanel.classList.add("open");
       chatPanel.setAttribute("aria-hidden", "false");
     }
@@ -1483,53 +1727,48 @@
       demoToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
     });
 
-    function flashLang() {
-      const toggle = document.querySelector(".lang-toggle");
-      if (!toggle) return;
-      toggle.style.outline = "2px solid rgba(252,168,60,0.8)";
-      toggle.style.outlineOffset = "3px";
-      setTimeout(() => { toggle.style.outline = ""; toggle.style.outlineOffset = ""; }, 1600);
-    }
+    document.querySelectorAll("[data-addon-toggle]").forEach((input) => {
+      input.addEventListener("change", () => {
+        setAddon(input.getAttribute("data-addon-toggle"), input.checked);
+      });
+    });
+    document.getElementById("addons-all-on").addEventListener("click", () => {
+      ADDON_KEYS.forEach((k) => { addonState[k] = true; });
+      applyAddons();
+    });
+    document.getElementById("addons-all-off").addEventListener("click", () => {
+      ADDON_KEYS.forEach((k) => { addonState[k] = false; });
+      applyAddons();
+    });
 
-    document.querySelectorAll("[data-demo]").forEach((btn) => {
+    document.querySelectorAll("[data-preview]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        const kind = btn.getAttribute("data-demo");
-        closeChat();
-        if (kind === "search") {
-          openSearch();
-          return;
-        }
+        const kind = btn.getAttribute("data-preview");
+        if (!hasAddon(kind) && kind !== "step" && kind !== "file") return;
+        if (kind === "search") { openSearch(); return; }
         if (kind === "lang") {
-          const next = document.documentElement.lang === "sw" ? "en" : "sw";
-          setLang(next);
+          setLang(document.documentElement.lang === "sw" ? "en" : "sw");
           go("home");
-          flashLang();
           return;
         }
-        if (kind === "quote") {
+        if (kind === "step" || kind === "file") {
+          if (!hasAddon(kind)) return;
           go("enquiry");
-          setTimeout(() => setQuoteStep(1), 40);
           return;
         }
-        if (kind === "landing") {
-          go("landing-telecom");
-          return;
-        }
-        if (kind === "chat") {
-          openChat();
-          return;
-        }
+        if (kind === "landing") { go("landing-telecom"); return; }
+        if (kind === "chat") { openChat(); return; }
         if (kind === "care") {
           go("enquiry");
           setTimeout(() => {
-            const care = Array.from(document.querySelectorAll("#enquiry .facts dt"))
-              .find((el) => /Care path/i.test(el.textContent || ""));
+            const care = document.querySelector('[data-addon="care"]');
             if (care) care.scrollIntoView({ behavior: "smooth", block: "center" });
           }, 120);
         }
       });
     });
 
+    applyAddons();
     const boot = (location.hash || "#home").replace(/^#/, "").split(/[/?]/)[0] || "home";
     go(document.getElementById(boot) ? boot : "home");
   </script>
