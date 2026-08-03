@@ -8,7 +8,7 @@
 **Scope:** Website only. Social media is proposed separately.  
 **Timeline:** 14 days (prompt Credo feedback required)
 
-**Interactive preview:** `/preview/credo-website/`
+**Interactive preview:** `/preview/credo-website/` (full Credo website experience)
 
 ## Deliverables
 
@@ -19,7 +19,7 @@
 | Photos | `proposals/credo-website/assets/photos/` → symlink to `credo-energy-group/assets/photos` |
 | Credo brand assets | `proposals/credo-website/assets/brand/` (logos, hero, Solar AC product shots) |
 | Preview QR | `proposals/credo-website/assets/qr/preview.png` |
-| Live mockup | `/preview/credo-website/` (static Credo-branded site mockup) |
+| Live website preview | `/preview/credo-website/` (production-ready Credo site: home, six verticals, solutions, projects, about/team, resources, news, careers, segmented quote) |
 
 ## Approved investment (catalog-valid)
 

@@ -4,381 +4,1402 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>Credo Energy Group · Website Preview | KasiTech</title>
+  <meta name="description" content="Credo Energy Group — solar cooling, smart utilities, renewables, EV, drones, and digital infrastructure." />
+  <title>Credo Energy Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #0c1612;
-      --accent: #0b6e4f;
-      --surface: #f3f7f5;
-      --muted: rgba(12, 22, 18, 0.65);
+      --black: #050505;
+      --ink: #0d0d0d;
+      --panel: #141414;
+      --panel-2: #1b1b1b;
+      --line: rgba(252, 168, 60, 0.18);
+      --line-soft: rgba(255, 255, 255, 0.08);
+      --gold: #fca83c;
+      --gold-mid: #c08430;
+      --bronze: #845424;
+      --gold-soft: rgba(252, 168, 60, 0.12);
+      --text: #f4efe6;
+      --muted: rgba(244, 239, 230, 0.62);
+      --light: #f7f4ef;
+      --light-ink: #16120e;
+      --light-muted: rgba(22, 18, 14, 0.62);
+      --grad: linear-gradient(115deg, #fca83c 0%, #c08430 48%, #845424 100%);
+      --font-display: "Oswald", sans-serif;
+      --font-body: "Montserrat", sans-serif;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --header-h: 76px;
     }
+
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     html, body { margin: 0; padding: 0; }
     body {
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      color: var(--ink);
-      background: var(--surface);
-      line-height: 1.5;
+      font-family: var(--font-body);
+      color: var(--text);
+      background:
+        radial-gradient(900px 420px at 15% -10%, rgba(252,168,60,0.14), transparent 55%),
+        radial-gradient(700px 380px at 90% 0%, rgba(132,84,36,0.18), transparent 50%),
+        var(--black);
+      line-height: 1.55;
+      min-height: 100vh;
     }
+    body.nav-open, body.search-open { overflow: hidden; }
     button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
     a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
 
-    .bar {
-      background: #0c1612;
-      color: rgba(255,255,255,0.7);
-      padding: 10px 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 16px;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
+    .proposed {
+      background: #000;
+      border-bottom: 1px solid rgba(252,168,60,0.2);
+      color: rgba(244,239,230,0.45);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
     }
-    .bar strong { color: #8fd4b5; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 10px; }
+    .proposed strong { color: var(--gold); font-weight: 700; }
+
+    .wrap { width: min(1200px, calc(100% - 36px)); margin: 0 auto; }
 
     header.site {
-      position: sticky; top: 0; z-index: 20;
-      background: rgba(243,247,245,0.96);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(12,22,18,0.1);
+      position: sticky; top: 0; z-index: 60;
+      background: rgba(5,5,5,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line-soft);
     }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
     .nav {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 14px 0;
+      min-height: var(--header-h);
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
     }
-    .nav img.logo { height: 36px; width: auto; display: block; }
-    .nav-links { display: none; gap: 22px; }
-    .nav-links button {
-      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-      opacity: 0.65;
+    .brand {
+      display: flex; align-items: center; gap: 12px;
     }
-    .nav-links button:hover, .nav-links button.active { opacity: 1; color: var(--accent); }
-    .cta {
-      background: var(--accent); color: #fff;
-      padding: 10px 14px; font-size: 11px; font-weight: 600;
-      letter-spacing: 0.12em; text-transform: uppercase;
+    .brand .mark { height: 42px; width: auto; }
+    .brand .word { height: 28px; width: auto; display: none; }
+    @media (min-width: 520px) { .brand .word { display: block; } }
+
+    .nav-desktop { display: none; align-items: center; gap: 2px; }
+    .nav-item { position: relative; }
+    .nav-item > button {
+      padding: 10px 12px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(244,239,230,0.7);
+      transition: color 0.2s var(--ease);
     }
-    @media (min-width: 800px) { .nav-links { display: flex; } }
+    .nav-item > button:hover,
+    .nav-item > button.active,
+    .nav-item:focus-within > button { color: var(--gold); }
+    .mega {
+      position: absolute; top: calc(100% + 10px); left: 0;
+      min-width: 300px; padding: 12px;
+      background: #111; border: 1px solid var(--line);
+      box-shadow: 0 24px 50px rgba(0,0,0,0.45);
+      display: none; grid-gap: 2px;
+    }
+    .nav-item:hover .mega, .nav-item:focus-within .mega { display: grid; }
+    .mega button {
+      text-align: left; padding: 11px 12px;
+      font-size: 13px; font-weight: 600;
+      border: 1px solid transparent;
+      transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+    }
+    .mega button:hover { background: var(--gold-soft); border-color: rgba(252,168,60,0.25); color: var(--gold); }
+    .mega button small {
+      display: block; margin-top: 3px;
+      font-size: 11px; font-weight: 500; color: var(--muted);
+      letter-spacing: 0; text-transform: none;
+    }
+
+    .nav-tools { display: flex; align-items: center; gap: 8px; }
+    .icon-btn {
+      width: 42px; height: 42px;
+      display: grid; place-items: center;
+      border: 1px solid var(--line-soft);
+      color: var(--text);
+      transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+    }
+    .icon-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .lang-toggle {
+      display: none;
+      align-items: center; gap: 0;
+      border: 1px solid var(--line-soft);
+      font-size: 11px; font-weight: 800; letter-spacing: 0.12em;
+    }
+    .lang-toggle button {
+      padding: 11px 10px; color: var(--muted);
+    }
+    .lang-toggle button.on { color: var(--black); background: var(--grad); }
+    .opt-dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold); margin-right: 6px; vertical-align: middle;
+    }
+
+    .cta, .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--grad); color: #120e09;
+      padding: 12px 18px;
+      font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: filter 0.2s var(--ease), transform 0.2s var(--ease);
+    }
+    .cta:hover, .btn:hover { filter: brightness(1.08); }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid rgba(252,168,60,0.45);
+      padding: 12px 18px;
+      font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-line {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--line-soft);
+      padding: 12px 18px;
+      font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .btn-line:hover { border-color: var(--gold); color: var(--gold); }
+    .linkish {
+      color: var(--gold); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .linkish:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    .burger {
+      width: 42px; height: 42px; display: grid; place-items: center;
+      border: 1px solid var(--line-soft);
+    }
+    .burger span, .burger span::before, .burger span::after {
+      display: block; width: 18px; height: 2px; background: var(--gold);
+      position: relative;
+    }
+    .burger span::before, .burger span::after { content: ""; position: absolute; left: 0; }
+    .burger span::before { top: -6px; }
+    .burger span::after { top: 6px; }
+
+    @media (min-width: 1040px) {
+      .nav-desktop { display: flex; }
+      .lang-toggle { display: inline-flex; }
+      .burger { display: none; }
+      .nav-cta-desktop { display: inline-flex; }
+    }
+    @media (max-width: 1039px) {
+      .nav-cta-desktop { display: none; }
+    }
+
+    .drawer {
+      position: fixed; inset: 0; z-index: 80;
+      background: rgba(0,0,0,0.65);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s var(--ease);
+    }
+    .drawer.open { opacity: 1; pointer-events: auto; }
+    .drawer-panel {
+      position: absolute; top: 0; right: 0; width: min(380px, 92vw); height: 100%;
+      background: #0d0d0d; border-left: 1px solid var(--line);
+      padding: 22px 18px 40px;
+      transform: translateX(100%);
+      transition: transform 0.3s var(--ease);
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .drawer.open .drawer-panel { transform: translateX(0); }
+    .drawer-close { align-self: flex-end; color: var(--muted); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 8px; }
+    .drawer .nav-link {
+      text-align: left; padding: 14px 4px;
+      border-bottom: 1px solid var(--line-soft);
+      font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .drawer .sub { text-align: left; padding: 8px 4px 8px 12px; color: var(--muted); font-size: 13px; }
+    .drawer .lang-toggle { display: inline-flex; margin: 12px 0; width: fit-content; }
+
+    .search-overlay {
+      position: fixed; inset: 0; z-index: 90;
+      background: rgba(0,0,0,0.88);
+      display: none; align-items: flex-start; justify-content: center;
+      padding: 12vh 18px 40px;
+    }
+    .search-overlay.open { display: flex; }
+    .search-box {
+      width: min(720px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 22px;
+      animation: rise 0.35s var(--ease);
+    }
+    .search-box input {
+      width: 100%; font: inherit; font-size: 1.2rem;
+      padding: 14px 0; border: 0; border-bottom: 1px solid var(--line);
+      background: transparent; color: var(--text); outline: none;
+    }
+    .search-meta {
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      margin: 10px 0 18px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    }
+    .search-results { display: grid; gap: 8px; max-height: 50vh; overflow: auto; }
+    .search-results button {
+      text-align: left; padding: 14px;
+      border: 1px solid var(--line-soft);
+      transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+    }
+    .search-results button:hover { border-color: var(--gold); background: var(--gold-soft); }
+    .search-results strong { display: block; margin-bottom: 4px; }
+    .search-results span { color: var(--muted); font-size: 13px; }
+
+    .opt-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 9px;
+      border: 1px solid rgba(252,168,60,0.35);
+      background: rgba(252,168,60,0.08);
+      color: var(--gold);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    }
 
     .page { display: none; }
-    .page.active { display: block; }
+    .page.active { display: block; animation: pageIn 0.5s var(--ease) both; }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: none; }
+    }
 
     .hero {
-      position: relative; min-height: 72vh;
-      color: #fff; overflow: hidden;
+      position: relative;
+      min-height: min(92vh, 880px);
+      overflow: hidden;
+      color: var(--text);
     }
-    .hero img.bg {
+    .hero .bg {
       position: absolute; inset: 0; width: 100%; height: 100%;
       object-fit: cover;
+      transform: scale(1.05);
+      animation: heroZoom 20s var(--ease) infinite alternate;
+      filter: brightness(0.72) contrast(1.05);
+    }
+    @keyframes heroZoom {
+      from { transform: scale(1.02); }
+      to { transform: scale(1.1); }
     }
     .hero .shade {
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(12,22,18,0.9), rgba(12,22,18,0.35));
+      background:
+        linear-gradient(105deg, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.55) 48%, rgba(5,5,5,0.25) 100%),
+        linear-gradient(0deg, rgba(5,5,5,0.75), transparent 42%);
     }
     .hero .content {
       position: relative; z-index: 1;
-      max-width: 1100px; margin: 0 auto;
-      padding: 72px 18px 48px;
+      width: min(1200px, calc(100% - 36px));
+      margin: 0 auto;
+      min-height: min(92vh, 880px);
+      padding: 88px 0 64px;
       display: flex; flex-direction: column; justify-content: flex-end;
-      min-height: 72vh;
     }
-    .hero .mark { height: 48px; width: auto; margin-bottom: 18px; }
-    .eyebrow {
+    .hero-mark {
+      height: 64px; width: auto; margin-bottom: 22px;
+      opacity: 0; animation: rise 0.85s var(--ease) 0.08s forwards;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.45));
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 7vw, 5.2rem);
+      line-height: 0.95; letter-spacing: 0.01em; text-transform: uppercase;
+      font-weight: 600; margin: 0 0 18px; max-width: 13ch;
+      opacity: 0; animation: rise 0.85s var(--ease) 0.2s forwards;
+    }
+    .hero h1 .gold {
+      background: var(--grad);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+    .hero .lede {
+      max-width: 36rem; margin: 0 0 28px; color: var(--muted); font-size: 1.05rem;
+      opacity: 0; animation: rise 0.85s var(--ease) 0.34s forwards;
+    }
+    .actions {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      opacity: 0; animation: rise 0.85s var(--ease) 0.46s forwards;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero .bg { animation: none; transform: none; }
+    }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+    .reveal.in { opacity: 1; transform: none; }
+
+    section.block { padding: 76px 0; }
+    section.band {
+      padding: 76px 0;
+      background:
+        radial-gradient(700px 280px at 80% 0%, rgba(252,168,60,0.1), transparent 60%),
+        linear-gradient(180deg, #101010, #0a0a0a);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line-soft);
+    }
+    section.light {
+      padding: 76px 0;
+      background:
+        radial-gradient(800px 300px at 10% 0%, rgba(252,168,60,0.12), transparent 55%),
+        var(--light);
+      color: var(--light-ink);
+    }
+    section.light .label { color: var(--bronze); }
+    section.light .sub, section.light .vert p, section.light .model p { color: var(--light-muted); }
+    section.light .vert, section.light .model {
+      background: rgba(255,255,255,0.72);
+      border-color: rgba(22,18,14,0.1);
+    }
+    section.light .btn-line { color: var(--light-ink); border-color: rgba(22,18,14,0.15); }
+    section.gold-band {
+      padding: 56px 0;
+      background: var(--grad);
+      color: #120e09;
+    }
+    section.gold-band h2 { color: #120e09; }
+    section.gold-band .sub { color: rgba(18,14,9,0.72); margin-bottom: 0; }
+
+    .label {
       font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-      color: #8fd4b5; margin: 0 0 12px;
+      color: var(--gold); font-weight: 800; margin: 0 0 10px;
     }
-    h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      line-height: 1.1; letter-spacing: -0.03em;
-      margin: 0 0 14px; max-width: 14ch; font-weight: 650;
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: 0.02em; line-height: 1.05; text-transform: uppercase;
+      margin: 0 0 12px; font-weight: 600;
     }
-    .lede { max-width: 36rem; color: rgba(255,255,255,0.78); margin: 0 0 22px; }
-    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
-    .btn-ghost {
-      border: 1px solid rgba(255,255,255,0.4); color: #fff;
-      padding: 10px 14px; font-size: 11px; font-weight: 600;
-      letter-spacing: 0.12em; text-transform: uppercase;
+    h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem; letter-spacing: 0.03em; text-transform: uppercase;
+      margin: 0 0 8px; font-weight: 600;
+    }
+    .sub { margin: 0 0 32px; color: var(--muted); max-width: 42rem; font-size: 1.02rem; }
+    .page-hero {
+      padding: 64px 0 32px;
+      border-bottom: 1px solid var(--line-soft);
+      background:
+        radial-gradient(700px 260px at 0% 0%, rgba(252,168,60,0.14), transparent 60%),
+        linear-gradient(180deg, #121212, transparent);
+    }
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      letter-spacing: 0.02em; line-height: 1; text-transform: uppercase;
+      margin: 0 0 14px; max-width: 16ch;
     }
 
-    section.block { padding: 48px 0; }
-    section.block h2 { margin: 0 0 8px; font-size: 1.7rem; letter-spacing: -0.02em; }
-    section.block .sub { margin: 0 0 24px; color: var(--muted); max-width: 40rem; }
-    .label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
-
-    .grid3 { display: grid; gap: 12px; grid-template-columns: 1fr; }
-    @media (min-width: 700px) { .grid3 { grid-template-columns: repeat(3, 1fr); } }
-    .card {
-      background: #fff; border: 1px solid rgba(12,22,18,0.1);
-      padding: 18px; text-align: left;
+    .vert-grid {
+      display: grid; gap: 14px;
+      grid-template-columns: 1fr;
     }
-    .card img.icon { height: 28px; width: auto; }
-    .card h3 { margin: 12px 0 6px; font-size: 1rem; }
-    .card p { margin: 0; font-size: 13px; color: var(--muted); }
-
-    .flagship { background: #fff; border-top: 1px solid rgba(12,22,18,0.08); border-bottom: 1px solid rgba(12,22,18,0.08); }
-    .product {
-      border: 1px solid rgba(12,22,18,0.08); background: var(--surface); padding: 16px;
+    @media (min-width: 700px) { .vert-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 980px) { .vert-grid { grid-template-columns: repeat(3, 1fr); } }
+    .vert {
+      text-align: left; padding: 22px 20px;
+      background: linear-gradient(180deg, rgba(27,27,27,0.95), rgba(14,14,14,0.95));
+      border: 1px solid var(--line-soft);
+      transition: transform 0.35s var(--ease), border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+      position: relative; overflow: hidden;
     }
-    .product .shot {
-      height: 180px; background: #fff; display: flex; align-items: center; justify-content: center;
+    .vert::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+      background: var(--grad); opacity: 0; transition: opacity 0.3s var(--ease);
     }
-    .product .shot img { height: 150px; width: auto; object-fit: contain; }
-    .product h3 { margin: 12px 0 6px; font-size: 0.95rem; }
-    .product p { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
-    .linkish { color: var(--accent); font-size: 11px; font-weight: 650; letter-spacing: 0.1em; text-transform: uppercase; }
+    .vert:hover {
+      transform: translateY(-4px);
+      border-color: rgba(252,168,60,0.4);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+    .vert:hover::before { opacity: 1; }
+    .vert img.icon {
+      height: 30px; width: auto; margin-bottom: 16px;
+      filter: brightness(0) saturate(100%) invert(72%) sepia(48%) saturate(700%) hue-rotate(359deg) brightness(103%) contrast(98%);
+    }
+    .vert p { margin: 0; font-size: 14px; color: var(--muted); }
+    .vert .go {
+      display: inline-block; margin-top: 16px;
+      font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
+    }
 
-    .split { display: grid; gap: 24px; }
-    @media (min-width: 800px) { .split { grid-template-columns: 1.2fr 1fr; align-items: center; } }
-    .split .photo { min-height: 220px; position: relative; overflow: hidden; }
-    .split .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .models { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 800px) { .models { grid-template-columns: repeat(3, 1fr); } }
+    .model {
+      background: #111; border: 1px solid var(--line-soft); padding: 18px;
+    }
+    section.light .model { background: #fff; }
+    .model .shot {
+      height: 210px; display: grid; place-items: center; margin-bottom: 14px;
+      background:
+        radial-gradient(circle at 50% 80%, rgba(252,168,60,0.18), transparent 55%),
+        #faf7f2;
+    }
+    .model .shot img { height: 168px; width: auto; object-fit: contain; }
+    .model p { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+
+    .split { display: grid; gap: 28px; align-items: center; }
+    @media (min-width: 860px) { .split { grid-template-columns: 1.05fr 0.95fr; gap: 48px; } }
+    @media (min-width: 860px) {
+      .split.reverse .copy { order: 2; }
+      .split.reverse .media { order: 1; }
+    }
+    .media {
+      position: relative; min-height: 300px; overflow: hidden;
+      border: 1px solid var(--line-soft);
+      background: #000;
+    }
+    .media img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.8s var(--ease); filter: saturate(1.05);
+    }
+    .media:hover img { transform: scale(1.04); }
+    .media::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.45));
+      pointer-events: none;
+    }
+
+    .journey { border-top: 1px solid var(--line-soft); }
+    .journey-row {
+      display: grid; gap: 14px; padding: 28px 0;
+      border-bottom: 1px solid var(--line-soft);
+      grid-template-columns: 56px 1fr;
+    }
+    @media (min-width: 900px) {
+      .journey-row { grid-template-columns: 72px 1.2fr 1fr; align-items: center; }
+    }
+    .journey-row .n {
+      font-family: var(--font-display); font-size: 1.8rem; color: var(--gold); font-weight: 600;
+    }
+    .journey-row p { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
+
+    .proof-grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+    @media (min-width: 800px) { .proof-grid { grid-template-columns: repeat(3, 1fr); } }
+    .proof {
+      position: relative; min-height: 300px; overflow: hidden; color: #fff;
+      border: 1px solid var(--line-soft);
+    }
+    .proof img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(0.62); transition: transform 0.7s var(--ease), filter 0.7s var(--ease);
+    }
+    .proof:hover img { transform: scale(1.05); filter: brightness(0.72); }
+    .proof .body {
+      position: relative; z-index: 1; min-height: 300px; padding: 22px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      background: linear-gradient(180deg, transparent 15%, rgba(0,0,0,0.88));
+    }
+    .proof .tag {
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); font-weight: 800; margin-bottom: 8px;
+    }
+
+    .empty-lib {
+      border: 1px dashed rgba(252,168,60,0.35);
+      background: linear-gradient(135deg, rgba(252,168,60,0.08), transparent 45%), #111;
+      padding: 26px;
+    }
+    section.light .empty-lib {
+      background: linear-gradient(135deg, rgba(252,168,60,0.1), transparent 45%), #fff;
+      border-color: rgba(132,84,36,0.35);
+    }
+    .empty-lib p { margin: 0; color: var(--muted); }
+    section.light .empty-lib p { color: var(--light-muted); }
+
+    .team-slots { display: grid; gap: 14px; grid-template-columns: 1fr; }
+    @media (min-width: 700px) { .team-slots { grid-template-columns: repeat(3, 1fr); } }
+    .slot {
+      min-height: 190px; padding: 22px;
+      background: #111; border: 1px solid var(--line-soft);
+      display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .slot .avatar {
+      width: 52px; height: 52px; margin-bottom: 18px;
+      background: linear-gradient(145deg, rgba(252,168,60,0.35), rgba(132,84,36,0.2));
+      border: 1px solid rgba(252,168,60,0.3);
+    }
+    .slot .role {
+      font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold); font-weight: 800;
+    }
+
+    .resource, .news-item {
+      display: grid; gap: 8px; width: 100%; text-align: left;
+      padding: 20px 0; border-bottom: 1px solid var(--line-soft);
+    }
+    @media (min-width: 700px) {
+      .resource { grid-template-columns: 100px 1fr auto; align-items: center; }
+      .news-item { grid-template-columns: 110px 1fr; }
+    }
+    .resource .kind, .news-item .date {
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); font-weight: 800;
+    }
+    .resource p, .news-item p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+    .contact-grid { display: grid; gap: 28px; }
+    @media (min-width: 900px) { .contact-grid { grid-template-columns: 0.9fr 1.1fr; gap: 40px; } }
+    .facts {
+      display: grid; gap: 18px; padding: 24px;
+      background: #111; border: 1px solid var(--line);
+    }
+    .facts dt {
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); font-weight: 800; margin: 0 0 4px;
+    }
+    .facts dd { margin: 0 0 8px; font-size: 1.05rem; }
+    .facts a:hover { color: var(--gold); }
 
     form.quote {
-      background: #fff; border: 1px solid rgba(12,22,18,0.1);
-      padding: 22px; display: grid; gap: 12px; max-width: 640px;
+      display: grid; gap: 14px; padding: 24px;
+      background: #111; border: 1px solid var(--line);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
     }
-    label { display: grid; gap: 6px; font-size: 11px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .steps { display: flex; gap: 8px; }
+    .steps span { flex: 1; height: 3px; background: rgba(255,255,255,0.1); transition: background 0.3s var(--ease); }
+    .steps span.on { background: var(--grad); }
+    .step-label {
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); font-weight: 700;
+    }
+    label {
+      display: grid; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+    }
     input, select, textarea {
-      font: inherit; padding: 10px 12px; border: 1px solid rgba(12,22,18,0.15);
-      background: var(--surface); color: var(--ink); text-transform: none; font-weight: 400; letter-spacing: 0;
+      font: inherit; padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #0a0a0a; color: var(--text);
+      text-transform: none; font-weight: 500; letter-spacing: 0;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid rgba(252,168,60,0.35); border-color: var(--gold);
     }
     textarea { min-height: 100px; resize: vertical; }
-    .done {
-      border: 1px solid rgba(11,110,79,0.35); background: #fff; padding: 22px; max-width: 640px;
+    .file-box {
+      border: 1px dashed rgba(252,168,60,0.35);
+      padding: 16px; background: rgba(252,168,60,0.05);
+      display: grid; gap: 8px;
     }
-    .done h3 { margin: 0 0 8px; color: var(--accent); }
+    .file-box input[type="file"] { border: 0; padding: 0; background: transparent; color: var(--muted); }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .done {
+      padding: 28px; border: 1px solid rgba(252,168,60,0.35);
+      background: linear-gradient(160deg, rgba(252,168,60,0.12), transparent 55%), #111;
+    }
+    .done h3 { color: var(--gold); }
+
+    .spec-table { width: 100%; border-collapse: collapse; margin: 14px 0 8px; font-size: 14px; }
+    .spec-table th, .spec-table td {
+      text-align: left; padding: 11px 0; border-bottom: 1px solid var(--line-soft);
+    }
+    .spec-table th {
+      width: 38%; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); font-weight: 700;
+    }
+
+    .landing-hero {
+      min-height: 70vh; position: relative; overflow: hidden;
+      display: flex; align-items: flex-end;
+    }
+    .landing-hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.55); }
+    .landing-hero .shade {
+      position: absolute; inset: 0;
+      background: linear-gradient(120deg, rgba(5,5,5,0.92), rgba(5,5,5,0.35));
+    }
+    .landing-hero .content { position: relative; z-index: 1; padding: 72px 0 48px; width: min(1200px, calc(100% - 36px)); margin: 0 auto; }
+    .landing-pillars { display: grid; gap: 14px; grid-template-columns: 1fr; }
+    @media (min-width: 800px) { .landing-pillars { grid-template-columns: repeat(3, 1fr); } }
+    .pillar {
+      padding: 22px; border: 1px solid var(--line); background: #111;
+    }
+
+    .chat-fab {
+      position: fixed; right: 18px; bottom: 18px; z-index: 70;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--grad); color: #120e09;
+      display: grid; place-items: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      font-weight: 800; font-size: 12px; letter-spacing: 0.04em;
+    }
+    .chat-panel {
+      position: fixed; right: 18px; bottom: 88px; z-index: 70;
+      width: min(340px, calc(100vw - 28px));
+      background: #111; border: 1px solid var(--line);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+      display: none; flex-direction: column; overflow: hidden;
+    }
+    .chat-panel.open { display: flex; animation: rise 0.3s var(--ease); }
+    .chat-head {
+      padding: 14px 16px; background: #0a0a0a; border-bottom: 1px solid var(--line-soft);
+      display: flex; justify-content: space-between; gap: 10px; align-items: center;
+    }
+    .chat-head strong { display: block; font-size: 13px; }
+    .chat-head span { font-size: 11px; color: var(--muted); }
+    .chat-body { padding: 14px; display: grid; gap: 10px; max-height: 280px; overflow: auto; }
+    .bubble {
+      padding: 10px 12px; font-size: 13px; line-height: 1.45;
+      background: #1a1a1a; border: 1px solid var(--line-soft);
+    }
+    .bubble.bot { border-color: rgba(252,168,60,0.25); }
+    .chat-quick { display: grid; gap: 6px; padding: 0 14px 14px; }
+    .chat-quick button {
+      text-align: left; padding: 10px 12px;
+      border: 1px solid var(--line-soft); font-size: 12px; color: var(--muted);
+    }
+    .chat-quick button:hover { border-color: var(--gold); color: var(--gold); }
 
     footer.site {
-      background: #0c1612; color: rgba(255,255,255,0.55);
-      padding: 36px 0; margin-top: 24px;
+      margin-top: 40px;
+      background:
+        radial-gradient(700px 260px at 20% 0%, rgba(252,168,60,0.12), transparent 60%),
+        #000;
+      border-top: 1px solid var(--line);
+      color: rgba(244,239,230,0.58);
+      padding: 52px 0 28px;
     }
-    footer.site .wrap { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: center; }
-    footer.site img { height: 48px; width: auto; }
-    footer.site .tiny { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 6px; }
+    .foot-grid {
+      display: grid; gap: 28px; grid-template-columns: 1fr;
+      padding-bottom: 28px; border-bottom: 1px solid var(--line-soft);
+    }
+    @media (min-width: 800px) { .foot-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; } }
+    footer.site .mark { height: 56px; width: auto; margin-bottom: 14px; }
+    footer.site h4 {
+      margin: 0 0 12px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(252,168,60,0.55); font-weight: 800;
+    }
+    footer.site button, footer.site a {
+      display: block; text-align: left; padding: 5px 0; font-size: 14px; color: rgba(244,239,230,0.72);
+    }
+    footer.site button:hover, footer.site a:hover { color: var(--gold); }
+    .foot-bottom {
+      padding-top: 18px; display: flex; flex-wrap: wrap; gap: 10px 20px;
+      justify-content: space-between; font-size: 11px; color: rgba(244,239,230,0.32);
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+
+    [data-i18n-sw] { display: none !important; }
+    html[lang="sw"] [data-i18n-en] { display: none !important; }
+    html[lang="sw"] [data-i18n-sw] { display: inline !important; }
+    html[lang="sw"] [data-i18n-sw].block,
+    html[lang="sw"] .sub[data-i18n-sw],
+    html[lang="sw"] p[data-i18n-sw] { display: block !important; }
   </style>
 </head>
 <body>
-  <div class="bar">
-    <div><strong>Conceptual website preview</strong> · KT-CEG-WEB-2026-001 · Credo Energy Group</div>
-    <div>Not the final build · Prepared by KasiTech</div>
+  <div class="proposed">
+    <div><strong>Credo Energy Group</strong> · Website preview</div>
+    <div>Optional add-ons shown for demonstration · Base package separately priced</div>
   </div>
 
   <header class="site">
     <div class="wrap nav">
-      <button type="button" data-go="home" aria-label="Credo home">
-        <img class="logo" src="assets/credo-logo-dark.png" alt="Credo Energy Group" />
+      <button type="button" class="brand" data-go="home" aria-label="Credo Energy Group home">
+        <img class="mark" src="/preview/credo-website/assets/credo-mark.png" alt="" />
+        <img class="word" src="/preview/credo-website/assets/credo-logo-dark.png" alt="Credo Energy Group" />
       </button>
-      <nav class="nav-links">
-        <button type="button" data-go="products">Products</button>
-        <button type="button" data-go="solutions">Solutions</button>
-        <button type="button" data-go="projects">Projects</button>
-        <button type="button" data-go="about">About</button>
+
+      <nav class="nav-desktop" aria-label="Primary">
+        <div class="nav-item">
+          <button type="button" data-nav="products" data-go="products"><span data-i18n-en>Products</span><span data-i18n-sw>Bidhaa</span></button>
+          <div class="mega">
+            <button type="button" data-go="product-solar-ac">Smart Solar AC <small>Breeze · Tower · Force</small></button>
+            <button type="button" data-go="product-utilities">Smart Utilities <small>Prepaid metering &amp; analytics</small></button>
+            <button type="button" data-go="product-renewables">Solar &amp; Renewables <small>Infrastructure &amp; kits</small></button>
+            <button type="button" data-go="product-ev">EV Solutions <small>Charging &amp; mobility</small></button>
+            <button type="button" data-go="product-drones">Drone Technology <small>Agri, security, inspection</small></button>
+            <button type="button" data-go="product-telecom">Digital &amp; Telecom <small>CREDO™ TELECOM &amp; smart city</small></button>
+          </div>
+        </div>
+        <div class="nav-item"><button type="button" data-go="solutions"><span data-i18n-en>Solutions</span><span data-i18n-sw>Suluhisho</span></button></div>
+        <div class="nav-item">
+          <button type="button" data-nav="proof" data-go="projects"><span data-i18n-en>Proof</span><span data-i18n-sw>Uthibitisho</span></button>
+          <div class="mega">
+            <button type="button" data-go="projects">Projects</button>
+            <button type="button" data-go="resources">Resource Centre</button>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button type="button" data-nav="company" data-go="about"><span data-i18n-en>Company</span><span data-i18n-sw>Kampuni</span></button>
+          <div class="mega">
+            <button type="button" data-go="about">About</button>
+            <button type="button" data-go="about" data-scroll="leadership">Leadership</button>
+            <button type="button" data-go="news">News</button>
+            <button type="button" data-go="careers">Careers</button>
+            <button type="button" data-go="landing-telecom">TELECOM Landing <small>Optional campaign page</small></button>
+          </div>
+        </div>
       </nav>
-      <button type="button" class="cta" data-go="enquiry">Request a quote</button>
+
+      <div class="nav-tools">
+        <button type="button" class="icon-btn" id="search-open" aria-label="Search" title="Advanced site search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </button>
+        <div class="lang-toggle" title="Bilingual EN/SW">
+          <button type="button" class="on" data-lang="en">EN</button>
+          <button type="button" data-lang="sw">SW</button>
+        </div>
+        <button type="button" class="cta nav-cta-desktop" data-go="enquiry"><span data-i18n-en>Request a quote</span><span data-i18n-sw>Omba bei</span></button>
+        <button type="button" class="burger" id="burger" aria-label="Open menu"><span></span></button>
+      </div>
     </div>
   </header>
 
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-panel">
+      <button type="button" class="drawer-close" id="drawer-close">Close</button>
+      <div class="lang-toggle">
+        <button type="button" class="on" data-lang="en">EN</button>
+        <button type="button" data-lang="sw">SW</button>
+      </div>
+      <button type="button" class="nav-link" data-go="home">Home</button>
+      <button type="button" class="nav-link" data-go="products">Products</button>
+      <button type="button" class="sub" data-go="product-solar-ac">Smart Solar AC</button>
+      <button type="button" class="sub" data-go="product-utilities">Smart Utilities</button>
+      <button type="button" class="sub" data-go="product-renewables">Solar &amp; Renewables</button>
+      <button type="button" class="sub" data-go="product-ev">EV Solutions</button>
+      <button type="button" class="sub" data-go="product-drones">Drone Technology</button>
+      <button type="button" class="sub" data-go="product-telecom">Digital &amp; Telecom</button>
+      <button type="button" class="nav-link" data-go="solutions">Solutions</button>
+      <button type="button" class="nav-link" data-go="projects">Projects</button>
+      <button type="button" class="nav-link" data-go="resources">Resources</button>
+      <button type="button" class="nav-link" data-go="about">About</button>
+      <button type="button" class="nav-link" data-go="news">News</button>
+      <button type="button" class="nav-link" data-go="careers">Careers</button>
+      <button type="button" class="nav-link" data-go="landing-telecom">TELECOM Landing</button>
+      <button type="button" class="cta" style="margin-top:16px;" data-go="enquiry">Request a quote</button>
+    </div>
+  </div>
+
+  <div class="search-overlay" id="search-overlay" aria-hidden="true">
+    <div class="search-box">
+      <div class="search-meta">
+        <span><span class="opt-dot"></span>Optional · ADD-SRCH · Advanced Site Search</span>
+        <button type="button" id="search-close" class="linkish">Close</button>
+      </div>
+      <input id="search-input" type="search" placeholder="Search products, specs, solutions…" autocomplete="off" />
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+
   <main>
+    <!-- HOME -->
     <div id="home" class="page active">
       <section class="hero">
-        <img class="bg" src="assets/credo-hero-1.jpg" alt="" />
+        <img class="bg" src="/preview/credo-website/assets/credo-hero-1.jpg" alt="" />
         <div class="shade"></div>
         <div class="content">
-          <img class="mark" src="assets/credo-logo-footer.png" alt="" />
-          <p class="eyebrow">Credo Energy Group</p>
-          <h1>Energy systems for Africa’s next decade.</h1>
-          <p class="lede">Solar cooling, smart utilities, renewables, EV, drones, and digital infrastructure — one institutional presence.</p>
+          <img class="hero-mark" src="/preview/credo-website/assets/credo-logo-footer.png" alt="Credo Energy Group" />
+          <h1>
+            <span data-i18n-en>Energy systems for <span class="gold">Africa’s</span> next decade.</span>
+            <span data-i18n-sw class="block">Mifumo ya nishati kwa <span class="gold">Afrika</span> ijayo.</span>
+          </h1>
+          <p class="lede">
+            <span data-i18n-en>Solar cooling, smart utilities, renewables, EV, drones, and digital infrastructure from a Tanzanian group building for the continent.</span>
+            <span data-i18n-sw class="block">Upoaji wa jua, huduma mahiri, nishati mbadala, EV, drones, na miundombinu ya kidijitali kutoka Tanzania kwa Afrika.</span>
+          </p>
           <div class="actions">
-            <button type="button" class="cta" data-go="enquiry">Request consultation</button>
-            <button type="button" class="btn-ghost" data-go="products">Explore products</button>
+            <button type="button" class="cta" data-go="enquiry"><span data-i18n-en>Request a quote</span><span data-i18n-sw>Omba bei</span></button>
+            <button type="button" class="btn-ghost" data-go="products"><span data-i18n-en>Explore products</span><span data-i18n-sw>Chunguza bidhaa</span></button>
           </div>
         </div>
       </section>
 
       <section class="block">
         <div class="wrap">
-          <p class="label">Portfolio</p>
-          <h2>Six verticals. One group.</h2>
-          <p class="sub">Buyers should understand Credo’s full portfolio in one scroll, then enter the right catalogue path.</p>
-          <div class="grid3">
-            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Smart Solar AC</h3><p>CREDO™ Solar Breeze, Tower, and Force for homes and commercial spaces.</p></button>
-            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-utilities.png" alt="" /><h3>Smart Utilities</h3><p>Prepaid water and electricity meters with software and analytics.</p></button>
-            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Solar &amp; Renewables</h3><p>Streetlights, benches, shelters, home kits, and solar infrastructure.</p></button>
-            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-ev.png" alt="" /><h3>EV Solutions</h3><p>Smart charging stations, portable chargers, and roadside power kits.</p></button>
-            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-drones.png" alt="" /><h3>Drone Technology</h3><p>Agricultural, surveillance, law enforcement, and civilian systems.</p></button>
-            <button type="button" class="card" data-go="products"><img class="icon" src="assets/credo-icon-telecom.png" alt="" /><h3>Digital &amp; Telecom</h3><p>CREDO™ TELECOM (upcoming ISP), satellite, AI, and smart city.</p></button>
+          <p class="label reveal"><span data-i18n-en>Portfolio</span><span data-i18n-sw>Kikundi</span></p>
+          <h2 class="reveal"><span data-i18n-en>Six verticals. One group.</span><span data-i18n-sw class="block">Wima sita. Kikundi kimoja.</span></h2>
+          <p class="sub reveal"><span data-i18n-en>Understand the full Credo portfolio in one scroll, then enter the catalogue path that matches how you buy.</span><span data-i18n-sw class="block">Elewa portfolio kamili ya Credo kwa skrini moja, kisha chagua njia inayolingana na unavyonunua.</span></p>
+          <div class="vert-grid">
+            <button type="button" class="vert reveal" data-go="product-solar-ac"><img class="icon" src="/preview/credo-website/assets/credo-icon-solar.png" alt="" /><h3>Smart Solar AC</h3><p>CREDO™ Solar Breeze, Tower, and Force for homes and commercial spaces.</p><span class="go">View Solar AC →</span></button>
+            <button type="button" class="vert reveal" data-go="product-utilities"><img class="icon" src="/preview/credo-website/assets/credo-icon-utilities.png" alt="" /><h3>Smart Utilities</h3><p>Prepaid water and electricity meters with software and analytics.</p><span class="go">View utilities →</span></button>
+            <button type="button" class="vert reveal" data-go="product-renewables"><img class="icon" src="/preview/credo-website/assets/credo-icon-solar.png" alt="" /><h3>Solar &amp; Renewables</h3><p>Streetlights, benches, shelters, home kits, and solar infrastructure.</p><span class="go">View renewables →</span></button>
+            <button type="button" class="vert reveal" data-go="product-ev"><img class="icon" src="/preview/credo-website/assets/credo-icon-ev.png" alt="" /><h3>EV Solutions</h3><p>Smart charging stations, portable chargers, and roadside power kits.</p><span class="go">View EV →</span></button>
+            <button type="button" class="vert reveal" data-go="product-drones"><img class="icon" src="/preview/credo-website/assets/credo-icon-drones.png" alt="" /><h3>Drone Technology</h3><p>Agricultural, surveillance, law enforcement, and civilian systems.</p><span class="go">View drones →</span></button>
+            <button type="button" class="vert reveal" data-go="product-telecom"><img class="icon" src="/preview/credo-website/assets/credo-icon-telecom.png" alt="" /><h3>Digital &amp; Telecom</h3><p>CREDO™ TELECOM (upcoming ISP), satellite, AI, and smart city.</p><span class="go">View digital →</span></button>
           </div>
         </div>
       </section>
 
-      <section class="block flagship">
+      <section class="light">
         <div class="wrap">
-          <p class="label">Flagship</p>
-          <h2>CREDO™ Smart Solar AC</h2>
-          <p class="sub">Efficient. Elegant. Eco-powered. Three models staged clearly so buyers can choose without digging through a generic catalogue.</p>
-          <div class="grid3">
-            <div class="product"><div class="shot"><img src="assets/credo-ac-1.png" alt="Solar Breeze" /></div><h3>CREDO™ Solar Breeze</h3><p>Compact solar cooling for homes, offices, and small spaces.</p><button type="button" class="linkish" data-go="enquiry">Request a quote →</button></div>
-            <div class="product"><div class="shot"><img src="assets/credo-ac-2.png" alt="Solar Tower" /></div><h3>CREDO™ Solar Tower</h3><p>Hybrid solar cooling for larger living rooms and open-plan spaces.</p><button type="button" class="linkish" data-go="enquiry">Request a quote →</button></div>
-            <div class="product"><div class="shot"><img src="assets/credo-ac-3.png" alt="Solar Force" /></div><h3>CREDO™ Solar Force</h3><p>Industrial-grade solar cooling for halls and commercial rooms.</p><button type="button" class="linkish" data-go="enquiry">Request a quote →</button></div>
+          <p class="label reveal">Flagship</p>
+          <h2 class="reveal">CREDO™ Smart Solar AC</h2>
+          <p class="sub reveal">Efficient. Elegant. Eco-powered. Three models staged clearly so buyers can choose without digging through a generic catalogue.</p>
+          <div class="models">
+            <article class="model reveal">
+              <div class="shot"><img src="/preview/credo-website/assets/credo-ac-1.png" alt="CREDO Solar Breeze" /></div>
+              <h3>CREDO™ Solar Breeze</h3>
+              <p>Compact solar cooling for homes, offices, and small spaces.</p>
+              <button type="button" class="linkish" data-go="enquiry" data-interest="Smart Solar AC" data-notes="Interested in CREDO Solar Breeze">Request a quote →</button>
+            </article>
+            <article class="model reveal">
+              <div class="shot"><img src="/preview/credo-website/assets/credo-ac-2.png" alt="CREDO Solar Tower" /></div>
+              <h3>CREDO™ Solar Tower</h3>
+              <p>Hybrid solar cooling for larger living rooms and open-plan spaces.</p>
+              <button type="button" class="linkish" data-go="enquiry" data-interest="Smart Solar AC" data-notes="Interested in CREDO Solar Tower">Request a quote →</button>
+            </article>
+            <article class="model reveal">
+              <div class="shot"><img src="/preview/credo-website/assets/credo-ac-3.png" alt="CREDO Solar Force" /></div>
+              <h3>CREDO™ Solar Force</h3>
+              <p>Industrial-grade solar cooling for halls and commercial rooms.</p>
+              <button type="button" class="linkish" data-go="enquiry" data-interest="Smart Solar AC" data-notes="Interested in CREDO Solar Force">Request a quote →</button>
+            </article>
           </div>
+          <p style="margin:24px 0 0;"><button type="button" class="btn-line" data-go="product-solar-ac">Compare Solar AC models</button></p>
         </div>
       </section>
 
       <section class="block">
-        <div class="wrap split">
-          <div>
+        <div class="wrap split reveal">
+          <div class="copy">
             <p class="label">Proof</p>
             <h2>Projects that earn confidence</h2>
-            <p class="sub">A structured proof library. Real deployments appear when Credo supplies them. We do not invent claims.</p>
+            <p class="sub">A structured proof library for deployments Credo supplies. The experience is staged. Claims are never invented.</p>
             <button type="button" class="linkish" data-go="projects">View projects →</button>
           </div>
-          <div class="photo"><img src="assets/credo-hero-2.jpg" alt="" /></div>
+          <div class="media"><img src="/preview/credo-website/assets/credo-hero-2.jpg" alt="Credo energy systems" /></div>
         </div>
       </section>
-    </div>
 
-    <div id="products" class="page">
-      <section class="block">
-        <div class="wrap">
-          <p class="label">Products</p>
-          <h2>Catalogue by vertical</h2>
-          <p class="sub">Buyers land in the right family first. Specs and quote paths sit next to each product.</p>
-          <div class="grid3" style="margin-bottom:32px;">
-            <div class="card"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Smart Solar AC</h3><p>Residential and commercial solar cooling line.</p></div>
-            <div class="card"><img class="icon" src="assets/credo-icon-utilities.png" alt="" /><h3>Smart Utilities</h3><p>Metering and utility technology.</p></div>
-            <div class="card"><img class="icon" src="assets/credo-icon-ev.png" alt="" /><h3>EV Solutions</h3><p>Charging and mobility infrastructure.</p></div>
-            <div class="card"><img class="icon" src="assets/credo-icon-drones.png" alt="" /><h3>Drone Technology</h3><p>Aerial systems for agri, security, inspection.</p></div>
-            <div class="card"><img class="icon" src="assets/credo-icon-telecom.png" alt="" /><h3>Digital &amp; Telecom</h3><p>Connectivity and smart-city services.</p></div>
-            <div class="card"><img class="icon" src="assets/credo-icon-solar.png" alt="" /><h3>Solar &amp; Renewables</h3><p>Infrastructure and solar products at scale.</p></div>
-          </div>
-          <h2 style="font-size:1.3rem;">CREDO™ Smart Solar AC line</h2>
-          <div class="grid3" style="margin-top:16px;">
-            <div class="product"><div class="shot"><img src="assets/credo-ac-1.png" alt="" /></div><h3>Solar Breeze</h3><p>Compact solar cooling.</p></div>
-            <div class="product"><div class="shot"><img src="assets/credo-ac-2.png" alt="" /></div><h3>Solar Tower</h3><p>Hybrid solar for larger spaces.</p></div>
-            <div class="product"><div class="shot"><img src="assets/credo-ac-3.png" alt="" /></div><h3>Solar Force</h3><p>Commercial-grade solar cooling.</p></div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div id="solutions" class="page">
-      <section class="block">
-        <div class="wrap">
-          <p class="label">Solutions</p>
-          <h2>Built for how Credo sells</h2>
-          <div class="grid3" style="margin-top:20px;">
-            <div class="card"><h3>Residential &amp; SME</h3><p>Solar AC, home kits, and clear quote paths for homeowners and small businesses.</p></div>
-            <div class="card"><h3>Municipal &amp; utility</h3><p>Metering, street infrastructure, and institutional buying journeys.</p></div>
-            <div class="card"><h3>Partners &amp; distributors</h3><p>Catalogue clarity and segmented intake for B2B buyers.</p></div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div id="projects" class="page">
-      <section class="block">
-        <div class="wrap">
-          <p class="label">Projects</p>
-          <h2>Proof library</h2>
-          <p class="sub">Structure is ready. Case content is added from Credo-supplied deployments only.</p>
-          <div class="grid3">
-            <div class="card"><p class="label">Smart Utilities</p><h3>Municipal metering rollout</h3><p>Template ready for Credo-supplied deployment details.</p></div>
-            <div class="card"><p class="label">Solar AC</p><h3>Commercial solar cooling</h3><p>Structure prepared. Real case content added when Credo provides it.</p></div>
-            <div class="card"><p class="label">EV Solutions</p><h3>EV charging pilot</h3><p>Proof library slot for institutional and roadside installs.</p></div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div id="about" class="page">
-      <section class="block">
-        <div class="wrap split">
+      <section class="gold-band">
+        <div class="wrap" style="display:flex; flex-wrap:wrap; gap:24px; justify-content:space-between; align-items:end;">
           <div>
-            <img src="assets/credo-logo-dark.png" alt="Credo Energy Group" style="height:40px;width:auto;margin-bottom:20px;" />
-            <p class="label">About</p>
-            <h2>A Tanzanian group building Africa’s energy future.</h2>
-            <p class="sub">Credo Energy Group works across sustainable development, innovation, and industrial projects: solar cooling, smart utilities, renewables, EV, drones, and an emerging digital and telecom agenda.</p>
-            <p class="sub">This About page replaces placeholder copy with a clear group narrative and verified contact facts.</p>
+            <p class="label" style="color:#3a2712;">Next step</p>
+            <h2 style="max-width:14ch;">Tell us how you buy energy systems.</h2>
+            <p class="sub">Residential, commercial, municipal, or distributor. Your quote routes with audience and vertical attached.</p>
           </div>
-          <div class="photo"><img src="assets/credo-hero-2.jpg" alt="" /></div>
+          <button type="button" class="btn-line" style="border-color:rgba(18,14,9,0.35); color:#120e09;" data-go="enquiry">Start quote request</button>
         </div>
       </section>
     </div>
 
+    <!-- PRODUCTS -->
+    <div id="products" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Products</p><h1>Catalogue by vertical</h1><p class="sub" style="margin-bottom:0;">Buyers land in the right family first. Specs and quote paths sit next to each product line.</p></div></div>
+      <section class="block"><div class="wrap vert-grid">
+        <button type="button" class="vert" data-go="product-solar-ac"><img class="icon" src="/preview/credo-website/assets/credo-icon-solar.png" alt="" /><h3>Smart Solar AC</h3><p>Residential and commercial solar cooling line.</p><span class="go">Open →</span></button>
+        <button type="button" class="vert" data-go="product-utilities"><img class="icon" src="/preview/credo-website/assets/credo-icon-utilities.png" alt="" /><h3>Smart Utilities</h3><p>Metering and utility technology.</p><span class="go">Open →</span></button>
+        <button type="button" class="vert" data-go="product-renewables"><img class="icon" src="/preview/credo-website/assets/credo-icon-solar.png" alt="" /><h3>Solar &amp; Renewables</h3><p>Infrastructure and solar products at scale.</p><span class="go">Open →</span></button>
+        <button type="button" class="vert" data-go="product-ev"><img class="icon" src="/preview/credo-website/assets/credo-icon-ev.png" alt="" /><h3>EV Solutions</h3><p>Charging and mobility infrastructure.</p><span class="go">Open →</span></button>
+        <button type="button" class="vert" data-go="product-drones"><img class="icon" src="/preview/credo-website/assets/credo-icon-drones.png" alt="" /><h3>Drone Technology</h3><p>Aerial systems for agri, security, inspection.</p><span class="go">Open →</span></button>
+        <button type="button" class="vert" data-go="product-telecom"><img class="icon" src="/preview/credo-website/assets/credo-icon-telecom.png" alt="" /><h3>Digital &amp; Telecom</h3><p>Connectivity and smart-city services.</p><span class="go">Open →</span></button>
+      </div></section>
+    </div>
+
+    <div id="product-solar-ac" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Smart Solar AC</p><h1>CREDO™ Solar Breeze, Tower, and Force.</h1><p class="sub" style="margin-bottom:0;">Clear model paths for homes, open-plan spaces, and commercial rooms.</p></div></div>
+      <section class="light"><div class="wrap"><div class="models">
+        <article class="model"><div class="shot"><img src="/preview/credo-website/assets/credo-ac-1.png" alt="Solar Breeze" /></div><h3>Solar Breeze</h3><p>Compact solar cooling for homes, offices, and small spaces.</p><table class="spec-table"><tr><th>Best for</th><td>Homes &amp; small offices</td></tr><tr><th>Power story</th><td>Solar-first cooling</td></tr><tr><th>Next step</th><td>Site assessment quote</td></tr></table><button type="button" class="cta" data-go="enquiry" data-interest="Smart Solar AC" data-notes="Interested in CREDO Solar Breeze" style="margin-top:8px;">Quote Breeze</button></article>
+        <article class="model"><div class="shot"><img src="/preview/credo-website/assets/credo-ac-2.png" alt="Solar Tower" /></div><h3>Solar Tower</h3><p>Hybrid solar cooling for larger living rooms and open-plan spaces.</p><table class="spec-table"><tr><th>Best for</th><td>Larger living &amp; open plans</td></tr><tr><th>Power story</th><td>Hybrid solar performance</td></tr><tr><th>Next step</th><td>Load &amp; layout quote</td></tr></table><button type="button" class="cta" data-go="enquiry" data-interest="Smart Solar AC" data-notes="Interested in CREDO Solar Tower" style="margin-top:8px;">Quote Tower</button></article>
+        <article class="model"><div class="shot"><img src="/preview/credo-website/assets/credo-ac-3.png" alt="Solar Force" /></div><h3>Solar Force</h3><p>Industrial-grade solar cooling for halls and commercial rooms.</p><table class="spec-table"><tr><th>Best for</th><td>Halls &amp; commercial rooms</td></tr><tr><th>Power story</th><td>Commercial-grade solar</td></tr><tr><th>Next step</th><td>Project quote</td></tr></table><button type="button" class="cta" data-go="enquiry" data-interest="Smart Solar AC" data-notes="Interested in CREDO Solar Force" style="margin-top:8px;">Quote Force</button></article>
+      </div></div></section>
+      <section class="band"><div class="wrap split"><div class="media"><img src="/preview/credo-website/assets/solar-panels.jpg" alt="" /></div><div class="copy"><p class="label">Why Solar AC leads</p><h2>Flagship clarity for a multi-vertical group.</h2><p class="sub">Solar AC is staged first so residential and commercial buyers are not lost in a generic catalogue.</p><button type="button" class="btn-line" data-go="resources">View resources</button></div></div></section>
+    </div>
+
+    <div id="product-utilities" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Smart Utilities</p><h1>Prepaid metering with software operators can run.</h1><p class="sub" style="margin-bottom:0;">Water and electricity metering for municipal and utility buyers.</p></div></div>
+      <section class="block"><div class="wrap split"><div class="copy"><h2>Built for institutional buying.</h2><p class="sub">Prepaid water and electricity meters, paired with software and analytics. Municipal journeys move from overview to consultation without agency-style form options.</p><button type="button" class="cta" data-go="enquiry" data-interest="Smart Utilities" data-audience="Municipal / utility">Request consultation</button></div><div class="media"><img src="/preview/credo-website/assets/smart-grid.jpg" alt="" /></div></div></section>
+    </div>
+
+    <div id="product-renewables" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Solar &amp; Renewables</p><h1>Solar infrastructure for streets, sites, and homes.</h1><p class="sub" style="margin-bottom:0;">Streetlights, benches, shelters, ATM booths, and home kits.</p></div></div>
+      <section class="block"><div class="wrap split"><div class="media"><img src="/preview/credo-website/assets/solar-field.jpg" alt="" /></div><div class="copy"><h2>From home kits to public infrastructure.</h2><p class="sub">A coherent renewables catalogue so residential kits and municipal solar assets stay clear of Solar AC and utilities.</p><button type="button" class="cta" data-go="enquiry" data-interest="Solar &amp; Renewables">Request a quote</button></div></div></section>
+    </div>
+
+    <div id="product-ev" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">EV Solutions</p><h1>Charging and mobility infrastructure.</h1><p class="sub" style="margin-bottom:0;">Smart charging stations, portable chargers, and roadside power kits.</p></div></div>
+      <section class="block"><div class="wrap split"><div class="copy"><h2>Ready for pilots and permanent installs.</h2><p class="sub">Commercial and institutional buyers get a clear EV path into quote and projects.</p><button type="button" class="cta" data-go="enquiry" data-interest="EV Solutions">Request a quote</button></div><div class="media"><img src="/preview/credo-website/assets/ev-charger.jpg" alt="" /></div></div></section>
+    </div>
+
+    <div id="product-drones" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Drone Technology</p><h1>Aerial systems for agriculture, security, and inspection.</h1><p class="sub" style="margin-bottom:0;">Agricultural, surveillance, law enforcement, and civilian systems.</p></div></div>
+      <section class="block"><div class="wrap split"><div class="media"><img src="/preview/credo-website/assets/wind-solar.jpg" alt="" /></div><div class="copy"><h2>Specialist systems, institutional voice.</h2><p class="sub">Buyers understand drone capability without leaving the Credo group story.</p><button type="button" class="cta" data-go="enquiry" data-interest="Drone Technology">Request a quote</button></div></div></section>
+    </div>
+
+    <div id="product-telecom" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Digital &amp; Telecom</p><h1>CREDO™ TELECOM and the smart-city horizon.</h1><p class="sub" style="margin-bottom:0;">Upcoming ISP, satellite, AI, and smart-city services.</p></div></div>
+      <section class="block"><div class="wrap split"><div class="copy"><h2>Connectivity as an energy-group chapter.</h2><p class="sub">Digital and telecom sit alongside physical energy systems so partners see the full Credo horizon.</p><div style="display:flex; flex-wrap:wrap; gap:10px;"><button type="button" class="cta" data-go="enquiry" data-interest="Digital &amp; Telecom">Talk to Credo</button><button type="button" class="btn-ghost" data-go="landing-telecom">Open TELECOM landing</button></div></div><div class="media"><img src="/preview/credo-website/assets/city-dusk.jpg" alt="" /></div></div></section>
+    </div>
+
+    <!-- TELECOM LANDING (ADD-LAND) -->
+    <div id="landing-telecom" class="page">
+      <section class="landing-hero">
+        <img class="bg" src="/preview/credo-website/assets/credo-hero-3.jpg" alt="" />
+        <div class="shade"></div>
+        <div class="content">
+          <span class="opt-chip" style="margin-bottom:16px;"><span class="opt-dot"></span>Optional · ADD-LAND · Custom landing page</span>
+          <p class="label">Campaign landing</p>
+          <h1 style="font-family:var(--font-display); font-size:clamp(2.4rem,6vw,4.4rem); text-transform:uppercase; letter-spacing:0.02em; margin:0 0 14px; max-width:14ch;">CREDO™ TELECOM is coming online.</h1>
+          <p class="lede" style="max-width:34rem; color:var(--muted); margin:0 0 24px;">A focused launch surface for ISP, satellite, and smart-city messaging. Keeps campaign traffic out of homepage clutter.</p>
+          <div class="actions">
+            <button type="button" class="cta" data-go="enquiry" data-interest="Digital &amp; Telecom" data-notes="CREDO TELECOM launch interest">Register interest</button>
+            <button type="button" class="btn-ghost" data-go="product-telecom">Back to Digital &amp; Telecom</button>
+          </div>
+        </div>
+      </section>
+      <section class="block"><div class="wrap landing-pillars">
+        <div class="pillar"><p class="label">Connectivity</p><h3>ISP horizon</h3><p style="margin:0; color:var(--muted); font-size:14px;">CREDO™ TELECOM as an upcoming connectivity chapter of the group.</p></div>
+        <div class="pillar"><p class="label">Coverage</p><h3>Satellite &amp; smart city</h3><p style="margin:0; color:var(--muted); font-size:14px;">Infrastructure narrative for partners and municipal programmes.</p></div>
+        <div class="pillar"><p class="label">Convert</p><h3>Campaign-ready CTA</h3><p style="margin:0; color:var(--muted); font-size:14px;">Ads and outreach can point here without rewriting the homepage.</p></div>
+      </div></section>
+    </div>
+
+    <!-- SOLUTIONS -->
+    <div id="solutions" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Solutions</p><h1>Built for how Credo sells.</h1><p class="sub" style="margin-bottom:0;">Three buying journeys. Same portfolio. Clear next steps.</p></div></div>
+      <section class="block"><div class="wrap journey">
+        <div class="journey-row"><div class="n">01</div><div><h3>Residential &amp; SME</h3><p>Homeowners and small businesses start on Solar AC or home kits, then quote with audience already set.</p><p style="margin-top:12px;"><button type="button" class="linkish" data-go="enquiry" data-audience="Residential / homeowner" data-interest="Smart Solar AC">Start residential quote →</button></p></div><div class="media" style="min-height:160px;"><img src="/preview/credo-website/assets/solar-panels.jpg" alt="" /></div></div>
+        <div class="journey-row"><div class="n">02</div><div><h3>Municipal &amp; utility</h3><p>Metering, street infrastructure, and institutional programmes move through solutions into case studies and consultation.</p><p style="margin-top:12px;"><button type="button" class="linkish" data-go="enquiry" data-audience="Municipal / utility" data-interest="Smart Utilities">Request consultation →</button></p></div><div class="media" style="min-height:160px;"><img src="/preview/credo-website/assets/smart-grid.jpg" alt="" /></div></div>
+        <div class="journey-row"><div class="n">03</div><div><h3>Partners &amp; distributors</h3><p>Catalogue clarity and segmented intake for B2B buyers who need product families, not a web-design contact form.</p><p style="margin-top:12px;"><button type="button" class="linkish" data-go="enquiry" data-audience="Distributor / partner">Partner enquiry →</button></p></div><div class="media" style="min-height:160px;"><img src="/preview/credo-website/assets/meeting.jpg" alt="" /></div></div>
+      </div></section>
+    </div>
+
+    <!-- PROJECTS -->
+    <div id="projects" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Projects &amp; case studies</p><h1>Proof library</h1><p class="sub" style="margin-bottom:0;">Structure is live. Deployment stories publish when Credo supplies them.</p></div></div>
+      <section class="block"><div class="wrap">
+        <div class="proof-grid">
+          <article class="proof"><img src="/preview/credo-website/assets/smart-grid.jpg" alt="" /><div class="body"><div class="tag">Smart Utilities</div><h3>Municipal metering rollout</h3><p style="margin:0;color:rgba(255,255,255,0.72);font-size:13px;">Library slot ready for Credo-supplied deployment details.</p></div></article>
+          <article class="proof"><img src="/preview/credo-website/assets/solar-panels.jpg" alt="" /><div class="body"><div class="tag">Solar AC</div><h3>Commercial solar cooling</h3><p style="margin:0;color:rgba(255,255,255,0.72);font-size:13px;">Case-study frame prepared for commercial installs.</p></div></article>
+          <article class="proof"><img src="/preview/credo-website/assets/ev-charger.jpg" alt="" /><div class="body"><div class="tag">EV Solutions</div><h3>EV charging pilot</h3><p style="margin:0;color:rgba(255,255,255,0.72);font-size:13px;">Proof slot for institutional and roadside programmes.</p></div></article>
+        </div>
+        <div class="empty-lib" style="margin-top:22px;"><p class="label">Content protocol</p><h3>Awaiting Credo deployment assets</h3><p>Projects and case studies modules are included. We publish only verified deployments you provide.</p></div>
+      </div></section>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="about" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">About Credo</p><h1>A Tanzanian group building Africa’s energy future.</h1><p class="sub" style="margin-bottom:0;">Sustainable development, innovation, and industrial projects across six verticals.</p></div></div>
+      <section class="block"><div class="wrap split"><div class="copy"><p class="label">Group narrative</p><h2>One institutional presence for six verticals.</h2><p class="sub">This About page replaces theme leftovers and placeholder names with a clear Credo voice. Statistics appear only when Credo verifies them.</p><button type="button" class="btn-line" data-go="enquiry">Contact Credo</button></div><div class="media"><img src="/preview/credo-website/assets/corporate-tower.jpg" alt="" /></div></div></section>
+      <section class="band" id="leadership"><div class="wrap"><p class="label">Leadership</p><h2>Team module, ready for Credo people.</h2><p class="sub">Placeholder names from the live site are removed. Slots wait for real leadership profiles you approve.</p><div class="team-slots">
+        <div class="slot"><div class="avatar"></div><div class="role">Executive</div><h3>Leadership profile</h3><p style="margin:8px 0 0;color:var(--muted);font-size:14px;">Name, title, and short bio supplied by Credo.</p></div>
+        <div class="slot"><div class="avatar"></div><div class="role">Operations</div><h3>Leadership profile</h3><p style="margin:8px 0 0;color:var(--muted);font-size:14px;">Name, title, and short bio supplied by Credo.</p></div>
+        <div class="slot"><div class="avatar"></div><div class="role">Commercial</div><h3>Leadership profile</h3><p style="margin:8px 0 0;color:var(--muted);font-size:14px;">Name, title, and short bio supplied by Credo.</p></div>
+      </div></div></section>
+    </div>
+
+    <div id="resources" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Resource Centre</p><h1>Specs and documents buyers can trust.</h1><p class="sub" style="margin-bottom:0;">Publishing surface for product sheets and guides. Operator-owned after training.</p></div></div>
+      <section class="block"><div class="wrap">
+        <button type="button" class="resource" data-go="product-solar-ac"><span class="kind">Spec sheet</span><div><h3>CREDO™ Smart Solar AC overview</h3><p>Model comparison for Breeze, Tower, and Force.</p></div><span class="linkish">Open →</span></button>
+        <button type="button" class="resource" data-go="product-utilities"><span class="kind">Guide</span><div><h3>Smart Utilities buyer brief</h3><p>Municipal and utility overview for metering programmes.</p></div><span class="linkish">Open →</span></button>
+        <button type="button" class="resource" data-go="enquiry"><span class="kind">Form</span><div><h3>Project intake checklist</h3><p>Site location, quantity, timeline, and buyer type.</p></div><span class="linkish">Start quote →</span></button>
+      </div></section>
+    </div>
+
+    <div id="news" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">News</p><h1>Group announcements in Credo’s voice.</h1><p class="sub" style="margin-bottom:0;">Product updates and institutional news have a permanent home.</p></div></div>
+      <section class="block"><div class="wrap">
+        <article class="news-item"><span class="date">Sample</span><div><h3>CREDO™ Smart Solar AC line staged for clearer buying</h3><p>How Breeze, Tower, and Force help buyers choose without a generic catalogue.</p></div></article>
+        <article class="news-item"><span class="date">Sample</span><div><h3>Smart utilities path for municipal programmes</h3><p>Why prepaid metering needs its own journey on the Credo website.</p></div></article>
+        <article class="news-item"><span class="date">Sample</span><div><h3>Digital and telecom on the group horizon</h3><p>CREDO™ TELECOM presented as a serious chapter of the energy group.</p></div></article>
+      </div></section>
+    </div>
+
+    <div id="careers" class="page">
+      <div class="page-hero"><div class="wrap"><p class="label">Careers</p><h1>Build with Credo Energy Group.</h1><p class="sub" style="margin-bottom:0;">A careers surface for hiring and partner diligence.</p></div></div>
+      <section class="block"><div class="wrap split"><div class="copy"><h2>Join a multi-vertical energy group.</h2><p class="sub">From field programmes to commercial and digital work, careers sit inside the same institutional presence.</p><div class="empty-lib"><p class="label">Open roles</p><h3>Roles to be announced</h3><p>Express interest through the quote path or contact the Dar es Salaam desk.</p><p style="margin-top:14px;"><button type="button" class="cta" data-go="enquiry" data-audience="Distributor / partner" data-notes="Careers / general interest">Express interest</button></p></div></div><div class="media"><img src="/preview/credo-website/assets/meeting.jpg" alt="" /></div></div></section>
+    </div>
+
+    <!-- ENQUIRY -->
     <div id="enquiry" class="page">
-      <section class="block">
-        <div class="wrap">
-          <p class="label">Request a quote</p>
-          <h2>The right enquiry path, first time.</h2>
-          <p class="sub">Segmented intake for energy buyers. No web-design or branding form options.</p>
+      <div class="page-hero"><div class="wrap">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <span class="opt-chip"><span class="opt-dot"></span>Optional · ADD-STEP · Multi-step form</span>
+          <span class="opt-chip"><span class="opt-dot"></span>Optional · ADD-FILE · File uploads</span>
+        </div>
+        <p class="label">Contact · Request a quote</p>
+        <h1>The right enquiry path, first time.</h1>
+        <p class="sub" style="margin-bottom:0;">Energy-aligned intake for residential, commercial, municipal, and distributor buyers. One verified Dar es Salaam contact truth.</p>
+      </div></div>
+      <section class="block"><div class="wrap contact-grid">
+        <aside class="facts">
+          <div><dt>Location</dt><dd>Africana, Dar es Salaam, Tanzania<br />P.O. Box (as listed on Credo public materials)</dd></div>
+          <div><dt>Phone</dt><dd><a href="tel:+255686882769">+255 686 882 769</a></dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:info@credogroupllc.com">info@credogroupllc.com</a></dd></div>
+          <div><dt>Local presence</dt><dd>Google Business Profile aligned to verified Dar es Salaam facts.</dd></div>
+          <div><dt>Care path</dt><dd>Professional Care after launch. Priority Care available as an upgrade if Credo wants faster response.</dd></div>
+          <button type="button" class="btn-line" data-go="products">Browse products</button>
+        </aside>
+        <div>
           <form class="quote" id="quote-form">
-            <label>Buyer type
-              <select name="audience">
-                <option>Residential / homeowner</option>
-                <option>Commercial / SME</option>
-                <option>Municipal / utility</option>
-                <option>Distributor / partner</option>
-              </select>
-            </label>
-            <label>Interest
-              <select name="interest">
-                <option>Smart Solar AC</option>
-                <option>Smart Utilities</option>
-                <option>Solar &amp; Renewables</option>
-                <option>EV Solutions</option>
-                <option>Drone Technology</option>
-                <option>Digital &amp; Telecom</option>
-              </select>
-            </label>
-            <label>Name<input required name="name" placeholder="Your name" /></label>
-            <label>Email or phone<input required name="contact" placeholder="How should Credo reach you?" /></label>
-            <label>Project notes<textarea name="notes" placeholder="Site location, quantity, timeline…"></textarea></label>
-            <button type="submit" class="cta" style="justify-self:start;">Submit quote request</button>
+            <div class="steps" aria-hidden="true"><span class="on" id="step-bar-1"></span><span id="step-bar-2"></span><span id="step-bar-3"></span></div>
+            <div class="step-label" id="step-label">Step 1 of 3 · Who is buying</div>
+            <div id="quote-step-1">
+              <label>Buyer type
+                <select name="audience" id="audience">
+                  <option>Residential / homeowner</option>
+                  <option>Commercial / SME</option>
+                  <option>Municipal / utility</option>
+                  <option>Distributor / partner</option>
+                </select>
+              </label>
+              <label>Interest
+                <select name="interest" id="interest">
+                  <option>Smart Solar AC</option>
+                  <option>Smart Utilities</option>
+                  <option>Solar &amp; Renewables</option>
+                  <option>EV Solutions</option>
+                  <option>Drone Technology</option>
+                  <option>Digital &amp; Telecom</option>
+                </select>
+              </label>
+              <div class="form-actions"><button type="button" class="cta" id="to-step-2">Continue</button></div>
+            </div>
+            <div id="quote-step-2" hidden>
+              <label>Name<input required name="name" id="q-name" placeholder="Your name" /></label>
+              <label>Email or phone<input required name="contact" id="q-contact" placeholder="How should Credo reach you?" /></label>
+              <div class="form-actions">
+                <button type="button" class="btn-line" id="back-step-1">Back</button>
+                <button type="button" class="cta" id="to-step-3">Continue</button>
+              </div>
+            </div>
+            <div id="quote-step-3" hidden>
+              <label>Project notes<textarea name="notes" id="q-notes" placeholder="Site location, quantity, timeline…"></textarea></label>
+              <div class="file-box">
+                <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                  <strong style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);">Attach files</strong>
+                  <span class="opt-chip">ADD-FILE</span>
+                </div>
+                <p style="margin:0; font-size:13px; color:var(--muted);">Specs, RFPs, or site photos for tender and B2B buyers.</p>
+                <input type="file" id="q-file" multiple accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
+                <div id="file-list" style="font-size:12px; color:var(--muted);"></div>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn-line" id="back-step-2">Back</button>
+                <button type="submit" class="cta">Submit quote request</button>
+              </div>
+            </div>
           </form>
           <div class="done" id="quote-done" hidden>
             <h3>Request received</h3>
-            <p>Demo confirmation only. In production, this routes to Credo’s sales desk with audience and vertical attached.</p>
-            <button type="button" class="linkish" id="quote-again">Send another</button>
+            <p style="margin:0 0 16px; color:var(--muted);">Thank you. Your enquiry will reach the Credo sales desk with audience and vertical attached so the right team can respond.</p>
+            <button type="button" class="linkish" id="quote-again">Send another request</button>
           </div>
         </div>
-      </section>
+      </div></section>
     </div>
   </main>
 
   <footer class="site">
     <div class="wrap">
-      <img src="assets/credo-logo-footer.png" alt="Credo Energy Group" />
-      <div>
-        <div>Dar es Salaam</div>
-        <div>enquiries@credogroupllc.com</div>
-        <div class="tiny">Conceptual preview · Proposal KT-CEG-WEB-2026-001</div>
+      <div class="foot-grid">
+        <div>
+          <img class="mark" src="/preview/credo-website/assets/credo-logo-footer.png" alt="Credo Energy Group" />
+          <p style="margin:0; max-width:30ch;">Tanzanian energy group. Solar cooling, smart utilities, renewables, EV, drones, and digital infrastructure.</p>
+        </div>
+        <div>
+          <h4>Products</h4>
+          <button type="button" data-go="product-solar-ac">Smart Solar AC</button>
+          <button type="button" data-go="product-utilities">Smart Utilities</button>
+          <button type="button" data-go="product-renewables">Solar &amp; Renewables</button>
+          <button type="button" data-go="product-ev">EV Solutions</button>
+          <button type="button" data-go="product-drones">Drone Technology</button>
+          <button type="button" data-go="product-telecom">Digital &amp; Telecom</button>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <button type="button" data-go="about">About</button>
+          <button type="button" data-go="projects">Projects</button>
+          <button type="button" data-go="resources">Resources</button>
+          <button type="button" data-go="news">News</button>
+          <button type="button" data-go="careers">Careers</button>
+          <button type="button" data-go="landing-telecom">TELECOM Landing</button>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="tel:+255686882769">+255 686 882 769</a>
+          <a href="mailto:info@credogroupllc.com">info@credogroupllc.com</a>
+          <button type="button" data-go="enquiry">Request a quote</button>
+          <p style="margin:12px 0 0; font-size:13px;">Africana, Dar es Salaam</p>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© Credo Energy Group</span>
+        <span>Website preview for Credo leadership</span>
       </div>
     </div>
   </footer>
 
+  <button type="button" class="chat-fab" id="chat-fab" aria-label="Open Credo assistant" title="Website chatbot">
+    AI
+  </button>
+  <div class="chat-panel" id="chat-panel" aria-hidden="true">
+    <div class="chat-head">
+      <div>
+        <strong>Credo assistant</strong>
+        <span><span class="opt-dot"></span>Optional · ADD-BOT</span>
+      </div>
+      <button type="button" class="linkish" id="chat-close">Close</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+      <div class="bubble bot">Karibu. I can help you find the right Credo vertical before you speak with sales.</div>
+    </div>
+    <div class="chat-quick">
+      <button type="button" data-chat="solar">Tell me about Solar AC</button>
+      <button type="button" data-chat="utilities">Municipal metering</button>
+      <button type="button" data-chat="quote">Start a quote</button>
+    </div>
+  </div>
+
   <script>
-    function go(id) {
-      document.querySelectorAll('.page').forEach((el) => el.classList.toggle('active', el.id === id));
-      document.querySelectorAll('.nav-links button').forEach((btn) => {
-        btn.classList.toggle('active', btn.getAttribute('data-go') === id);
-      });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    const pages = Array.from(document.querySelectorAll(".page"));
+    const drawer = document.getElementById("drawer");
+    const burger = document.getElementById("burger");
+    const form = document.getElementById("quote-form");
+    const done = document.getElementById("quote-done");
+    const interestEl = document.getElementById("interest");
+    const audienceEl = document.getElementById("audience");
+    const notesEl = document.getElementById("q-notes");
+    const step1 = document.getElementById("quote-step-1");
+    const step2 = document.getElementById("quote-step-2");
+    const step3 = document.getElementById("quote-step-3");
+    const stepLabel = document.getElementById("step-label");
+    const bars = [
+      document.getElementById("step-bar-1"),
+      document.getElementById("step-bar-2"),
+      document.getElementById("step-bar-3"),
+    ];
+    const searchOverlay = document.getElementById("search-overlay");
+    const searchInput = document.getElementById("search-input");
+    const searchResults = document.getElementById("search-results");
+    const chatPanel = document.getElementById("chat-panel");
+    const chatBody = document.getElementById("chat-body");
+
+    const catalog = [
+      { title: "Smart Solar AC", blurb: "Breeze, Tower, Force solar cooling", go: "product-solar-ac", keys: "solar ac breeze tower force cooling" },
+      { title: "Smart Utilities", blurb: "Prepaid water and electricity meters", go: "product-utilities", keys: "utilities meters prepaid municipal water electricity" },
+      { title: "Solar & Renewables", blurb: "Streetlights, kits, solar infrastructure", go: "product-renewables", keys: "renewables streetlights kits solar" },
+      { title: "EV Solutions", blurb: "Charging and mobility infrastructure", go: "product-ev", keys: "ev charging mobility" },
+      { title: "Drone Technology", blurb: "Agri, security, inspection systems", go: "product-drones", keys: "drone agri surveillance" },
+      { title: "Digital & Telecom", blurb: "CREDO TELECOM, satellite, smart city", go: "product-telecom", keys: "telecom digital isp satellite smart city" },
+      { title: "CREDO TELECOM Landing", blurb: "Optional campaign landing page", go: "landing-telecom", keys: "landing campaign telecom isp" },
+      { title: "Projects", blurb: "Proof library and case studies", go: "projects", keys: "projects cases proof deployments" },
+      { title: "Request a quote", blurb: "Segmented energy buyer intake", go: "enquiry", keys: "quote enquiry contact form" },
+      { title: "About Credo", blurb: "Group narrative and leadership", go: "about", keys: "about company leadership team" },
+      { title: "Resource Centre", blurb: "Specs and buyer guides", go: "resources", keys: "resources specs sheets documents" },
+    ];
+
+    function setQuoteStep(n) {
+      step1.hidden = n !== 1;
+      step2.hidden = n !== 2;
+      step3.hidden = n !== 3;
+      bars.forEach((b, i) => b.classList.toggle("on", i < n));
+      stepLabel.textContent = [
+        "Step 1 of 3 · Who is buying",
+        "Step 2 of 3 · How to reach you",
+        "Step 3 of 3 · Project notes & files",
+      ][n - 1];
     }
-    document.querySelectorAll('[data-go]').forEach((btn) => {
-      btn.addEventListener('click', () => go(btn.getAttribute('data-go')));
+
+    function closeDrawer() {
+      drawer.classList.remove("open");
+      drawer.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("nav-open");
+    }
+    function openDrawer() {
+      drawer.classList.add("open");
+      drawer.setAttribute("aria-hidden", "false");
+      document.body.classList.add("nav-open");
+    }
+
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+      document.querySelectorAll(".lang-toggle button").forEach((btn) => {
+        btn.classList.toggle("on", btn.getAttribute("data-lang") === lang);
+      });
+    }
+
+    function observeReveals() {
+      const nodes = document.querySelectorAll(".page.active .reveal");
+      if (!nodes.length) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        nodes.forEach((n) => n.classList.add("in"));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+      nodes.forEach((n) => io.observe(n));
+    }
+
+    function go(id, opts = {}) {
+      if (!id) return;
+      const page = document.getElementById(id);
+      if (!page) return;
+      pages.forEach((el) => el.classList.toggle("active", el.id === id));
+      document.querySelectorAll(".nav-desktop .nav-item > button").forEach((btn) => {
+        const group = btn.getAttribute("data-nav");
+        const target = btn.getAttribute("data-go") || "";
+        let active = target === id;
+        if (group === "products" && id.startsWith("product-")) active = true;
+        if (group === "proof" && (id === "projects" || id === "resources")) active = true;
+        if (group === "company" && ["about", "news", "careers", "landing-telecom"].includes(id)) active = true;
+        btn.classList.toggle("active", active);
+      });
+      if (opts.interest && interestEl) {
+        const wanted = opts.interest.replace(/&amp;/g, "&");
+        const match = Array.from(interestEl.options).find((o) => o.value.replace(/&amp;/g, "&") === wanted);
+        if (match) interestEl.value = match.value;
+      }
+      if (opts.audience && audienceEl) audienceEl.value = opts.audience;
+      if (opts.notes && notesEl && !notesEl.value) notesEl.value = opts.notes;
+      if (id === "enquiry") {
+        form.hidden = false;
+        done.hidden = true;
+        setQuoteStep(1);
+      }
+      closeDrawer();
+      closeSearch();
+      history.replaceState(null, "", "#" + id);
+      requestAnimationFrame(() => {
+        observeReveals();
+        if (opts.scroll) {
+          const el = document.getElementById(opts.scroll);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            return;
+          }
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+
+    function renderSearch(q) {
+      const query = (q || "").trim().toLowerCase();
+      const hits = catalog.filter((item) => {
+        if (!query) return true;
+        return (item.title + " " + item.blurb + " " + item.keys).toLowerCase().includes(query);
+      }).slice(0, 8);
+      searchResults.innerHTML = hits.length
+        ? hits.map((item) => `<button type="button" data-go="${item.go}"><strong>${item.title}</strong><span>${item.blurb}</span></button>`).join("")
+        : `<div class="bubble">No matches. Try Solar AC, meters, EV, or telecom.</div>`;
+      searchResults.querySelectorAll("[data-go]").forEach((btn) => {
+        btn.addEventListener("click", () => go(btn.getAttribute("data-go")));
+      });
+    }
+
+    function openSearch() {
+      searchOverlay.classList.add("open");
+      searchOverlay.setAttribute("aria-hidden", "false");
+      document.body.classList.add("search-open");
+      renderSearch("");
+      setTimeout(() => searchInput.focus(), 40);
+    }
+    function closeSearch() {
+      searchOverlay.classList.remove("open");
+      searchOverlay.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("search-open");
+      searchInput.value = "";
+    }
+
+    document.querySelectorAll("[data-go]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        go(btn.getAttribute("data-go"), {
+          interest: btn.getAttribute("data-interest") || undefined,
+          audience: btn.getAttribute("data-audience") || undefined,
+          notes: btn.getAttribute("data-notes") || undefined,
+          scroll: btn.getAttribute("data-scroll") || undefined,
+        });
+      });
     });
-    const form = document.getElementById('quote-form');
-    const done = document.getElementById('quote-done');
-    form.addEventListener('submit', (e) => {
+
+    burger.addEventListener("click", () => {
+      if (drawer.classList.contains("open")) closeDrawer();
+      else openDrawer();
+    });
+    document.getElementById("drawer-close").addEventListener("click", closeDrawer);
+    drawer.addEventListener("click", (e) => { if (e.target === drawer) closeDrawer(); });
+
+    document.querySelectorAll("[data-lang]").forEach((btn) => {
+      btn.addEventListener("click", () => setLang(btn.getAttribute("data-lang")));
+    });
+
+    document.getElementById("search-open").addEventListener("click", openSearch);
+    document.getElementById("search-close").addEventListener("click", closeSearch);
+    searchOverlay.addEventListener("click", (e) => { if (e.target === searchOverlay) closeSearch(); });
+    searchInput.addEventListener("input", () => renderSearch(searchInput.value));
+
+    document.getElementById("to-step-2").addEventListener("click", () => setQuoteStep(2));
+    document.getElementById("to-step-3").addEventListener("click", () => {
+      if (!document.getElementById("q-name").value.trim() || !document.getElementById("q-contact").value.trim()) {
+        document.getElementById("q-name").reportValidity();
+        document.getElementById("q-contact").reportValidity();
+        return;
+      }
+      setQuoteStep(3);
+    });
+    document.getElementById("back-step-1").addEventListener("click", () => setQuoteStep(1));
+    document.getElementById("back-step-2").addEventListener("click", () => setQuoteStep(2));
+
+    document.getElementById("q-file").addEventListener("change", (e) => {
+      const files = Array.from(e.target.files || []);
+      document.getElementById("file-list").textContent = files.length
+        ? files.map((f) => f.name).join(" · ")
+        : "";
+    });
+
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
       form.hidden = true;
       done.hidden = false;
     });
-    document.getElementById('quote-again').addEventListener('click', () => {
+    document.getElementById("quote-again").addEventListener("click", () => {
       form.reset();
+      document.getElementById("file-list").textContent = "";
       form.hidden = false;
       done.hidden = true;
+      setQuoteStep(1);
     });
+
+    const chatReplies = {
+      solar: "CREDO™ Smart Solar AC includes Breeze, Tower, and Force. I can open the product page or start a quote with Solar AC selected.",
+      utilities: "Smart Utilities covers prepaid water and electricity metering for municipal and utility buyers. Want the utilities page or a consultation quote?",
+      quote: "Opening the quote request. Choose residential, commercial, municipal, or distributor and we will route it correctly.",
+    };
+    document.getElementById("chat-fab").addEventListener("click", () => {
+      const open = !chatPanel.classList.contains("open");
+      chatPanel.classList.toggle("open", open);
+      chatPanel.setAttribute("aria-hidden", open ? "false" : "true");
+    });
+    document.getElementById("chat-close").addEventListener("click", () => {
+      chatPanel.classList.remove("open");
+      chatPanel.setAttribute("aria-hidden", "true");
+    });
+    document.querySelectorAll("[data-chat]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-chat");
+        const user = document.createElement("div");
+        user.className = "bubble";
+        user.textContent = btn.textContent;
+        chatBody.appendChild(user);
+        const bot = document.createElement("div");
+        bot.className = "bubble bot";
+        bot.textContent = chatReplies[key] || "I can help with products or a quote.";
+        chatBody.appendChild(bot);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        if (key === "solar") setTimeout(() => go("product-solar-ac"), 450);
+        if (key === "utilities") setTimeout(() => go("product-utilities"), 450);
+        if (key === "quote") setTimeout(() => go("enquiry"), 450);
+      });
+    });
+
+    const boot = (location.hash || "#home").replace(/^#/, "").split(/[/?]/)[0] || "home";
+    go(document.getElementById(boot) ? boot : "home");
   </script>
 </body>
 </html>
