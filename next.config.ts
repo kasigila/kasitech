@@ -15,6 +15,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  /**
+   * Credo proposal QR targets /preview/credo-website/.
+   * Next strips the trailing slash, so rewrite the directory URL to the static index.
+   */
+  async rewrites() {
+    return [
+      {
+        source: "/preview/credo-website",
+        destination: "/preview/credo-website/index.html",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
