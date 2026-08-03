@@ -622,13 +622,67 @@
       padding: 22px; border: 1px solid var(--line); background: #111;
     }
 
+    .demo-dock {
+      position: fixed; left: 14px; bottom: 14px; z-index: 75;
+      width: min(320px, calc(100vw - 28px));
+      background: rgba(10, 10, 10, 0.96);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+      backdrop-filter: blur(12px);
+    }
+    .demo-dock.collapsed .demo-dock-body { display: none; }
+    .demo-dock-toggle {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid transparent;
+    }
+    .demo-dock:not(.collapsed) .demo-dock-toggle { border-bottom-color: var(--line-soft); }
+    .demo-dock-toggle strong {
+      display: block;
+      font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+    }
+    .demo-dock-toggle span { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+    .demo-dock-toggle .chev {
+      font-size: 12px; color: var(--gold); letter-spacing: 0;
+      transition: transform 0.2s var(--ease);
+    }
+    .demo-dock.collapsed .demo-dock-toggle .chev { transform: rotate(180deg); }
+    .demo-dock-body { padding: 12px 12px 14px; display: grid; gap: 8px; }
+    .demo-dock-body p {
+      margin: 0 0 4px; font-size: 12px; color: var(--muted); line-height: 1.4;
+    }
+    .demo-dock-body button {
+      width: 100%; text-align: left;
+      padding: 11px 12px;
+      border: 1px solid var(--line-soft);
+      background: #121212;
+      display: grid; gap: 2px;
+      transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+    }
+    .demo-dock-body button:hover {
+      border-color: rgba(252,168,60,0.45);
+      background: rgba(252,168,60,0.08);
+    }
+    .demo-dock-body button b {
+      font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text);
+    }
+    .demo-dock-body button small {
+      font-size: 11px; color: var(--muted); letter-spacing: 0; text-transform: none; font-weight: 500;
+    }
+    @media (max-width: 720px) {
+      .demo-dock { left: 10px; right: 78px; width: auto; bottom: 12px; }
+      .demo-dock-body button b { font-size: 11px; }
+    }
+
     .chat-fab {
       position: fixed; right: 18px; bottom: 18px; z-index: 70;
-      width: 58px; height: 58px; border-radius: 50%;
+      min-width: 58px; height: 58px; padding: 0 14px; border-radius: 999px;
       background: var(--grad); color: #120e09;
       display: grid; place-items: center;
       box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-      font-weight: 800; font-size: 12px; letter-spacing: 0.04em;
+      font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
     }
     .chat-panel {
       position: fixed; right: 18px; bottom: 88px; z-index: 70;
@@ -697,7 +751,7 @@
 <body>
   <div class="proposed">
     <div><strong>Credo Energy Group</strong> · Website preview</div>
-    <div>Optional add-ons shown for demonstration · Base package separately priced</div>
+    <div>Use the “Try optional extras” panel to demo add-ons · Not in base price</div>
   </div>
 
   <header class="site">
@@ -740,10 +794,10 @@
       </nav>
 
       <div class="nav-tools">
-        <button type="button" class="icon-btn" id="search-open" aria-label="Search" title="Advanced site search">
+        <button type="button" class="icon-btn" id="search-open" aria-label="Search products" title="Optional: Advanced site search">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         </button>
-        <div class="lang-toggle" title="Bilingual EN/SW">
+        <div class="lang-toggle" title="Optional: Bilingual EN/SW">
           <button type="button" class="on" data-lang="en">EN</button>
           <button type="button" data-lang="sw">SW</button>
         </div>
@@ -1130,8 +1184,27 @@
     </div>
   </footer>
 
-  <button type="button" class="chat-fab" id="chat-fab" aria-label="Open Credo assistant" title="Website chatbot">
-    AI
+  <aside class="demo-dock" id="demo-dock" aria-label="Optional add-ons demo">
+    <button type="button" class="demo-dock-toggle" id="demo-dock-toggle" aria-expanded="true">
+      <span>
+        <strong>Try optional extras</strong>
+        <span>One tap each · not in base price</span>
+      </span>
+      <span class="chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="demo-dock-body" id="demo-dock-body">
+      <p>Tap any item to see how that optional add-on would look and feel on the Credo site.</p>
+      <button type="button" data-demo="search"><b>ADD-SRCH · Site search</b><small>Find Solar AC, meters, EV, telecom…</small></button>
+      <button type="button" data-demo="lang"><b>LANG-ENSW · English / Swahili</b><small>Switch the homepage language instantly</small></button>
+      <button type="button" data-demo="quote"><b>ADD-STEP + ADD-FILE · Quote flow</b><small>Multi-step form with file uploads</small></button>
+      <button type="button" data-demo="landing"><b>ADD-LAND · TELECOM landing</b><small>Campaign page for CREDO™ TELECOM</small></button>
+      <button type="button" data-demo="chat"><b>ADD-BOT · Website chatbot</b><small>Quick product triage before sales</small></button>
+      <button type="button" data-demo="care"><b>CARE-PRI · Priority Care note</b><small>See the upgrade path on Contact</small></button>
+    </div>
+  </aside>
+
+  <button type="button" class="chat-fab" id="chat-fab" aria-label="Open Credo chat" title="Optional: Website chatbot">
+    Chat
   </button>
   <div class="chat-panel" id="chat-panel" aria-hidden="true">
     <div class="chat-head">
@@ -1371,15 +1444,20 @@
       utilities: "Smart Utilities covers prepaid water and electricity metering for municipal and utility buyers. Want the utilities page or a consultation quote?",
       quote: "Opening the quote request. Choose residential, commercial, municipal, or distributor and we will route it correctly.",
     };
-    document.getElementById("chat-fab").addEventListener("click", () => {
-      const open = !chatPanel.classList.contains("open");
-      chatPanel.classList.toggle("open", open);
-      chatPanel.setAttribute("aria-hidden", open ? "false" : "true");
-    });
-    document.getElementById("chat-close").addEventListener("click", () => {
+    function openChat() {
+      chatPanel.classList.add("open");
+      chatPanel.setAttribute("aria-hidden", "false");
+    }
+    function closeChat() {
       chatPanel.classList.remove("open");
       chatPanel.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("chat-fab").addEventListener("click", () => {
+      if (chatPanel.classList.contains("open")) closeChat();
+      else openChat();
     });
+    document.getElementById("chat-close").addEventListener("click", closeChat);
     document.querySelectorAll("[data-chat]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const key = btn.getAttribute("data-chat");
@@ -1395,6 +1473,60 @@
         if (key === "solar") setTimeout(() => go("product-solar-ac"), 450);
         if (key === "utilities") setTimeout(() => go("product-utilities"), 450);
         if (key === "quote") setTimeout(() => go("enquiry"), 450);
+      });
+    });
+
+    const demoDock = document.getElementById("demo-dock");
+    const demoToggle = document.getElementById("demo-dock-toggle");
+    demoToggle.addEventListener("click", () => {
+      const collapsed = demoDock.classList.toggle("collapsed");
+      demoToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    });
+
+    function flashLang() {
+      const toggle = document.querySelector(".lang-toggle");
+      if (!toggle) return;
+      toggle.style.outline = "2px solid rgba(252,168,60,0.8)";
+      toggle.style.outlineOffset = "3px";
+      setTimeout(() => { toggle.style.outline = ""; toggle.style.outlineOffset = ""; }, 1600);
+    }
+
+    document.querySelectorAll("[data-demo]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const kind = btn.getAttribute("data-demo");
+        closeChat();
+        if (kind === "search") {
+          openSearch();
+          return;
+        }
+        if (kind === "lang") {
+          const next = document.documentElement.lang === "sw" ? "en" : "sw";
+          setLang(next);
+          go("home");
+          flashLang();
+          return;
+        }
+        if (kind === "quote") {
+          go("enquiry");
+          setTimeout(() => setQuoteStep(1), 40);
+          return;
+        }
+        if (kind === "landing") {
+          go("landing-telecom");
+          return;
+        }
+        if (kind === "chat") {
+          openChat();
+          return;
+        }
+        if (kind === "care") {
+          go("enquiry");
+          setTimeout(() => {
+            const care = Array.from(document.querySelectorAll("#enquiry .facts dt"))
+              .find((el) => /Care path/i.test(el.textContent || ""));
+            if (care) care.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 120);
+        }
       });
     });
 
