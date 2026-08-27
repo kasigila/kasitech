@@ -202,6 +202,7 @@ header.mast {
 .brand img {
   width: 54px;
   height: auto;
+  object-fit: contain;
 }
 .brand .name {
   display: none;
@@ -461,7 +462,7 @@ header.mast {
   gap: 18px;
 }
 .cover .mark {
-  width: min(168px, 42vw);
+  width: min(200px, 48vw);
   height: auto;
   filter: drop-shadow(0 12px 28px rgba(0, 82, 196, 0.28));
 }
