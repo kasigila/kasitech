@@ -5,7 +5,6 @@
 import { loadPriceBook } from "@/commercial/price-book/load";
 import { formatTsh } from "@/commercial/money";
 import {
-  displayItemPrice,
   getBundleViews,
   getWebsitePackages,
   PACKAGE_POSITIONING,
