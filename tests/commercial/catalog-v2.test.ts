@@ -5,7 +5,12 @@ import {
   demoStudioUrl,
 } from "@/demo-studio/configuration/deep-link";
 import { buildCatalogPdf } from "@/commercial/catalog/pdf";
-import { buildBundleGuides } from "@/commercial/catalog/buying-guide-content";
+import {
+  KB_WHAT_YOU_GET,
+  WEB_BASELINE_SCOPE,
+  buildBundleGuides,
+  buildKbGuides,
+} from "@/commercial/catalog/buying-guide-content";
 import { PRICE_BOOK_VERSION } from "@/commercial";
 
 describe("Commercial Catalog V2", () => {
@@ -53,6 +58,39 @@ describe("Commercial Catalog V2", () => {
     expect(beauty!.standaloneTotalTsh).toBeNull();
     expect(beauty!.savingsTsh).toBeNull();
     expect(beauty!.pricingNote).toMatch(/entitlement/i);
+  });
+
+  it("website baseline is included in all website packages", () => {
+    expect(WEB_BASELINE_SCOPE.toLowerCase()).toContain(
+      "included in all website packages",
+    );
+  });
+
+  it("KasiTech Business copy names the approved owner modules", () => {
+    const launch = KB_WHAT_YOU_GET.launch.items.join(" ");
+    const growth = KB_WHAT_YOU_GET.growth.items.join(" ");
+    expect(launch).toMatch(/Overview/i);
+    expect(launch).toMatch(/Website/i);
+    expect(launch).toMatch(/Analytics/i);
+    expect(growth).toMatch(/Catalog/i);
+    expect(growth).toMatch(/Bookings/i);
+    expect(growth).toMatch(/Customers/i);
+    expect(growth).toMatch(/Events/i);
+    expect(growth).toMatch(/QR/i);
+    expect(growth).toMatch(/Feedback/i);
+    expect(growth).toMatch(/Locations/i);
+    expect(KB_WHAT_YOU_GET.intro).toMatch(/private dashboard/i);
+
+    const kb = buildKbGuides();
+    expect(kb.map((p) => p.item.code)).toEqual([
+      "KB-LAUNCH",
+      "KB-GROW",
+      "KB-PRO",
+      "KB-SCALE",
+      "KB-ENT",
+    ]);
+    expect(kb[0]!.included.length).toBeGreaterThanOrEqual(3);
+    expect(kb[1]!.included.join(" ")).toMatch(/Bookings/i);
   });
 
   it("catalog Phase 3.2 PDF is a dense editorial buying guide", async () => {
