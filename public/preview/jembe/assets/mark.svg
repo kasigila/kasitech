@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="jembeAzure" x1="24" y1="176" x2="220" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0057C2"/>
+      <stop offset="42%" stop-color="#0082FC"/>
+      <stop offset="100%" stop-color="#7EC8FF"/>
+    </linearGradient>
+  </defs>
+  <!-- Eight tapered fins, origin clustered at lower-left, fanning up and right — Jembe Group mark -->
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="6.2" d="M36 168 C92 166 148 154 198 128"/>
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="6.1" d="M37 164 C96 158 154 140 208 108"/>
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="6.0" d="M38 159 C100 148 160 122 214 86"/>
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="5.8" d="M39 154 C102 138 164 104 216 64"/>
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="5.6" d="M40 148 C104 126 166 86 214 44"/>
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="5.4" d="M42 141 C106 114 166 70 208 28"/>
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="5.1" d="M44 134 C106 102 162 56 198 16"/>
+  <path stroke="url(#jembeAzure)" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="4.8" d="M47 126 C104 92 154 48 186 8"/>
+</svg>
