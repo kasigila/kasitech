@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     ],
   },
   /**
-   * Credo proposal QR targets /preview/credo-website/.
+   * Client website previews live as static HTML under /preview/*.
    * Next strips the trailing slash, so rewrite the directory URL to the static index.
    */
   async rewrites() {
@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
       {
         source: "/preview/credo-website",
         destination: "/preview/credo-website/index.html",
+      },
+      {
+        source: "/preview/jembe",
+        destination: "/preview/jembe/index.html",
       },
     ];
   },
