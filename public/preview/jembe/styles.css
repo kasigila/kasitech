@@ -1,4 +1,4 @@
-/* Jembe Group LLC — corporate profile, unbound.
+/* Jembe Group LLC  -  corporate profile, unbound.
    Palette sampled from Corporate Profile 2026 (navy #02122C, azure mark, champagne gold).
    Sharp corners. Hairline rules. No card grids, no pills, no SaaS chrome. */
 
@@ -71,7 +71,7 @@ h1, h2, h3, h4 { font-weight: 500; }
   margin-inline: auto;
 }
 
-/* —— Proposed preview strip (KasiTech, not client chrome) —— */
+/*  -  Proposed preview strip (KasiTech, not client chrome)  -  */
 .proposed {
   background: #01080f;
   border-bottom: 1px solid var(--line);
@@ -88,7 +88,7 @@ h1, h2, h3, h4 { font-weight: 500; }
 }
 .proposed b { color: var(--gold); font-weight: 600; }
 
-/* —— Diamond rule —— */
+/*  -  Diamond rule  -  */
 .rule {
   display: flex;
   align-items: center;
@@ -140,7 +140,7 @@ h1, h2, h3, h4 { font-weight: 500; }
 
 .ink-muted { color: var(--muted-ink); }
 
-/* —— Buttons —— */
+/*  -  Buttons  -  */
 .cta,
 .ghost,
 .line {
@@ -177,7 +177,7 @@ h1, h2, h3, h4 { font-weight: 500; }
 .line:hover { color: var(--gold); }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
-/* —— Header —— */
+/*  -  Header  -  */
 header.mast {
   position: sticky;
   top: 0;
@@ -308,7 +308,7 @@ header.mast {
   .nav-cta { display: none; }
 }
 
-/* —— Drawer —— */
+/*  -  Drawer  -  */
 .drawer {
   position: fixed;
   inset: 0;
@@ -358,7 +358,7 @@ header.mast {
   font-size: 14px;
 }
 
-/* —— Search —— */
+/*  -  Search  -  */
 .search-overlay {
   position: fixed;
   inset: 0;
@@ -407,7 +407,7 @@ header.mast {
 .search-results strong { display: block; font-weight: 600; margin-bottom: 2px; }
 .search-results span { color: var(--muted); font-size: 13px; }
 
-/* —— Pages —— */
+/*  -  Pages  -  */
 .page { display: none; }
 .page.active { display: block; animation: enter 0.55s var(--ease) both; }
 @keyframes enter {
@@ -432,7 +432,7 @@ header.mast {
   .reveal { opacity: 1; transform: none; }
 }
 
-/* —— Cover hero (PDF page 1) —— */
+/*  -  Cover hero (PDF page 1)  -  */
 .cover {
   position: relative;
   min-height: calc(100vh - 110px);
@@ -503,7 +503,7 @@ header.mast {
   color: var(--gold);
 }
 
-/* —— Sector wall (PDF page 2) —— */
+/*  -  Sector wall (PDF page 2)  -  */
 .sector-wall {
   display: flex;
   min-height: min(78vh, 760px);
@@ -603,7 +603,7 @@ header.mast {
   border-bottom: 1px solid var(--line-soft);
 }
 
-/* —— Sections —— */
+/*  -  Sections  -  */
 section.block { padding: 84px 0; }
 section.navy {
   padding: 84px 0;
@@ -687,7 +687,7 @@ h3.display { font-size: clamp(1.4rem, 2.4vw, 1.85rem); }
   color: var(--gold);
 }
 
-/* Who we are — PDF two-column ledger */
+/* Who we are  -  PDF two-column ledger */
 .who {
   display: grid;
   gap: 48px;
