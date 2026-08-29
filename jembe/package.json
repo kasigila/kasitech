@@ -1,0 +1,13 @@
+{
+  "name": "jembegroupllc",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Standalone production website for Jembe Group LLC (jembegroupllc.com)",
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes serve -l 4173 .",
+    "start": "npx --yes serve -l 4173 .",
+    "build": "node ./scripts/build.mjs",
+    "check": "node ./scripts/build.mjs"
+  }
+}

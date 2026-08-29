@@ -3,7 +3,10 @@
 **Prepared by:** KasiTech  
 **Prepared for:** Jembe Group LLC  
 **Source:** Corporate Profile 2026 (client PDF)  
-**Live preview:** `/preview/jembe/`
+**Live preview (Kasitech demo only):** `/preview/jembe/`
+
+The standalone production website for **https://jembegroupllc.com** lives in
+`/jembe/` at the repository root. Do not point that domain at this preview.
 
 A full institutional website, not a KasiTech marketing page. Brand, copy, offices, assets, entities, and selected engagements are taken from the client profile. Statistics that are not in the PDF are not invented.
 

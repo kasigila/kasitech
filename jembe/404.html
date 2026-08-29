@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Jembe Group LLC</title>
+  <link rel="canonical" href="https://jembegroupllc.com/" />
+  <script>
+    (function () {
+      var known = {
+        home: 1, about: 1, sectors: 1, "sector-energy": 1, "sector-infra": 1,
+        "sector-insurance": 1, "sector-agri": 1, "sector-mining": 1, portfolio: 1,
+        delivery: 1, network: 1, track: 1, offices: 1, resources: 1, careers: 1,
+        mandate: 1
+      };
+      var path = location.pathname.replace(/^\/+|\/+$/g, "");
+      if (path && known[path]) {
+        location.replace("/#" + path);
+      } else {
+        location.replace("/");
+      }
+    })();
+  </script>
+</head>
+<body>
+  <p><a href="/">Jembe Group LLC</a></p>
+</body>
+</html>
