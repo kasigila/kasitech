@@ -6,12 +6,6 @@
   "installCommand": "echo skip",
   "redirects": [
     {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.jembegroupllc.com" }],
-      "destination": "https://jembegroupllc.com/:path*",
-      "permanent": true
-    },
-    {
       "source": "/preview/jembe",
       "destination": "/",
       "permanent": true
