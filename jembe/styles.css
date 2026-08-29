@@ -842,20 +842,95 @@ h3.display { font-size: clamp(1.4rem, 2.4vw, 1.85rem); }
   color: var(--gold);
 }
 
+/* Network marks — official partner lockups */
+.net-logos {
+  display: grid;
+  gap: 14px;
+  padding: 8px 0 8px;
+}
+@media (min-width: 720px) {
+  .net-logos { grid-template-columns: repeat(3, 1fr); }
+}
+.net-logo {
+  min-height: 132px;
+  border: 1px solid var(--line-ink);
+  background: #fff;
+  display: grid;
+  place-items: center;
+  padding: 18px 20px;
+}
+.net-logo img {
+  max-width: 100%;
+  max-height: 88px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+.net-logo.dark {
+  background: #0b0b0b;
+  border-color: rgba(16, 24, 32, 0.55);
+}
+.net-logo.word {
+  background: var(--ivory);
+  color: var(--ink);
+  text-align: center;
+}
+.net-logo.word strong {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  display: block;
+  line-height: 1;
+}
+.net-logo.word span {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: var(--gold-lo);
+}
+
 /* Network board */
 .board {
   border-top: 1px solid var(--line);
 }
 .board-row {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   padding: 18px 0;
   border-bottom: 1px solid var(--line-soft);
   text-align: left;
   width: 100%;
+  align-items: center;
 }
 @media (min-width: 760px) {
-  .board-row { grid-template-columns: 0.9fr 1.2fr 0.6fr; align-items: baseline; }
+  .board-row { grid-template-columns: 72px 0.85fr 1.2fr 0.5fr; }
+}
+.board-row .mark {
+  width: 64px;
+  height: 44px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  flex: none;
+}
+.board-row .mark.dark { background: #0b0b0b; }
+.board-row .mark.word {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--gold);
+  font-family: var(--font-label);
+  letter-spacing: 0.12em;
+  font-size: 13px;
+}
+.board-row .mark img {
+  max-width: 100%;
+  max-height: 36px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 .board-row:hover { color: var(--gold); }
 .board-row .co {
