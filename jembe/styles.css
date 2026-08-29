@@ -1243,6 +1243,10 @@ button.inline:hover { color: var(--gold); }
   padding: 0;
 }
 .foot-legal button:hover { color: var(--gold); }
+.site-credit {
+  color: var(--muted);
+}
+.site-credit:hover { color: var(--gold); }
 
 body.cookie-open { padding-bottom: 120px; }
 

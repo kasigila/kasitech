@@ -67,6 +67,12 @@ function walk(dir) {
   return out;
 }
 
+const CREDIT_HREF = "https://www.kasitechinnovations.com/";
+
+function withoutAllowedCredit(text) {
+  return text.split(CREDIT_HREF).join("");
+}
+
 function validate() {
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
@@ -75,13 +81,17 @@ function validate() {
 
   const errors = [];
 
+  if (!html.includes(`href="${CREDIT_HREF}"`) || !html.includes("Powered by Kasitech Innovations")) {
+    errors.push("footer credit to Kasitech Innovations is missing");
+  }
+
   for (const [label, text] of [
     ["index.html", html],
     ["styles.css", css],
     ["app.js", app],
     ["config.js", config],
   ]) {
-    if (/kasitechinnovations\.com/i.test(text)) {
+    if (/kasitechinnovations\.com/i.test(withoutAllowedCredit(text))) {
       errors.push(`${label} still references kasitechinnovations.com`);
     }
     if (/\/preview\/jembe/.test(text)) {
@@ -158,7 +168,7 @@ function validate() {
     if (file.endsWith("DEPLOYMENT.md") || file.endsWith("README.md")) continue;
     const text = fs.readFileSync(file, "utf8");
     if (file.includes(`${path.sep}scripts${path.sep}`)) continue;
-    const hit = text.match(/kasitechinnovations\.com/i);
+    const hit = withoutAllowedCredit(text).match(/kasitechinnovations\.com/i);
     if (hit) {
       errors.push(`Kasitech URL in ${path.relative(root, file)}`);
     }
