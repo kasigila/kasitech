@@ -861,11 +861,12 @@ h3.display { font-size: clamp(1.4rem, 2.4vw, 1.85rem); }
 }
 .net-logo img {
   max-width: 100%;
-  max-height: 88px;
+  max-height: 96px;
   width: auto;
   height: auto;
   object-fit: contain;
 }
+.net-logo.dark img { max-height: 112px; }
 .net-logo.dark {
   background: #0b0b0b;
   border-color: rgba(16, 24, 32, 0.55);
