@@ -92,6 +92,13 @@ function validate() {
   if (/noindex/i.test(html)) errors.push("index.html still has noindex");
   if (/KasiTech/.test(html)) errors.push("index.html still names KasiTech");
   if (/class="proposed"/.test(html)) errors.push("index.html still has the preview strip");
+  if (/Jembe Group Llc/.test(html)) errors.push("brand lockup still writes Llc instead of LLC");
+  if (/as stated in .*Corporate Profile/.test(html)) {
+    errors.push("site still cites Corporate Profile 2026 as a source viewers cannot open");
+  }
+  if (!html.includes('id="page-privacy"') || !html.includes('id="page-terms"') || !html.includes('id="page-cookies"') || !html.includes('id="page-disclaimer"')) {
+    errors.push("legal pages are missing");
+  }
   if (!html.includes('rel="canonical" href="https://jembegroupllc.com/"')) {
     errors.push("canonical URL is not https://jembegroupllc.com/");
   }

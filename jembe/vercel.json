@@ -31,7 +31,11 @@
     { "source": "/offices", "destination": "/index.html" },
     { "source": "/resources", "destination": "/index.html" },
     { "source": "/careers", "destination": "/index.html" },
-    { "source": "/mandate", "destination": "/index.html" }
+    { "source": "/mandate", "destination": "/index.html" },
+    { "source": "/privacy", "destination": "/index.html" },
+    { "source": "/terms", "destination": "/index.html" },
+    { "source": "/cookies", "destination": "/index.html" },
+    { "source": "/disclaimer", "destination": "/index.html" }
   ],
   "headers": [
     {

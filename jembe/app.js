@@ -24,6 +24,10 @@
     { id: "resources", title: "Resources", blurb: "Corporate profile and sector notes", terms: "downloads profile" },
     { id: "careers", title: "Careers", blurb: "Teams assembled around mandates", terms: "roles interest" },
     { id: "mandate", title: "Begin a mandate", blurb: "Segmented desk for sponsors, governments, DFIs", terms: "contact form instruct" },
+    { id: "privacy", title: "Privacy policy", blurb: "How the Group handles information sent through this site", terms: "privacy data personal information form" },
+    { id: "terms", title: "Terms of use", blurb: "Conditions for using jembegroupllc.com", terms: "terms conditions website" },
+    { id: "cookies", title: "Cookie notice", blurb: "Essential preference and type loaded from Google Fonts", terms: "cookies notice fonts" },
+    { id: "disclaimer", title: "Site disclaimer", blurb: "Information only — not an offer or advice", terms: "disclaimer investment securities reliance" },
   ];
 
   function knownPage(id) {
@@ -242,6 +246,41 @@
       { threshold: 0.12 },
     );
     els.forEach((el) => io.observe(el));
+  }
+
+  const cookieBar = document.getElementById("cookie-bar");
+  const COOKIE_KEY = "jembe-cookie-notice";
+
+  function hideCookieBar() {
+    if (!cookieBar) return;
+    cookieBar.hidden = true;
+    document.body.classList.remove("cookie-open");
+  }
+
+  function acceptCookies() {
+    try {
+      localStorage.setItem(COOKIE_KEY, "accepted");
+    } catch {
+      /* private mode — bar will return next visit */
+    }
+    hideCookieBar();
+  }
+
+  if (cookieBar) {
+    let accepted = false;
+    try {
+      accepted = localStorage.getItem(COOKIE_KEY) === "accepted";
+    } catch {
+      accepted = false;
+    }
+    if (accepted) {
+      hideCookieBar();
+    } else {
+      cookieBar.hidden = false;
+      document.body.classList.add("cookie-open");
+    }
+    const acceptBtn = document.getElementById("cookie-accept");
+    if (acceptBtn) acceptBtn.addEventListener("click", acceptCookies);
   }
 
   const hash = location.hash.replace("#", "");
