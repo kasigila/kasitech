@@ -25,9 +25,10 @@ existing Kasitech Vercel project (`kasitech`).
 | Install Command | `echo skip` (or leave default; there are no npm dependencies) |
 | Node | 20 |
 
-`jembe/vercel.json` already sets build command, output directory, www → apex
-redirect, leftover `/preview/jembe` → `/`, and section rewrites (`/mandate`
-→ `index.html`).
+`jembe/vercel.json` already sets build command, output directory, leftover
+`/preview/jembe` → `/`, and section rewrites (`/mandate` → `index.html`).
+Set www vs apex only in Vercel → Settings → Domains (not in vercel.json),
+or CSS and images will redirect-loop and the site will look unstyled.
 
 ### Exact clicks in the Vercel dashboard
 
