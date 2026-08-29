@@ -6,6 +6,9 @@
   const searchInput = document.getElementById("search-input");
   const searchResults = document.getElementById("search-results");
 
+  /** Mandate form deliveries go to the group desk via FormSubmit. */
+  const MANDATE_TO = "info@jembegroupllc.com";
+
   const INDEX = [
     { id: "home", title: "Home", blurb: "Corporate profile cover · five sectors" },
     { id: "about", title: "The Group", blurb: "Mauritius-incorporated advisory and investing group" },
@@ -31,7 +34,7 @@
     document.querySelectorAll(".nav-item > button").forEach((b) => {
       b.classList.toggle("on", b.dataset.go === key);
     });
-    document.title = titles[key] || "Jembe Group LLC";
+    document.title = titles[key] || "Jembe Group LLC · www.jembegroupllc.com";
     if (opts.sector) {
       const sel = document.getElementById("sector");
       if (sel) {
@@ -115,15 +118,84 @@
 
   const form = document.getElementById("mandate-form");
   const done = document.getElementById("mandate-done");
-  form.addEventListener("submit", (e) => {
+  const mandateError = document.getElementById("mandate-error");
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    form.hidden = true;
-    done.hidden = false;
+    const fd = new FormData(form);
+    const name = String(fd.get("name") || "").trim();
+    const org = String(fd.get("org") || "").trim();
+    const contact = String(fd.get("contact") || "").trim();
+    const counterpart = String(fd.get("counterpart") || "").trim();
+    const sector = String(fd.get("sector") || "").trim();
+    const notes = String(fd.get("notes") || "").trim();
+
+    const previousLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
+    if (mandateError) mandateError.hidden = true;
+
+    try {
+      const res = await fetch(
+        `https://formsubmit.co/ajax/${encodeURIComponent(MANDATE_TO)}`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            organisation: org,
+            contact,
+            counterpart,
+            sector,
+            notes: notes || "-",
+            message: [
+              `Counterpart: ${counterpart}`,
+              `Sector: ${sector}`,
+              `Organisation: ${org}`,
+              `Contact: ${contact}`,
+              "",
+              notes || "(no notes)",
+            ].join("\n"),
+            _subject: `Jembe Group LLC mandate · ${sector} · ${org}`,
+            _template: "table",
+            _captcha: "false",
+            _replyto: contact.includes("@") ? contact : undefined,
+            _url: "https://www.jembegroupllc.com",
+          }),
+        },
+      );
+
+      const data = await res.json().catch(() => null);
+      const ok =
+        res.ok &&
+        (data?.success === true ||
+          data?.success === "true" ||
+          data?.success === undefined);
+
+      if (!ok) throw new Error(data?.message || "FormSubmit rejected the post");
+
+      form.hidden = true;
+      done.hidden = false;
+      if (mandateError) mandateError.hidden = true;
+    } catch {
+      form.hidden = true;
+      done.hidden = false;
+      if (mandateError) mandateError.hidden = false;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = previousLabel;
+    }
   });
+
   document.getElementById("mandate-again").addEventListener("click", () => {
     form.reset();
     form.hidden = false;
     done.hidden = true;
+    if (mandateError) mandateError.hidden = true;
   });
 
   function observeReveal() {
