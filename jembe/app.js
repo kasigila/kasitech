@@ -8,22 +8,22 @@
   const cfg = window.JEMBE_CONFIG || {};
 
   const INDEX = [
-    { id: "home", title: "Home", blurb: "Corporate profile cover · five sectors" },
-    { id: "about", title: "The Group", blurb: "Mauritius-incorporated advisory and investing group" },
-    { id: "sectors", title: "Five sectors", blurb: "Energy, infrastructure, insurance, agribusiness, mining" },
-    { id: "sector-energy", title: "Energy", blurb: "IPPs, PPAs, renewables, DFI engagement" },
-    { id: "sector-infra", title: "Infrastructure", blurb: "PPP, water, transport, bankable feasibility" },
-    { id: "sector-insurance", title: "Insurance & Risk", blurb: "Placement, medical schemes, project risk" },
-    { id: "sector-agri", title: "Agribusiness", blurb: "Estates, processing, commodity off-take" },
-    { id: "sector-mining", title: "Mining & Minerals", blurb: "Due diligence, plants, mineral trading" },
-    { id: "portfolio", title: "Energy portfolio", blurb: "Shinyanga 50 MW, Bukombe 5 MW, substations" },
-    { id: "delivery", title: "Delivery · BQ Contractors", blurb: "EPC, water, industrial, hospital works" },
-    { id: "network", title: "Network", blurb: "Infinity Star, Ndege, CreditInvest, BQ" },
-    { id: "track", title: "Track record", blurb: "Selected engagements across five sectors" },
-    { id: "offices", title: "Offices", blurb: "Mauritius, Nairobi, Dar es Salaam, Kampala, Kigali" },
-    { id: "resources", title: "Resources", blurb: "Corporate profile and sector notes" },
-    { id: "careers", title: "Careers", blurb: "Teams assembled around mandates" },
-    { id: "mandate", title: "Begin a mandate", blurb: "Segmented desk for sponsors, governments, DFIs" },
+    { id: "home", title: "Home", blurb: "Corporate profile cover · five sectors", terms: "jembe advisory investment mauritius" },
+    { id: "about", title: "The Group", blurb: "Mauritius-incorporated advisory and investing group", terms: "eben incorporation east africa" },
+    { id: "sectors", title: "Five sectors", blurb: "Energy, infrastructure, insurance, agribusiness, mining", terms: "practice platform" },
+    { id: "sector-energy", title: "Energy", blurb: "IPPs, PPAs, renewables, DFI engagement", terms: "solar hydro gas generation transmission tanesco" },
+    { id: "sector-infra", title: "Infrastructure", blurb: "PPP, water, transport, bankable feasibility", terms: "roads ports logistics water backbone" },
+    { id: "sector-insurance", title: "Insurance & Risk", blurb: "Placement, medical schemes, project risk", terms: "ndege brokerage claims" },
+    { id: "sector-agri", title: "Agribusiness", blurb: "Estates, processing, commodity off-take", terms: "sisal estate fibre" },
+    { id: "sector-mining", title: "Mining & Minerals", blurb: "Due diligence, plants, mineral trading", terms: "gold tarime processing" },
+    { id: "portfolio", title: "Energy portfolio", blurb: "Shinyanga 50 MW, Bukombe 5 MW, substations", terms: "solar tanesco shinyanga bukombe kinyerezi chalinze grid" },
+    { id: "delivery", title: "Delivery · BQ Contractors", blurb: "EPC, water, industrial, hospital works", terms: "piping marine tanks arusha" },
+    { id: "network", title: "Network", blurb: "Infinity Star, Ndege, CreditInvest, BQ", terms: "mbegu next bridge" },
+    { id: "track", title: "Track record", blurb: "Selected engagements across five sectors", terms: "sisal water medical gold solar" },
+    { id: "offices", title: "Offices", blurb: "Mauritius, Nairobi, Dar es Salaam, Kampala, Kigali", terms: "eben westlands samora" },
+    { id: "resources", title: "Resources", blurb: "Corporate profile and sector notes", terms: "downloads profile" },
+    { id: "careers", title: "Careers", blurb: "Teams assembled around mandates", terms: "roles interest" },
+    { id: "mandate", title: "Begin a mandate", blurb: "Segmented desk for sponsors, governments, DFIs", terms: "contact form instruct" },
   ];
 
   function knownPage(id) {
@@ -78,9 +78,11 @@
 
   function renderSearch(q) {
     const query = q.trim().toLowerCase();
-    const hits = INDEX.filter(
-      (i) => !query || i.title.toLowerCase().includes(query) || i.blurb.toLowerCase().includes(query),
-    ).slice(0, 8);
+    const hits = INDEX.filter((i) => {
+      if (!query) return true;
+      const hay = `${i.title} ${i.blurb} ${i.terms || ""}`.toLowerCase();
+      return hay.includes(query);
+    }).slice(0, 8);
     searchResults.innerHTML = hits
       .map(
         (h) =>
@@ -152,65 +154,65 @@
       organisation: data.org || "",
       contact: data.contact || "",
       notes: data.notes || "",
+      company_website: data.company_website || "",
     };
   }
 
-  async function postMandate(payload) {
-    const body = {
-      ...payload,
-      _subject: `Jembe Group mandate: ${payload.sector} — ${payload.organisation}`,
-    };
-    if (cfg.formAccessKey) body.access_key = cfg.formAccessKey;
-
-    const res = await fetch(cfg.formEndpoint, {
+  async function postJson(url, payload, extra = {}) {
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...payload, ...extra }),
     });
-
-    if (!res.ok) {
-      throw new Error(`Form service responded ${res.status}`);
+    const data = await res.json().catch(() => null);
+    if (!res.ok || data?.ok === false) {
+      throw new Error(data?.error || `Form service responded ${res.status}`);
     }
   }
 
-  function mailtoMandate(payload) {
-    const email = cfg.mandateEmail || "info@jembegroup.com";
-    const subject = encodeURIComponent(`Mandate enquiry: ${payload.sector} — ${payload.organisation}`);
-    const lines = [
-      `Counterpart: ${payload.counterpart}`,
-      `Sector: ${payload.sector}`,
-      `Name: ${payload.name}`,
-      `Organisation: ${payload.organisation}`,
-      `Contact: ${payload.contact}`,
-      "",
-      payload.notes || "",
-    ];
-    const body = encodeURIComponent(lines.join("\n"));
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+  async function postMandate(payload) {
+    const api = cfg.mandateApi || "/api/mandate";
+    try {
+      await postJson(api, payload);
+      return;
+    } catch (apiErr) {
+      if (cfg.formEndpoint) {
+        const extra = {
+          _subject: `Jembe Group mandate: ${payload.sector} — ${payload.organisation}`,
+        };
+        if (cfg.formAccessKey) extra.access_key = cfg.formAccessKey;
+        await postJson(cfg.formEndpoint, payload, extra);
+        return;
+      }
+      const email = cfg.mandateEmail || "info@jembegroup.com";
+      await postJson(`https://formsubmit.co/ajax/${encodeURIComponent(email)}`, payload, {
+        _subject: `Jembe Group mandate: ${payload.sector} — ${payload.organisation}`,
+        _template: "table",
+        _captcha: "false",
+        _url: cfg.siteOrigin || "https://jembegroupllc.com",
+      });
+      void apiErr;
+    }
   }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     showError("");
     const payload = payloadFromForm();
+    if (payload.company_website) {
+      showDone("The desk has the file.", "Thank you.");
+      return;
+    }
     submitBtn.disabled = true;
     try {
-      if (cfg.formEndpoint) {
-        await postMandate(payload);
-        showDone(
-          "The desk has the file.",
-          "Thank you. Your counterpart type and sector travel with the note so the right entity in the network can respond.",
-        );
-      } else {
-        mailtoMandate(payload);
-        showDone(
-          "Open your email client to send.",
-          "A message to the group desk has been prepared in your email client. Send it to complete the request. To receive submissions in the browser instead, set JEMBE_FORM_ENDPOINT on the host.",
-        );
-      }
+      await postMandate(payload);
+      showDone(
+        "The desk has the file.",
+        "Thank you. Your counterpart type and sector travel with the note so the right entity in the network can respond.",
+      );
     } catch (err) {
       showError("The mandate could not be sent. Please email info@jembegroup.com or try again.");
       console.error(err);

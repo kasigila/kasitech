@@ -1071,6 +1071,12 @@ form.mandate select option { color: var(--navy); }
   margin: 0 0 8px;
   font-size: 0.95rem;
 }
+.hp {
+  position: absolute;
+  left: -9999px;
+  height: 0;
+  overflow: hidden;
+}
 .form-error[hidden] { display: none; }
 form.mandate .cta:disabled {
   opacity: 0.55;

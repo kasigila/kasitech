@@ -6,4 +6,5 @@ window.JEMBE_CONFIG = {
   formEndpoint: "",
   formAccessKey: "",
   mandateEmail: "info@jembegroup.com",
+  mandateApi: "/api/mandate",
 };

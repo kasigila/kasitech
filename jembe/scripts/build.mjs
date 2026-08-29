@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /**
  * Production build for the standalone Jembe Group site.
- * Injects optional form-service environment variables and fails if the
- * site still contains Kasitech preview paths or missing assets.
+ * Injects form-service environment variables, writes the Vercel static
+ * output to dist/, and fails if Kasitech preview paths or assets are missing.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const dist = path.join(root, "dist");
 
 function writeConfig() {
   const endpoint = (process.env.JEMBE_FORM_ENDPOINT || "").trim();
@@ -24,20 +25,41 @@ window.JEMBE_CONFIG = {
   formEndpoint: ${JSON.stringify(endpoint)},
   formAccessKey: ${JSON.stringify(accessKey)},
   mandateEmail: ${JSON.stringify(email)},
+  mandateApi: "/api/mandate",
 };
 `;
   fs.writeFileSync(path.join(root, "config.js"), js);
   console.log(
     endpoint
-      ? `config.js: form endpoint configured (${endpoint})`
-      : "config.js: no form endpoint — mandate form will use mailto fallback",
+      ? `config.js: upstream form endpoint configured`
+      : "config.js: mandate posts to /api/mandate (independent of Kasitech)",
   );
+}
+
+function copyDist() {
+  fs.rmSync(dist, { recursive: true, force: true });
+  fs.mkdirSync(path.join(dist, "assets"), { recursive: true });
+
+  const files = [
+    "index.html",
+    "404.html",
+    "styles.css",
+    "app.js",
+    "config.js",
+    "robots.txt",
+    "sitemap.xml",
+  ];
+  for (const file of files) {
+    fs.copyFileSync(path.join(root, file), path.join(dist, file));
+  }
+  fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: true });
+  console.log(`Wrote static output to ${path.relative(root, dist)}/`);
 }
 
 function walk(dir) {
   const out = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+    if (entry.name === "node_modules" || entry.name.startsWith(".") || entry.name === "dist" || entry.name === "scripts") continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) out.push(...walk(full));
     else out.push(full);
@@ -84,13 +106,8 @@ function validate() {
     if (m) refs.add(m[1]);
   }
 
-  const skip = new Set([
-    "https://fonts.googleapis.com",
-    "https://fonts.gstatic.com",
-  ]);
   for (const ref of refs) {
     if (ref.startsWith("http") || ref.startsWith("mailto:") || ref.startsWith("tel:")) continue;
-    if (skip.has(ref)) continue;
     const filePath = path.join(root, ref.replace(/^\//, ""));
     if (!fs.existsSync(filePath)) {
       errors.push(`missing file for ${ref} (${filePath})`);
@@ -121,6 +138,9 @@ function validate() {
     "config.js",
     "robots.txt",
     "sitemap.xml",
+    "api/mandate.js",
+    "dist/index.html",
+    "dist/assets/mark.png",
   ];
   for (const rel of requiredAssets) {
     if (!fs.existsSync(path.join(root, rel))) errors.push(`required file missing: ${rel}`);
@@ -131,10 +151,16 @@ function validate() {
     if (file.endsWith("DEPLOYMENT.md") || file.endsWith("README.md")) continue;
     const text = fs.readFileSync(file, "utf8");
     if (file.includes(`${path.sep}scripts${path.sep}`)) continue;
-    if (/kasitechinnovations\.com/i.test(text)) {
+    const hit = text.match(/kasitechinnovations\.com/i);
+    if (hit) {
       errors.push(`Kasitech URL in ${path.relative(root, file)}`);
     }
-    if (/\/preview\/jembe/.test(text) && !file.endsWith("vercel.json") && !file.endsWith("netlify.toml") && !file.endsWith("_redirects")) {
+    if (
+      /\/preview\/jembe/.test(text) &&
+      !file.endsWith("vercel.json") &&
+      !file.endsWith("netlify.toml") &&
+      !file.endsWith("_redirects")
+    ) {
       errors.push(`/preview/jembe in ${path.relative(root, file)}`);
     }
   }
@@ -150,4 +176,5 @@ function validate() {
 }
 
 writeConfig();
+copyDist();
 validate();

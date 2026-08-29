@@ -24,6 +24,23 @@
   <link rel="stylesheet" href="/styles.css" />
   <link rel="icon" href="/assets/mark.png" type="image/png" />
   <link rel="apple-touch-icon" href="/assets/mark.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Jembe Group LLC",
+    "url": "https://jembegroupllc.com/",
+    "email": "info@jembegroup.com",
+    "description": "Jembe Group LLC — a Mauritius-incorporated multi-sector advisory and investing group. Energy, infrastructure, insurance, agribusiness, and mining across East Africa.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Level 8, Standard Chartered Tower, 19 Cybercity",
+      "addressLocality": "Ebene",
+      "postalCode": "72201",
+      "addressCountry": "MU"
+    }
+  }
+  </script>
 </head>
 <body>
   <header class="mast">
@@ -818,6 +835,9 @@
               <label>Organisation<input required name="org" placeholder="Institution or company" /></label>
               <label>Email or telephone<input required name="contact" placeholder="How should the desk reach you?" /></label>
               <label>Mandate notes<textarea name="notes" placeholder="Asset, geography, counterparties, timeline, what you need structured…"></textarea></label>
+              <div class="hp" aria-hidden="true">
+                <label>Company website<input type="text" name="company_website" tabindex="-1" autocomplete="off" /></label>
+              </div>
               <p class="form-error" id="mandate-error" hidden></p>
               <button type="submit" class="cta" id="mandate-submit">Submit to the desk</button>
             </form>
