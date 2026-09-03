@@ -5,14 +5,13 @@
 import { loadPriceBook } from "@/commercial/price-book/load";
 import { formatTsh } from "@/commercial/money";
 import {
-  displayItemPrice,
   getBundleViews,
   getWebsitePackages,
   PACKAGE_POSITIONING,
 } from "@/commercial/catalog/presentation";
 import { KB_MODULES } from "@/demo-studio/configuration/kb-modules";
 import { demoStudioUrl } from "@/demo-studio/configuration/deep-link";
-import type { CatalogItem } from "@/commercial/types";
+import type { BillingType, CatalogItem } from "@/commercial/types";
 
 /** Baseline bullets from ENT-WEB-BASELINE (approved entitlement text). */
 export const WEB_BASELINE_INCLUDED = [
@@ -64,7 +63,13 @@ export type BundleGuide = {
   name: string;
   valueProp: string;
   whyTogether: string;
-  components: { code: string; name: string; priceLabel: string }[];
+  components: {
+    code: string;
+    name: string;
+    priceLabel: string;
+    priceTsh: number | null;
+    billing: BillingType;
+  }[];
   entitlements: string[];
   standaloneTotalTsh: number | null;
   bundlePriceLabel: string;
