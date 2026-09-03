@@ -30,6 +30,22 @@ const toc = [
   { id: "journey", label: "Your journey" },
 ] as const;
 
+/** Scattered across packages + bundles so the mark is not clustered. */
+const BEST_SELLERS = new Set([
+  "WEB-ESS",
+  "BND-BEAUTY",
+  "BND-STORE",
+  "BND-GROW",
+]);
+
+function BestSellerBadge() {
+  return (
+    <span className="inline-flex bg-[#C7FF00] px-2 py-1 font-mono text-[10px] tracking-[0.16em] text-[#0A0A0A]">
+      BEST SELLER
+    </span>
+  );
+}
+
 function ItemPrice({ item }: { item: CatalogItem }) {
   const { formatItem } = usePricingCurrency();
   return <>{formatItem(item)}</>;
@@ -211,6 +227,11 @@ function DigitalCatalogInner() {
                 key={g.item.code}
                 className="border border-[#E0DBD1] bg-white p-6"
               >
+                {BEST_SELLERS.has(g.item.code) ? (
+                  <div className="mb-4">
+                    <BestSellerBadge />
+                  </div>
+                ) : null}
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="font-display text-2xl tracking-[-0.02em]">
                     {g.item.name}
@@ -267,6 +288,11 @@ function DigitalCatalogInner() {
                 key={b.code}
                 className="border border-[#E0DBD1] bg-white p-6"
               >
+                {BEST_SELLERS.has(b.code) ? (
+                  <div className="mb-4">
+                    <BestSellerBadge />
+                  </div>
+                ) : null}
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="font-display text-2xl tracking-[-0.02em]">
                     {b.name}
