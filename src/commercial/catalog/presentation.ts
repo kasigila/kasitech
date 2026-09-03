@@ -313,7 +313,13 @@ export type BundleView = {
   item: CatalogItem;
   priceLabel: string;
   billingLabel: PublicBillingLabel;
-  chargeComponents: { code: string; name: string; priceLabel: string }[];
+  chargeComponents: {
+    code: string;
+    name: string;
+    priceLabel: string;
+    priceTsh: number | null;
+    billing: BillingType;
+  }[];
   entitlements: { code: string; name: string }[];
   savings: ReturnType<typeof priceConfiguration>["bundleSavings"];
 };
@@ -336,6 +342,8 @@ export function getBundleViews(book: PriceBook = loadPriceBook()): BundleView[] 
               code: c.componentCode,
               name: it.name,
               priceLabel: displayItemPrice(it),
+              priceTsh: it.priceTsh,
+              billing: it.billing,
             };
           }),
         entitlements: comps

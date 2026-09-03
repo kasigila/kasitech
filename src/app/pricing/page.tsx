@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   title: "Services & Pricing",
   description:
-    "KasiTech commercial buying guide in Tanzanian Shillings — website packages, bundles, care, and capabilities. Clear scope before you buy.",
+    "KasiTech commercial buying guide in TZS, CAD, or USD — website packages, bundles, care, and capabilities. Clear scope before you buy.",
   path: "/pricing",
   openGraphTitle: "KasiTech Services & Pricing",
 });

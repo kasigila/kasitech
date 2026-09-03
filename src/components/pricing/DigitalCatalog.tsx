@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   FAQ_ENTRIES,
@@ -7,12 +9,16 @@ import {
   buildCareGuides,
   buildKbGuides,
   buildPackageGuides,
-  formatMoney,
 } from "@/commercial/catalog/buying-guide-content";
-import { displayItemPrice } from "@/commercial/catalog/presentation";
-import { PRICE_BOOK_VERSION } from "@/commercial/types";
+import { PRICE_BOOK_VERSION, type CatalogItem } from "@/commercial/types";
 import { PRICING_PDF_HREF } from "@/lib/site";
 import { BuyCtas } from "@/components/site/BuyCtas";
+import {
+  CurrencyRateNote,
+  CurrencySwitcher,
+  PricingCurrencyProvider,
+  usePricingCurrency,
+} from "@/components/pricing/PricingCurrency";
 
 const toc = [
   { id: "packages", label: "Website packages" },
@@ -24,12 +30,31 @@ const toc = [
   { id: "journey", label: "Your journey" },
 ] as const;
 
+function ItemPrice({ item }: { item: CatalogItem }) {
+  const { formatItem } = usePricingCurrency();
+  return <>{formatItem(item)}</>;
+}
+
+function Money({ amountTsh }: { amountTsh: number }) {
+  const { format } = usePricingCurrency();
+  return <>{format(amountTsh)}</>;
+}
+
 export function DigitalCatalog() {
+  return (
+    <PricingCurrencyProvider>
+      <DigitalCatalogInner />
+    </PricingCurrencyProvider>
+  );
+}
+
+function DigitalCatalogInner() {
   const packages = buildPackageGuides();
   const bundles = buildBundleGuides();
   const capabilities = buildCapabilityGuides();
   const care = buildCareGuides();
   const kb = buildKbGuides();
+  const { note, formatItem } = usePricingCurrency();
 
   return (
     <div className="bg-[#F4F2EA] text-[#1A1A1A]">
@@ -43,17 +68,20 @@ export function DigitalCatalog() {
             Commercial buying guide
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-[#5C5C57] md:text-lg">
-            Understand what we sell, what it costs in Tanzanian Shillings, and
-            how packages, bundles, and ongoing plans fit together — before you
-            approve anything.
+            Understand what we sell, what it costs, and how packages, bundles,
+            and ongoing plans fit together — before you approve anything.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] tracking-[0.14em] text-[#5C5C57]">
-            <span>{PRICE_BOOK_VERSION}</span>
-            <span aria-hidden>·</span>
-            <span>All prices in TSh</span>
-            <span aria-hidden>·</span>
-            <span>Dar es Salaam</span>
+          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
+            <p className="font-mono text-[11px] tracking-[0.14em] text-[#5C5C57]">
+              {PRICE_BOOK_VERSION}
+              <span aria-hidden> · </span>
+              {note}
+              <span aria-hidden> · </span>
+              Dar es Salaam
+            </p>
+            <CurrencySwitcher />
           </div>
+          <CurrencyRateNote className="mt-4 max-w-xl" />
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/start"
@@ -73,6 +101,15 @@ export function DigitalCatalog() {
         </div>
       </section>
 
+      <div className="sticky top-[76px] z-30 border-b border-[#E0DBD1] bg-[#F4F2EA]/95 backdrop-blur-md print:hidden">
+        <div className="mx-auto flex max-w-[1100px] items-center justify-between gap-4 px-5 py-2.5 md:px-8">
+          <p className="font-mono text-[10px] tracking-[0.16em] text-[#5C5C57]">
+            {note.toUpperCase()}
+          </p>
+          <CurrencySwitcher />
+        </div>
+      </div>
+
       {/* How to read + TOC */}
       <section className="border-b border-[#E0DBD1] px-5 py-14 md:px-8">
         <div className="mx-auto grid max-w-[1100px] gap-12 lg:grid-cols-[1.2fr_0.8fr]">
@@ -84,7 +121,8 @@ export function DigitalCatalog() {
               Each section starts with a quick overview, then more detail. This
               catalog is a commercial reference — not a quotation or invoice.
               Exact scope, timelines, and payment terms are confirmed in writing
-              before work begins.
+              before work begins. CAD and USD figures are indicative conversions
+              from the TSh price book.
             </p>
           </div>
           <nav aria-label="Catalog sections">
@@ -108,7 +146,7 @@ export function DigitalCatalog() {
       </section>
 
       {/* Website packages */}
-      <section id="packages" className="scroll-mt-24 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
+      <section id="packages" className="scroll-mt-36 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-[1100px]">
           <p className="font-mono text-[11px] tracking-[0.16em] text-[#5C5C57]">
             01
@@ -135,7 +173,7 @@ export function DigitalCatalog() {
                   <tr key={g.item.code} className="border-b border-[#E0DBD1] last:border-0">
                     <td className="px-4 py-3 font-medium">{g.item.name}</td>
                     <td className="px-4 py-3 font-mono text-[12px] text-[#6B8F00]">
-                      {displayItemPrice(g.item)}
+                      <ItemPrice item={g.item} />
                     </td>
                     <td className="px-4 py-3 text-[#5C5C57]">
                       {g.timeline ?? "Scoped after discovery"}
@@ -178,7 +216,7 @@ export function DigitalCatalog() {
                     {g.item.name}
                   </h3>
                   <p className="font-mono text-[12px] tracking-[0.04em] text-[#6B8F00]">
-                    {displayItemPrice(g.item)}
+                    <ItemPrice item={g.item} />
                   </p>
                 </div>
                 {g.timeline ? (
@@ -210,7 +248,7 @@ export function DigitalCatalog() {
       </section>
 
       {/* Bundles */}
-      <section id="bundles" className="scroll-mt-24 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
+      <section id="bundles" className="scroll-mt-36 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-[1100px]">
           <p className="font-mono text-[11px] tracking-[0.16em] text-[#5C5C57]">
             02
@@ -234,12 +272,16 @@ export function DigitalCatalog() {
                     {b.name}
                   </h3>
                   <p className="font-mono text-[12px] tracking-[0.04em] text-[#6B8F00]">
-                    {b.bundlePriceLabel}
+                    {b.bundlePriceTsh != null ? (
+                      <Money amountTsh={b.bundlePriceTsh} />
+                    ) : (
+                      b.bundlePriceLabel
+                    )}
                   </p>
                 </div>
                 {b.showSavings && b.savingsTsh ? (
                   <p className="mt-2 font-mono text-[10px] tracking-[0.14em] text-[#6B8F00]">
-                    YOU SAVE {formatMoney(b.savingsTsh).toUpperCase()}
+                    YOU SAVE <Money amountTsh={b.savingsTsh} />
                   </p>
                 ) : null}
                 <p className="mt-4 text-sm leading-relaxed text-[#5C5C57]">
@@ -256,7 +298,10 @@ export function DigitalCatalog() {
                     >
                       <span>{c.name}</span>
                       <span className="font-mono text-[11px] text-[#5C5C57]">
-                        {c.priceLabel}
+                        {formatItem({
+                          priceTsh: c.priceTsh,
+                          billing: c.billing,
+                        })}
                       </span>
                     </li>
                   ))}
@@ -279,7 +324,7 @@ export function DigitalCatalog() {
       </section>
 
       {/* Capabilities */}
-      <section id="capabilities" className="scroll-mt-24 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
+      <section id="capabilities" className="scroll-mt-36 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-[1100px]">
           <p className="font-mono text-[11px] tracking-[0.16em] text-[#5C5C57]">
             03
@@ -302,7 +347,7 @@ export function DigitalCatalog() {
                   {c.item.name}
                 </h3>
                 <p className="mt-2 font-mono text-[12px] text-[#6B8F00]">
-                  {displayItemPrice(c.item)}
+                  <ItemPrice item={c.item} />
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-[#5C5C57]">
                   {c.valueProp}
@@ -318,7 +363,7 @@ export function DigitalCatalog() {
       </section>
 
       {/* Care */}
-      <section id="care" className="scroll-mt-24 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
+      <section id="care" className="scroll-mt-36 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-[1100px]">
           <p className="font-mono text-[11px] tracking-[0.16em] text-[#5C5C57]">
             04
@@ -342,7 +387,7 @@ export function DigitalCatalog() {
                   {p.item.name}
                 </h3>
                 <p className="mt-2 font-mono text-[12px] text-[#6B8F00]">
-                  {displayItemPrice(p.item)}
+                  <ItemPrice item={p.item} />
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-[#5C5C57]">
                   {p.valueProp}
@@ -358,7 +403,7 @@ export function DigitalCatalog() {
       </section>
 
       {/* KasiTech Business */}
-      <section id="business" className="scroll-mt-24 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
+      <section id="business" className="scroll-mt-36 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-[1100px]">
           <p className="font-mono text-[11px] tracking-[0.16em] text-[#5C5C57]">
             05
@@ -381,7 +426,7 @@ export function DigitalCatalog() {
                   {p.item.name}
                 </h3>
                 <p className="mt-2 font-mono text-[12px] text-[#6B8F00]">
-                  {displayItemPrice(p.item)}
+                  <ItemPrice item={p.item} />
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-[#5C5C57]">
                   {p.valueProp}
@@ -397,7 +442,7 @@ export function DigitalCatalog() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="scroll-mt-24 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
+      <section id="faq" className="scroll-mt-36 border-b border-[#E0DBD1] px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-[1100px]">
           <p className="font-mono text-[11px] tracking-[0.16em] text-[#5C5C57]">
             06
@@ -419,7 +464,7 @@ export function DigitalCatalog() {
       </section>
 
       {/* Journey */}
-      <section id="journey" className="scroll-mt-24 bg-[#0A0A0A] px-5 py-16 text-[#F4F2EA] md:px-8 md:py-20">
+      <section id="journey" className="scroll-mt-36 bg-[#0A0A0A] px-5 py-16 text-[#F4F2EA] md:px-8 md:py-20">
         <div className="mx-auto max-w-[1100px]">
           <p className="font-mono text-[11px] tracking-[0.16em] text-[#858580]">
             07
@@ -452,7 +497,8 @@ export function DigitalCatalog() {
 
           <p className="mt-12 max-w-xl text-sm text-[#858580]">
             This catalog is a commercial reference — not a quotation or invoice.
-            Nothing starts until you approve a written quotation.
+            Nothing starts until you approve a written quotation. CAD and USD
+            are indicative conversions from the TSh catalog.
           </p>
 
           <div className="mt-10">
