@@ -22,14 +22,7 @@ export default function HomePage() {
             business software, automation and AI, we design technology around
             the way your business works.
           </p>
-          <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
-            <Link
-              href="/work#client-work"
-              className="text-kasi-green transition hover:text-kasi-ivory"
-            >
-              2 LIVE LAUNCHES
-            </Link>
-            <span aria-hidden>·</span>
+          <p className="mt-5 font-mono text-[11px] tracking-[0.14em] text-kasi-grey">
             <Link
               href="/showcase"
               className="text-kasi-green transition hover:text-kasi-ivory"
