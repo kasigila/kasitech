@@ -3,22 +3,22 @@ import { logoutBusiness } from "@/lib/business-portal/actions";
 
 export const fieldClass = "mt-1 h-11 w-full border border-kasi-border bg-black px-3 text-sm text-kasi-ivory";
 
-export function Notice({ saved, error }: { saved?: string; error?: string }) {
+export function Notice({ saved, error, savedText = "Saved." }: { saved?: string; error?: string; savedText?: string }) {
   if (error) return <p role="alert" className="mb-4 border border-red-400/40 px-4 py-3 text-sm">{error}</p>;
-  if (saved) return <p role="status" className="mb-4 border border-kasi-border px-4 py-3 text-sm">Saved.</p>;
+  if (saved) return <p role="status" className="mb-4 border border-kasi-border px-4 py-3 text-sm">{savedText}</p>;
   return null;
 }
 
 const links = [
-  ["/business/unique-trends", "Overview"],
+  ["/business/unique-trends", "Home"],
   ["/business/unique-trends/products", "Products"],
-  ["/business/unique-trends/categories", "Categories"],
+  ["/business/unique-trends/categories", "Sections"],
   ["/business/unique-trends/brands", "Brands"],
-  ["/business/unique-trends/collections", "Collections"],
+  ["/business/unique-trends/collections", "Scents"],
   ["/business/unique-trends/orders", "Orders"],
-  ["/business/unique-trends/homepage", "Homepage"],
-  ["/business/unique-trends/settings", "Business settings"],
-  ["/business/unique-trends/account", "Account"],
+  ["/business/unique-trends/homepage", "Front page"],
+  ["/business/unique-trends/settings", "Shop details"],
+  ["/business/unique-trends/account", "Password"],
 ];
 
 export function DeskShell({ children, shopUrl }: { children: React.ReactNode; shopUrl: string }) {
@@ -36,8 +36,8 @@ export function DeskShell({ children, shopUrl }: { children: React.ReactNode; sh
             </Link>
           ))}
           {shopUrl ? (
-            <a href={shopUrl} className="shrink-0 px-3 py-2 text-sm text-kasi-grey hover:text-kasi-green">
-              View shop
+            <a href={shopUrl} target="_blank" rel="noreferrer" className="shrink-0 px-3 py-2 text-sm text-kasi-grey hover:text-kasi-green">
+              See the shop
             </a>
           ) : null}
           <form action={logoutBusiness} className="shrink-0">

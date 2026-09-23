@@ -1,3 +1,4 @@
+import { ConfirmButton } from "@/components/business/confirm-button";
 import { PhotoField } from "@/components/business/photo-field";
 import { fieldClass } from "@/components/business/ui";
 import { deleteDeskCollection, saveDeskCollection } from "@/lib/business-portal/actions";
@@ -19,13 +20,13 @@ export function CollectionEditor({
     <form action={saveDeskCollection} className="max-w-3xl space-y-4">
       <input type="hidden" name="id" value={collection?.id || ""} />
       <label className="block text-sm">
-        Collection name
+        Scent name
         <input name="name" required defaultValue={collection?.name || ""} className={fieldClass} />
       </label>
       <label className="block text-sm">
         Brand
         <select name="brandId" defaultValue={collection?.brandId || ""} className={fieldClass}>
-          <option value="">None</option>
+          <option value="">No brand</option>
           {brands.map((brand) => (
             <option key={brand.id} value={brand.id}>{brand.name}</option>
           ))}
@@ -38,6 +39,7 @@ export function CollectionEditor({
       <PhotoField name="heroImageUrl" folder="collections" single origin={origin} initial={collection?.heroImageUrl ? [{ url: collection.heroImageUrl }] : []} />
       <fieldset>
         <legend className="text-sm">Products in this scent</legend>
+        <p className="mt-1 text-sm text-kasi-grey">Tick the mist, wash, or cream that belongs with this scent. Each one stays its own product.</p>
         <div className="mt-2 space-y-2">
           {products.map((product) => (
             <label key={product.id} className="flex items-center gap-2 text-sm">
@@ -48,15 +50,17 @@ export function CollectionEditor({
         </div>
       </fieldset>
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" name="isVisible" defaultChecked={collection ? collection.isVisible : true} /> Show in the shop
+        <input type="checkbox" name="isVisible" defaultChecked={collection ? collection.isVisible : true} /> Show this scent in the shop
       </label>
       <div className="flex flex-wrap gap-3">
-        <button name="intent" value="draft" className="h-12 border border-kasi-ivory px-5 text-sm">Save draft</button>
-        <button name="intent" value="publish" className="h-12 bg-kasi-ivory px-5 text-sm text-kasi-black">Publish</button>
+        <button className="h-12 bg-kasi-ivory px-5 text-sm text-kasi-black">Save</button>
         {collection ? (
-          <button formAction={deleteDeskCollection} className="h-12 border border-kasi-border px-5 text-sm">Delete</button>
+          <ConfirmButton message="Remove this scent from the shop? The products stay." formAction={deleteDeskCollection} className="h-12 border border-kasi-border px-5 text-sm">
+            Remove
+          </ConfirmButton>
         ) : null}
       </div>
+      <p className="text-sm text-kasi-grey">Save puts this on the shop. Untick the box above if customers should not see it.</p>
     </form>
   );
 }

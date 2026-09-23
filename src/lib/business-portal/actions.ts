@@ -136,6 +136,7 @@ async function mutate(op: string, formData: FormData, ok: string) {
 
 export async function saveDeskProduct(formData: FormData) {
   const id = String(formData.get("id") || "");
+  formData.set("intent", formData.get("showInShop") === "on" ? "publish" : "draft");
   await mutate("product.save", formData, id ? `/business/unique-trends/products/${id}?saved=1` : "/business/unique-trends/products/:id?saved=1");
 }
 
@@ -173,6 +174,7 @@ export async function deleteDeskBrand(formData: FormData) {
 
 export async function saveDeskCollection(formData: FormData) {
   const id = String(formData.get("id") || "");
+  formData.set("intent", "publish");
   await mutate("collection.save", formData, id ? `/business/unique-trends/collections/${id}?saved=1` : "/business/unique-trends/collections/:id?saved=1");
 }
 
@@ -186,6 +188,7 @@ export async function saveDeskOrderStatus(formData: FormData) {
 }
 
 export async function saveDeskHomepage(formData: FormData) {
+  formData.set("intent", "publish");
   await mutate("homepage.save", formData, "/business/unique-trends/homepage?saved=1");
 }
 

@@ -16,9 +16,9 @@ export default async function BusinessPage() {
           <div className="mt-8 border border-kasi-border p-5">
             <p className="text-sm text-kasi-grey">Signed in as {session.name}</p>
             <p className="mt-4 font-display text-2xl">Unique Trends TZ</p>
-            <p className="mt-2 text-sm text-kasi-grey">Shop desk for this business only.</p>
+            <p className="mt-2 text-sm text-kasi-grey">This opens only Unique Trends TZ.</p>
             <Link href="/business/unique-trends" className="mt-6 inline-flex h-12 items-center bg-kasi-ivory px-5 text-sm text-kasi-black">
-              Open shop desk
+              Continue
             </Link>
             <form action={logoutBusiness} className="mt-4">
               <button type="submit" className="text-sm text-kasi-grey underline">
@@ -29,7 +29,7 @@ export default async function BusinessPage() {
         ) : (
           <>
             <p className="mt-3 text-sm text-kasi-grey">
-              Use the username and password for your business. It opens only that business.
+              Sign in with the username and password for your shop.
             </p>
             <BusinessLoginForm />
           </>

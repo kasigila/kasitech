@@ -12,7 +12,7 @@ export default async function NewCollectionPage({
   const data = await portalData<{ collections: DeskCollection[]; brands: DeskOption[]; products: DeskProduct[] }>("collections");
   return (
     <div>
-      <PageTitle title="Add collection" />
+      <PageTitle title="Add a scent" text="Name it, tick the products, and press Save." />
       <Notice error={params.error} />
       <CollectionEditor brands={data.brands} products={data.products} origin={shopOrigin()} />
     </div>

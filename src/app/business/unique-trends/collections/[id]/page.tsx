@@ -17,8 +17,8 @@ export default async function EditCollectionPage({
   if (!collection) notFound();
   return (
     <div>
-      <PageTitle title={collection.name} />
-      <Notice saved={query.saved} error={query.error} />
+      <PageTitle title={collection.name} text="Change what you need, then press Save." />
+      <Notice saved={query.saved} error={query.error} savedText="Saved. Customers can see this on the shop now." />
       <CollectionEditor collection={collection} brands={data.brands} products={data.products} origin={shopOrigin()} />
     </div>
   );

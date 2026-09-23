@@ -13,17 +13,17 @@ export default async function CollectionsPage({
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <PageTitle title="Scent collections" text="Group the mist, wash, and cream from the same scent. They stay separate products." />
+        <PageTitle title="Scents" text="Group the mist, wash, and cream from the same scent. They stay separate products." />
         <Link href="/business/unique-trends/collections/new" className="inline-flex h-12 items-center bg-kasi-ivory px-5 text-sm text-kasi-black">
-          Add collection
+          Add a scent
         </Link>
       </div>
-      <Notice saved={params.saved} error={params.error} />
+      <Notice saved={params.saved} error={params.error} savedText="Saved. Customers can see this on the shop now." />
       <div className="space-y-3">
         {data.collections.map((collection) => (
           <Link key={collection.id} href={`/business/unique-trends/collections/${collection.id}`} className="block border border-kasi-border p-4">
             <h2 className="font-display text-2xl">{collection.name}</h2>
-            <p className="mt-1 text-sm text-kasi-grey">{collection.isVisible ? "Showing in the shop" : "Hidden"}</p>
+            <p className="mt-1 text-sm text-kasi-grey">{collection.isVisible && collection.publishStatus !== "DRAFT" ? "On the shop" : "Not on the shop"}</p>
           </Link>
         ))}
       </div>

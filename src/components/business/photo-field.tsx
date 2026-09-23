@@ -26,7 +26,12 @@ export function PhotoField({
     const response = await fetch("/api/business/upload", { method: "POST", body });
     const data = (await response.json()) as { url?: string; error?: string };
     if (!response.ok || !data.url) {
-      setError(data.error || "The photo could not be saved.");
+      const message = data.error || "";
+      setError(
+        message.toLowerCase().includes("not ready") || message.toLowerCase().includes("technical support")
+          ? "New photos cannot be added yet. The pictures already on the shop stay as they are."
+          : message || "The photo could not be saved. Try again.",
+      );
       return;
     }
     setImages((current) => (single ? [{ url: data.url as string, alt: "" }] : [...current, { url: data.url as string, alt: "" }]));
@@ -54,12 +59,12 @@ export function PhotoField({
           </div>
         ))}
       </div>
-      <label className="block text-sm">
-        {single ? "Photo" : "Photos"}
+      <label className="inline-flex h-11 cursor-pointer items-center border border-kasi-ivory px-4 text-sm">
+        Add a photo
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          className="mt-1 block w-full text-sm"
+          className="sr-only"
           onChange={(event) => {
             const file = event.target.files?.[0];
             if (file) void upload(file);
@@ -67,6 +72,7 @@ export function PhotoField({
           }}
         />
       </label>
+      <p className="text-sm text-kasi-grey">Choose a JPG or PNG, then press Save.</p>
     </div>
   );
 }

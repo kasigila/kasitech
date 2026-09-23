@@ -19,24 +19,24 @@ export default async function UniqueTrendsHome({
   const cards = [
     ["Products", stats.total],
     ["In stock", stats.inStock],
-    ["Low stock", stats.lowStock],
-    ["Out of stock", stats.outOfStock],
-    ["Needs confirmation", stats.needsConfirmation],
-    ["WhatsApp orders", stats.orders],
+    ["Only a few left", stats.lowStock],
+    ["Finished", stats.outOfStock],
+    ["Confirm on WhatsApp", stats.needsConfirmation],
+    ["Orders", stats.orders],
   ];
   return (
     <div>
-      <PageTitle title="Overview" text="A simple view of Unique Trends TZ." />
+      <PageTitle title="Unique Trends TZ" text="Change a price under Products. Change the phone number, Instagram, or about text under Shop details. Then refresh the shop to see it." />
       <Notice saved={params.saved} error={params.error} />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {cards.map(([label, value]) => (
           <div key={String(label)} className="border border-kasi-border p-5">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-kasi-grey">{label}</p>
+            <p className="text-sm text-kasi-grey">{label}</p>
             <p className="mt-2 font-display text-4xl">{value}</p>
           </div>
         ))}
       </div>
-      <p className="mt-6 text-sm text-kasi-grey">WhatsApp checkout clicks: {stats.whatsappClicks}</p>
+      <p className="mt-6 text-sm text-kasi-grey">Someone opened WhatsApp from the shop {stats.whatsappClicks} times.</p>
     </div>
   );
 }

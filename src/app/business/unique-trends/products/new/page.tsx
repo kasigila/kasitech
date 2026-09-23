@@ -12,7 +12,7 @@ export default async function NewProductPage({
   const data = await portalData<{ categories: DeskOption[]; brands: DeskOption[]; collections: DeskCollection[] }>("catalog");
   return (
     <div>
-      <PageTitle title="Add product" />
+      <PageTitle title="Add a product" text="Fill this in and press Save. It shows in the shop straight away." />
       <Notice error={params.error} />
       <ProductEditor brands={data.brands} categories={data.categories} collections={data.collections} origin={shopOrigin()} />
     </div>

@@ -14,8 +14,8 @@ export default async function EditProductPage({
   const data = await portalData<{ product: DeskProduct; categories: DeskOption[]; brands: DeskOption[]; collections: DeskCollection[] }>("product", { id });
   return (
     <div>
-      <PageTitle title={data.product.name} />
-      <Notice saved={query.saved} error={query.error} />
+      <PageTitle title={data.product.name} text="Change what you need, then press Save." />
+      <Notice saved={query.saved} error={query.error} savedText="Saved. Customers can see this on the shop now." />
       <ProductEditor product={data.product} brands={data.brands} categories={data.categories} collections={data.collections} origin={shopOrigin()} />
     </div>
   );
