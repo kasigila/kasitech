@@ -132,6 +132,9 @@ export function Footer() {
         <div className="flex gap-6">
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
+          <Link href="/business" className="hover:text-kasi-green">
+            Client sign in
+          </Link>
           <Link href="/work/africa-climate-finance" className="hover:text-kasi-green">
             Client case study.
           </Link>

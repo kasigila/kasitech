@@ -11,10 +11,11 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const isDemoStudio =
     pathname?.startsWith("/demo-studio") || pathname?.startsWith("/build/");
   const isCard = pathname === "/card";
+  const isBusiness = pathname === "/business" || pathname?.startsWith("/business/");
   const isHome = pathname === "/";
 
-  // Standalone surfaces: demos, Demo Studio, shared builds, digital business card
-  if (isDemo || isDemoStudio || isCard) {
+  // Standalone surfaces: demos, Demo Studio, shared builds, digital business card, client desks
+  if (isDemo || isDemoStudio || isCard || isBusiness) {
     return <>{children}</>;
   }
 
