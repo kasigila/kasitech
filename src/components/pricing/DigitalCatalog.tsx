@@ -3,7 +3,9 @@
 import Link from "next/link";
 import {
   FAQ_ENTRIES,
+  KB_WHAT_YOU_GET,
   WEB_BASELINE_INCLUDED,
+  WEB_BASELINE_SCOPE,
   buildBundleGuides,
   buildCapabilityGuides,
   buildCareGuides,
@@ -205,7 +207,7 @@ function DigitalCatalogInner() {
               Website baseline
             </h3>
             <p className="mt-2 text-sm text-[#5C5C57]">
-              Included in One Page through Signature.
+              {WEB_BASELINE_SCOPE}
             </p>
             <ul className="mt-6 grid gap-2 sm:grid-cols-2">
               {WEB_BASELINE_INCLUDED.map((item) => (
@@ -437,9 +439,86 @@ function DigitalCatalogInner() {
           <h2 className="mt-3 font-display text-3xl tracking-[-0.03em] md:text-4xl">
             KasiTech Business
           </h2>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#5C5C57]">
-            Optional monthly plans for managing content, bookings, customers, and
-            day-to-day operations from one place after you launch.
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#5C5C57]">
+            {KB_WHAT_YOU_GET.intro}
+          </p>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#5C5C57]">
+            {KB_WHAT_YOU_GET.reality}
+          </p>
+
+          <div className="mt-10 border border-[#E0DBD1] bg-white p-6 md:p-8">
+            <h3 className="font-display text-xl tracking-[-0.02em]">
+              What you actually get
+            </h3>
+            <p className="mt-2 font-mono text-[10px] tracking-[0.14em] text-[#5C5C57]">
+              A PRIVATE OWNER DASHBOARD — NOT A SECOND WEBSITE
+            </p>
+            <ul className="mt-6 space-y-2">
+              {KB_WHAT_YOU_GET.dayToDay.map((item) => (
+                <li key={item} className="flex gap-2 text-sm text-[#1A1A1A]">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-[#C7FF00]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 font-mono text-[10px] tracking-[0.14em] text-[#5C5C57]">
+              WHAT IT IS NOT
+            </p>
+            <ul className="mt-3 space-y-1.5">
+              {KB_WHAT_YOU_GET.notThis.map((item) => (
+                <li key={item} className="text-sm text-[#5C5C57]">
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-sm leading-relaxed text-[#5C5C57]">
+              {KB_WHAT_YOU_GET.vsCare}
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <article className="border border-[#E0DBD1] bg-white p-6">
+              <p className="font-mono text-[10px] tracking-[0.14em] text-[#5C5C57]">
+                LAUNCH
+              </p>
+              <h3 className="mt-2 font-display text-2xl tracking-[-0.02em]">
+                {KB_WHAT_YOU_GET.launch.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-[#5C5C57]">
+                {KB_WHAT_YOU_GET.launch.blurb}
+              </p>
+              <ul className="mt-5 space-y-1.5">
+                {KB_WHAT_YOU_GET.launch.items.map((item) => (
+                  <li key={item} className="flex gap-2 text-sm">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-[#C7FF00]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+            <article className="border border-[#E0DBD1] bg-white p-6">
+              <p className="font-mono text-[10px] tracking-[0.14em] text-[#5C5C57]">
+                GROWTH
+              </p>
+              <h3 className="mt-2 font-display text-2xl tracking-[-0.02em]">
+                {KB_WHAT_YOU_GET.growth.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-[#5C5C57]">
+                {KB_WHAT_YOU_GET.growth.blurb}
+              </p>
+              <ul className="mt-5 space-y-1.5">
+                {KB_WHAT_YOU_GET.growth.items.map((item) => (
+                  <li key={item} className="flex gap-2 text-sm">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-[#C7FF00]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
+
+          <p className="mt-6 max-w-2xl text-sm leading-relaxed text-[#5C5C57]">
+            {KB_WHAT_YOU_GET.higherPlans}
           </p>
 
           <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -457,13 +536,39 @@ function DigitalCatalogInner() {
                 <p className="mt-4 text-sm leading-relaxed text-[#5C5C57]">
                   {p.valueProp}
                 </p>
+                <p className="mt-4 font-mono text-[10px] tracking-[0.14em] text-[#5C5C57]">
+                  WHAT&apos;S INCLUDED
+                </p>
+                <ul className="mt-3 space-y-1.5">
+                  {p.included.map((item) => (
+                    <li key={item} className="flex gap-2 text-sm">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-[#C7FF00]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
                 <p className="mt-4 text-sm">
                   <span className="font-medium">Best for:</span>{" "}
                   <span className="text-[#5C5C57]">{p.whoFor}</span>
                 </p>
+                <p className="mt-3 text-sm text-[#5C5C57]">
+                  <span className="font-medium text-[#1A1A1A]">When to upgrade:</span>{" "}
+                  {p.whenUpgrade}
+                </p>
               </article>
             ))}
           </div>
+
+          <p className="mt-8 text-sm text-[#5C5C57]">
+            See the owner dashboard live in{" "}
+            <Link
+              href="/demo-studio?kb=growth"
+              className="text-[#1A1A1A] underline decoration-[#E0DBD1] underline-offset-4 transition hover:decoration-[#0A0A0A]"
+            >
+              Demo Studio
+            </Link>
+            .
+          </p>
         </div>
       </section>
 

@@ -13,7 +13,9 @@ import { PRICE_BOOK_VERSION } from "@/commercial/types";
 import { displayItemPrice } from "@/commercial/catalog/presentation";
 import {
   FAQ_ENTRIES,
+  KB_WHAT_YOU_GET,
   WEB_BASELINE_INCLUDED,
+  WEB_BASELINE_SCOPE,
   buildBundleGuides,
   buildCapabilityGuides,
   buildCareGuides,
@@ -156,7 +158,7 @@ async function writePackages(doc: Doc) {
     pg = newPage(doc, "Website packages");
     y = CONTENT_TOP;
   }
-  drawSectionLabel(pg, doc.fonts, "Website baseline (included in WEB-ONE through WEB-SIG)", M, y);
+  drawSectionLabel(pg, doc.fonts, `Website baseline (${WEB_BASELINE_SCOPE.replace(/\.$/, "")})`, M, y);
   y -= 12;
   y = drawChecklist(pg, doc.fonts, WEB_BASELINE_INCLUDED, M, y, PAGE.w - M * 2, 16);
   y -= 8;
@@ -296,24 +298,76 @@ function writeKb(doc: Doc) {
   mark(doc, "KasiTech Business - at a glance", page);
   let y = CONTENT_TOP;
   y = heading(page, doc.fonts, "What is KasiTech Business?", y);
-  y = para(
+  y = para(page, doc.fonts, KB_WHAT_YOU_GET.intro, y);
+  y = para(page, doc.fonts, KB_WHAT_YOU_GET.reality, y);
+
+  drawSectionLabel(page, doc.fonts, "What you actually get", M, y);
+  y -= 14;
+  y = drawChecklist(
     page,
     doc.fonts,
-    "KasiTech Business transforms a website into a business management platform - so owners can manage website content, analytics, bookings, customers, catalog/services, feedback, QR experiences, locations, and day-to-day operations from one place.",
+    KB_WHAT_YOU_GET.dayToDay,
+    M,
     y,
+    PAGE.w - M * 2,
+    KB_WHAT_YOU_GET.dayToDay.length,
   );
-  y = para(
+  y -= 8;
+  y = para(page, doc.fonts, KB_WHAT_YOU_GET.vsCare, y);
+
+  drawSectionLabel(page, doc.fonts, "What it is not", M, y);
+  y -= 14;
+  y = drawChecklist(
     page,
     doc.fonts,
-    "Only approved modules are documented. Launch unlocks website and analytics basics. Growth unlocks the fuller operator set. Pro, Scale, and Enterprise are commercial tiers - additional modules beyond Growth are scoped with KasiTech, not invented here.",
+    KB_WHAT_YOU_GET.notThis,
+    M,
     y,
+    PAGE.w - M * 2,
+    KB_WHAT_YOU_GET.notThis.length,
   );
-  y -= 6;
+
+  foot(doc, page);
+  page = newPage(doc, "KasiTech Business");
+  y = CONTENT_TOP;
+  y = heading(page, doc.fonts, "Launch and Growth in detail", y);
+
+  drawSectionLabel(page, doc.fonts, KB_WHAT_YOU_GET.launch.title, M, y);
+  y -= 12;
+  y = para(page, doc.fonts, KB_WHAT_YOU_GET.launch.blurb, y);
+  y = drawChecklist(
+    page,
+    doc.fonts,
+    KB_WHAT_YOU_GET.launch.items,
+    M,
+    y,
+    PAGE.w - M * 2,
+    KB_WHAT_YOU_GET.launch.items.length,
+  );
+  y -= 10;
+
+  drawSectionLabel(page, doc.fonts, KB_WHAT_YOU_GET.growth.title, M, y);
+  y -= 12;
+  y = para(page, doc.fonts, KB_WHAT_YOU_GET.growth.blurb, y);
+  y = drawChecklist(
+    page,
+    doc.fonts,
+    KB_WHAT_YOU_GET.growth.items,
+    M,
+    y,
+    PAGE.w - M * 2,
+    KB_WHAT_YOU_GET.growth.items.length,
+  );
+  y -= 8;
+  y = para(page, doc.fonts, KB_WHAT_YOU_GET.higherPlans, y);
+
+  y -= 4;
   drawSectionLabel(page, doc.fonts, "Plans", M, y);
   y -= 12;
 
   for (const g of plans) {
-    const blockH = 96;
+    const includedLines = g.included.slice(0, 4);
+    const blockH = 88 + includedLines.length * 12;
     if (y - blockH < CONTENT_BOTTOM) {
       foot(doc, page);
       page = newPage(doc, "KasiTech Business");
@@ -323,14 +377,21 @@ function writeKb(doc: Doc) {
     drawIcon(page, "spark", M + 12, y - 10, 14, C.ink);
     drawText(page, g.item.name, doc.fonts.bold, 11, M + 32, y - 20, C.black);
     drawPrice(page, doc.fonts, displayItemPrice(g.item), PAGE.w - M - 12, y - 20, 11);
+    let cy = y - 36;
     for (const line of wrap(g.valueProp, doc.fonts.regular, 7.5, PAGE.w - M * 2 - 24).slice(0, 2)) {
-      drawText(page, line, doc.fonts.regular, 7.5, M + 12, y - 38, C.grey);
+      drawText(page, line, doc.fonts.regular, 7.5, M + 12, cy, C.grey);
+      cy -= 10;
     }
-    drawSectionLabel(page, doc.fonts, "Included", M + 12, y - 52);
-    drawChecklist(page, doc.fonts, g.included, M + 12, y - 64, PAGE.w - M * 2 - 24, 2);
+    drawSectionLabel(page, doc.fonts, "Included", M + 12, cy - 2);
+    drawChecklist(page, doc.fonts, includedLines, M + 12, cy - 14, PAGE.w - M * 2 - 24, includedLines.length);
     y -= blockH + 10;
   }
 
+  if (y < CONTENT_BOTTOM + 28) {
+    foot(doc, page);
+    page = newPage(doc, "KasiTech Business");
+    y = CONTENT_TOP;
+  }
   for (const line of wrap(
     `See KasiTech Business live: ${DEMO_STUDIO_ORIGIN}/demo-studio?kb=growth`,
     doc.fonts.regular,

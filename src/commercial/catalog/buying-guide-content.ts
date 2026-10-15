@@ -9,7 +9,6 @@ import {
   getWebsitePackages,
   PACKAGE_POSITIONING,
 } from "@/commercial/catalog/presentation";
-import { KB_MODULES } from "@/demo-studio/configuration/kb-modules";
 import { demoStudioUrl } from "@/demo-studio/configuration/deep-link";
 import type { BillingType, CatalogItem } from "@/commercial/types";
 
@@ -30,6 +29,9 @@ export const WEB_BASELINE_INCLUDED = [
   "Two revision rounds",
   "Launch support",
 ];
+
+/** Scope line for the website baseline block (standard packages, not Custom Platform). */
+export const WEB_BASELINE_SCOPE = "Included in all website packages.";
 
 export type PackageGuide = {
   item: CatalogItem;
@@ -741,67 +743,111 @@ export function buildCareGuides(): PlanGuide[] {
     .filter(Boolean) as PlanGuide[];
 }
 
+/**
+ * Customer-facing KasiTech Business explanation.
+ * Modules match approved KB_MODULES only — Launch vs Growth — no invented entitlements.
+ */
+export const KB_WHAT_YOU_GET = {
+  intro:
+    "Your website is what visitors see. KasiTech Business is the private dashboard you and your team log into after launch — to run the business behind that site.",
+  reality:
+    "Instead of emailing us to change a price, update opening hours, check who booked this morning, or see how the site is performing, you do it yourself from one login. It is an optional monthly subscription, independent of Website Care: Care is us looking after the site; KasiTech Business is you operating it.",
+  notThis: [
+    "Not a second public website — it is a private owner login",
+    "Not Website Care — we still fix and maintain the site only if you buy Care",
+    "Not a replacement for the website package — you still need a site for customers to visit",
+  ],
+  dayToDay: [
+    "Log in on your phone or laptop and see a snapshot of activity across your digital presence",
+    "Edit pages and publish — hours, copy, photos — without waiting on a developer",
+    "Watch basic analytics: traffic over the last week, which pages people open, simple trends",
+    "On Growth, manage what you sell, who booked, who your customers are, events, QR codes, feedback, and up to five locations",
+  ],
+  launch: {
+    title: "Launch — the owner basics",
+    blurb:
+      "Enough to stop depending on us for everyday website changes, and to see whether the site is actually being used.",
+    items: [
+      "Overview — a snapshot of activity across your digital presence",
+      "Website — edit pages and publish updates yourself",
+      "Analytics — visitor traffic, top pages, and basic trends",
+    ],
+  },
+  growth: {
+    title: "Growth — the operator set",
+    blurb:
+      "The same dashboard, plus the tools operators use every day when the site takes bookings, sells services, or runs events.",
+    items: [
+      "Everything in Launch",
+      "Catalog / Services — add, price, hide, or draft what you offer",
+      "Bookings — an inbox of appointment or reservation requests (customer, service, staff, status)",
+      "Customers — a directory with last visit and booking history",
+      "Events — publish events and track remaining seats",
+      "QR — print codes that open your menu, booking page, or feedback form",
+      "Feedback — collect ratings and comments, then publish them",
+      "Locations — manage up to 5 business locations",
+    ],
+  },
+  higherPlans:
+    "Pro, Scale, and Enterprise are commercial tiers for larger organisations. The approved dashboard surface today matches Growth; any extra modules beyond that are scoped with KasiTech in writing — not guessed from this catalog.",
+  vsCare:
+    "You can buy KasiTech Business without Website Care, and Care without KasiTech Business. Many operators eventually want both: Care for security and updates we handle, KasiTech Business for the work you want to do yourself.",
+};
+
 export function buildKbGuides(): PlanGuide[] {
   const book = loadPriceBook();
-  const launchModules = KB_MODULES.filter((m) => m.minPlan === "KB-LAUNCH").map(
-    (m) => m.label,
-  );
-  const growthModules = KB_MODULES.filter((m) => m.minPlan === "KB-GROW").map(
-    (m) => m.label,
-  );
 
   const docs: Record<string, Omit<PlanGuide, "item" | "seeLiveUrl">> = {
     "KB-LAUNCH": {
       valueProp:
-        "Owner tools for website basics and analytics - your site becomes manageable day to day.",
-      whoFor: "Businesses that need to edit the site and see basic traffic signals.",
-      included: [
-        `Approved Launch modules: ${launchModules.join(", ")}`,
-      ],
+        "Your own login to edit the website and see basic traffic — without waiting on a developer for everyday changes.",
+      whoFor: "Owners who need to update pages and watch visitor numbers themselves.",
+      included: KB_WHAT_YOU_GET.launch.items,
       whenUpgrade:
         "Upgrade to Growth when you need bookings, customers, catalog, events, QR, feedback, or locations.",
       notes: null,
     },
     "KB-GROW": {
       valueProp:
-        "Turns the website into a lighter business platform - bookings, customers, and more.",
-      whoFor: "Operators who take appointments, manage customers, or run events.",
-      included: [
-        `Everything available at Launch, plus Growth modules: ${growthModules.join(", ")}`,
-      ],
+        "Turns the website into a lighter business platform: manage services, bookings, customers, events, QR, feedback, and locations from the same dashboard.",
+      whoFor:
+        "Salons, clinics, restaurants, tours, and anyone who takes bookings or runs events.",
+      included: KB_WHAT_YOU_GET.growth.items,
       whenUpgrade:
-        "Pro / Scale / Enterprise are priced for larger organisations; additional modules beyond Growth are scoped with KasiTech - not invented here.",
+        "Pro / Scale / Enterprise are priced for larger organisations; additional modules beyond Growth are scoped with KasiTech.",
       notes: null,
     },
     "KB-PRO": {
-      valueProp: "Higher commercial plan for organisations that need Pro-tier pricing.",
+      valueProp:
+        "Pro-tier commercial plan. Same approved operator dashboard as Growth today; extra modules are scoped with KasiTech before sale.",
       whoFor: "Larger teams ready for a Pro commercial relationship.",
       included: [
-        "Approved Demo Studio surface matches Growth modules today",
+        "Everything available at Growth",
         "Additional modules beyond Growth are defined with KasiTech before sale",
       ],
       whenUpgrade: "Scale or Enterprise when organisational scope requires it.",
       notes: "No invented Pro-only modules in this catalog.",
     },
     "KB-SCALE": {
-      valueProp: "Scale-tier commercial plan for expanding operations.",
+      valueProp:
+        "Scale-tier commercial plan for expanding operations. Same approved operator dashboard as Growth today.",
       whoFor: "Multi-location or high-volume operators (as scoped).",
       included: [
-        "Approved Demo Studio surface matches Growth modules today",
+        "Everything available at Growth",
         "Additional modules beyond Growth are defined with KasiTech before sale",
       ],
       whenUpgrade: "Enterprise for custom organisational needs.",
       notes: "No invented Scale-only modules in this catalog.",
     },
     "KB-ENT": {
-      valueProp: "Enterprise plan - custom quotation.",
-      whoFor: "Enterprises with bespoke operational requirements.",
+      valueProp: "Enterprise plan — custom quotation for bespoke operational requirements.",
+      whoFor: "Enterprises with requirements beyond the approved Growth dashboard.",
       included: [
         "Scoped in a formal enterprise quotation",
-        "No modules invented beyond approved Growth surface in Demo Studio",
+        "No modules invented beyond the approved Growth surface",
       ],
-      whenUpgrade: "Highest listed plan - scope with KasiTech.",
-      notes: "Custom quote - price confirmed before commencement.",
+      whenUpgrade: "Highest listed plan — scope with KasiTech.",
+      notes: "Custom quote — price confirmed before commencement.",
     },
   };
 
@@ -877,7 +923,7 @@ export const FAQ_ENTRIES: { q: string; a: string }[] = [
   },
   {
     q: "Do I need KasiTech Business?",
-    a: "Only if you want the owner dashboard modules (analytics, bookings, customers, etc.). Many sites launch without it and add it later.",
+    a: "Only if you want a private owner dashboard after launch — to edit pages, see traffic, and (on Growth) manage bookings, customers, catalog, events, QR, feedback, and locations. Many sites launch without it and add it later.",
   },
   {
     q: "Can I use Website Care without KasiTech Business?",
